@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import heroImage from "@/assets/gea-hero-sunset.jpeg.asset.json";
+import { heroImage } from "@/lib/responsive-image";
+
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
@@ -25,17 +26,19 @@ export function Hero() {
           }}
         />
         <img
-          src={heroImage.url}
+          src={heroImage.fallback}
+          srcSet={heroImage.srcSet}
+          sizes={heroImage.sizes}
           alt="GEA — pôr do sol na estrada"
           className="h-full w-full object-cover object-center transition-opacity duration-700"
           style={{ opacity: loaded ? 1 : 0 }}
           loading="eager"
           decoding="async"
           fetchPriority="high"
-          sizes="100vw"
           draggable={false}
           onLoad={() => setLoaded(true)}
         />
+
 
       </motion.div>
 
