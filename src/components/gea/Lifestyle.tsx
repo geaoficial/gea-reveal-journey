@@ -5,6 +5,8 @@ import { BlurImage } from "./BlurImage";
 import { useDeviceCapability } from "@/lib/device-capability";
 
 export function Lifestyle() {
+  const { allowHeavyFx, reducedMotion } = useDeviceCapability();
+  const lite = !allowHeavyFx; // mobile / low-end / save-data / reduced motion
   const revealRef = useRef<HTMLDivElement>(null);
   const [reveal, setReveal] = useState<{ x: number; y: number; active: boolean }>({
     x: 50,
