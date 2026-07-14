@@ -3,7 +3,6 @@ import { Hero } from "@/components/gea/Hero";
 import { Manifesto } from "@/components/gea/Manifesto";
 import { Lifestyle } from "@/components/gea/Lifestyle";
 import { InstagramSection } from "@/components/gea/InstagramSection";
-import { FinalCTA } from "@/components/gea/FinalCTA";
 import { CinematicControls } from "@/components/gea/CinematicControls";
 
 export const Route = createFileRoute("/")({
@@ -17,7 +16,6 @@ function Index() {
       <Manifesto />
       <Lifestyle />
       <InstagramSection />
-      <FinalCTA />
       {/* Global cinematic grain overlay, tied to --grain-opacity */}
       <div
         aria-hidden
