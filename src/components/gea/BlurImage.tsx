@@ -83,6 +83,12 @@ export function BlurImage({
     let cancelled = false;
     let timeoutId: number | undefined;
 
+    const assetUrl =
+      (typeof imgProps.src === "string" && imgProps.src) ||
+      fallbackSrc ||
+      (typeof srcSet === "string" ? srcSet.split(",")[0]?.trim().split(" ")[0] : "") ||
+      "unknown";
+
     const armTimeout = () => {
       // Safety net: some browsers (Safari iOS) can silently stall on
       // AVIF/WebP decode without firing load/error. After N ms of no paint,
@@ -93,6 +99,13 @@ export function BlurImage({
         if (!img.complete || img.naturalWidth === 0) {
           setFailed(true);
           setRevealed(true);
+          reportImageFailure({
+            asset: assetUrl,
+            reason: "timeout",
+            section: telemetrySection,
+            naturalWidth: img.naturalWidth,
+            naturalHeight: img.naturalHeight,
+          });
         }
       }, fallbackTimeoutMs);
     };
@@ -105,7 +118,14 @@ export function BlurImage({
       try {
         if (img.decode) await img.decode();
       } catch {
-        /* decode pode rejeitar em alguns navegadores; seguimos assim mesmo */
+        // decode pode rejeitar em alguns navegadores — registramos e seguimos.
+        reportImageFailure({
+          asset: assetUrl,
+          reason: "decode",
+          section: telemetrySection,
+          naturalWidth: img.naturalWidth,
+          naturalHeight: img.naturalHeight,
+        });
       }
       clearTimer();
       if (!cancelled) reveal();
@@ -120,6 +140,13 @@ export function BlurImage({
         clearTimer();
         setFailed(true);
         reveal();
+        reportImageFailure({
+          asset: assetUrl,
+          reason: "error",
+          section: telemetrySection,
+          naturalWidth: img.naturalWidth,
+          naturalHeight: img.naturalHeight,
+        });
       };
       img.addEventListener("load", onLoadNative, { once: true });
       img.addEventListener("error", onError, { once: true });
