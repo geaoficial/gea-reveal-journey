@@ -225,7 +225,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
           <span className="inline-block h-px w-6 bg-gea-cream/20" />
         </div>
       )}
-    </div>
+    </motion.div>
   );
 });
 
