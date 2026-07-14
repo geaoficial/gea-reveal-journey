@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
+import { useVip } from "@/lib/vip";
+
 
 const IG_URL = "https://instagram.com/geastoree";
 
