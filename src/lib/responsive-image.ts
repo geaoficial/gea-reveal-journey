@@ -35,8 +35,7 @@ const build = (v: { url: string }[]) =>
   v.map((a, i) => `${a.url} ${WIDTHS[i]}w`).join(", ");
 
 /** Art direction — full-bleed on every breakpoint; browser matches to DPR. */
-export const FULL_BLEED_SIZES =
-  "(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1920px";
+export const FULL_BLEED_SIZES = "100vw";
 
 export type ResponsiveImage = {
   /** JPEG fallback URL for <img src>. Universal support. */
@@ -49,13 +48,16 @@ export type ResponsiveImage = {
   avif: string;
   /** Common sizes attribute for all sources. */
   sizes: string;
-  /** Highest-resolution JPEG (used as safe preload href). */
+  /** Highest-resolution JPEG (used as safe preload href fallback). */
   fallback: string;
+  /** Highest-resolution AVIF — matches the preload `type: image/avif`. */
+  preloadHref: string;
 };
 
 export const heroImage: ResponsiveImage = {
   src: hero1280j.url,
   fallback: hero1920j.url,
+  preloadHref: hero1920a.url,
   srcSet: build([hero640j, hero1280j, hero1920j]),
   webp: build([hero640w, hero1280w, hero1920w]),
   avif: build([hero640a, hero1280a, hero1920a]),
@@ -65,6 +67,7 @@ export const heroImage: ResponsiveImage = {
 export const lifestyleImage: ResponsiveImage = {
   src: life1280j.url,
   fallback: life1920j.url,
+  preloadHref: life1920a.url,
   srcSet: build([life640j, life1280j, life1920j]),
   webp: build([life640w, life1280w, life1920w]),
   avif: build([life640a, life1280a, life1920a]),
@@ -74,6 +77,7 @@ export const lifestyleImage: ResponsiveImage = {
 export const mysteryImage: ResponsiveImage = {
   src: mystery1280j.url,
   fallback: mystery1920j.url,
+  preloadHref: mystery1920a.url,
   srcSet: build([mystery640j, mystery1280j, mystery1920j]),
   webp: build([mystery640w, mystery1280w, mystery1920w]),
   avif: build([mystery640a, mystery1280a, mystery1920a]),
