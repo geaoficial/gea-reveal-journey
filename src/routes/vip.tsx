@@ -583,6 +583,7 @@ function InviteQrButton({ url, memberNumber }: { url: string; memberNumber: numb
         "Download Invite QR"
       );
     } catch { /* ignore */ }
+    logInviteShare({ data: { channel: "qr_download" } }).catch(() => { /* ignore */ });
   }
 
   return (
