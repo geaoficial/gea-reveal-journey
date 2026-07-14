@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 import watchMystery from "@/assets/gea-life-mystery.jpg.asset.json";
@@ -11,6 +11,24 @@ export function Lifestyle() {
     active: false,
   });
 
+  // Névoa âmbar dirigida por scroll — dissolve e reaparece conforme o teaser cruza a viewport
+  const { scrollYProgress } = useScroll({
+    target: revealRef,
+    offset: ["start end", "end start"],
+  });
+  const fogOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    [0, 0.85, 0.35, 0.9, 0.4, 0],
+  );
+  const fogY = useTransform(scrollYProgress, [0, 1], ["12%", "-14%"]);
+  const fogScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1.25, 1.05]);
+  const shadowOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.5, 0.75, 1],
+    [0.95, 0.55, 0.8, 0.5, 0.95],
+  );
+
   const updateFromEvent = (clientX: number, clientY: number) => {
     const el = revealRef.current;
     if (!el) return;
@@ -19,6 +37,7 @@ export function Lifestyle() {
     const y = ((clientY - rect.top) / rect.height) * 100;
     setReveal({ x, y, active: true });
   };
+
 
   return (
     <section className="relative bg-gea-black">
@@ -96,6 +115,38 @@ export function Lifestyle() {
               style={{ objectPosition: "center 45%" }}
             />
           </motion.div>
+
+          {/* Sombras progressivas — respiram conforme o scroll */}
+          <motion.div
+            aria-hidden
+            style={{ opacity: shadowOpacity }}
+            className="pointer-events-none absolute inset-0"
+          >
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.75) 78%, rgba(0,0,0,0.98) 100%)",
+              }}
+            />
+          </motion.div>
+
+          {/* Névoa âmbar — dissolve e reaparece com o scroll */}
+          <motion.div
+            aria-hidden
+            style={{ opacity: fogOpacity, y: fogY, scale: fogScale }}
+            className="pointer-events-none absolute inset-0 mix-blend-screen"
+          >
+            <div
+              className="absolute inset-x-[-10%] top-[10%] h-[80%]"
+              style={{
+                background:
+                  "radial-gradient(ellipse 60% 40% at 30% 55%, rgba(232,138,58,0.32) 0%, rgba(232,138,58,0.12) 35%, transparent 70%), radial-gradient(ellipse 55% 45% at 75% 50%, rgba(255,168,90,0.22) 0%, transparent 65%), radial-gradient(ellipse 90% 35% at 50% 80%, rgba(120,60,20,0.35) 0%, transparent 70%)",
+                filter: "blur(40px)",
+              }}
+            />
+          </motion.div>
+
 
           {/* Brilho pulsante sobre o dial */}
           <motion.div
