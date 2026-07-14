@@ -473,3 +473,26 @@ function Stat({ n, label }: { n: number; label: string }) {
     </div>
   );
 }
+
+function CopyInviteButton({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(url);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1600);
+          try {
+            (window as unknown as { plausible?: (n: string) => void }).plausible?.(
+              "Copy Invite Link"
+            );
+          } catch { /* ignore */ }
+        } catch { /* ignore */ }
+      }}
+      className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-white/20 rounded hover:border-white/40"
+    >
+      {copied ? "Copiado ✓" : "Copiar"}
+    </button>
+  );
+}
