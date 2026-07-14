@@ -1,7 +1,6 @@
 import { motion } from "motion/react";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 import lifestyle03 from "@/assets/gea-lifestyle-03-watch.jpg.asset.json";
-import lifestyle04 from "@/assets/gea-lifestyle-04-fashion.jpg.asset.json";
 
 type Frame = {
   label: string;
@@ -12,7 +11,6 @@ type Frame = {
 const frames: Frame[] = [
   { label: "Relógio ao pôr do sol — silhueta preta na estrada", image: lifestyle02.url, quote: "Algumas escolhas dizem tudo." },
   { label: "Close no relógio — pulso, luz dourada", image: lifestyle03.url, quote: "O tempo revela." },
-  { label: "Moda — silhueta preta ao pôr do sol", image: lifestyle04.url, quote: "Vista sua identidade." },
 ];
 
 
