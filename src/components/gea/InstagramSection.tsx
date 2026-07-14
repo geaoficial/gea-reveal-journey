@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { FounderBadge } from "./FounderBadge";
 
 const IG_URL = "https://instagram.com/geastoree";
 
