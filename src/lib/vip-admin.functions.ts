@@ -249,3 +249,103 @@ export const setInviteStatus = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+// ------------------------------------------------------------------
+// Estatísticas de compartilhamento de convite (vip_events)
+// Agrupa por canal e por membro, com filtro por período (em dias).
+// ------------------------------------------------------------------
+export const getInviteShareStats = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        days: z.number().int().min(1).max(365).default(30),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const since = new Date(Date.now() - data.days * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: rows, error } = await supabaseAdmin
+      .from("vip_events")
+      .select("id, member_id, payload, created_at")
+      .eq("type", "invite_share")
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(5000);
+    if (error) throw new Error(error.message);
+
+    const events = rows ?? [];
+
+    // Agrupa por canal
+    const byChannel = new Map<string, number>();
+    // Agrupa por membro
+    const byMember = new Map<
+      string,
+      { total: number; whatsapp: number; copy_link: number; qr_generate: number; qr_download: number; last: string }
+    >();
+
+    for (const e of events) {
+      const channel = ((e.payload as { channel?: string } | null)?.channel ?? "unknown") as string;
+      byChannel.set(channel, (byChannel.get(channel) ?? 0) + 1);
+
+      if (e.member_id) {
+        const cur = byMember.get(e.member_id) ?? {
+          total: 0,
+          whatsapp: 0,
+          copy_link: 0,
+          qr_generate: 0,
+          qr_download: 0,
+          last: e.created_at,
+        };
+        cur.total += 1;
+        if (channel === "whatsapp") cur.whatsapp += 1;
+        else if (channel === "copy_link") cur.copy_link += 1;
+        else if (channel === "qr_generate") cur.qr_generate += 1;
+        else if (channel === "qr_download") cur.qr_download += 1;
+        if (new Date(e.created_at) > new Date(cur.last)) cur.last = e.created_at;
+        byMember.set(e.member_id, cur);
+      }
+    }
+
+    // Hidrata nomes dos membros
+    const memberIds = [...byMember.keys()];
+    let membersMap = new Map<string, { member_number: number; full_name: string; instagram_handle: string }>();
+    if (memberIds.length > 0) {
+      const { data: members } = await supabaseAdmin
+        .from("vip_members")
+        .select("id, member_number, full_name, instagram_handle")
+        .in("id", memberIds);
+      for (const m of members ?? []) {
+        membersMap.set(m.id, {
+          member_number: m.member_number,
+          full_name: m.full_name,
+          instagram_handle: m.instagram_handle,
+        });
+      }
+    }
+
+    const channels = [...byChannel.entries()]
+      .map(([channel, count]) => ({ channel, count }))
+      .sort((a, b) => b.count - a.count);
+
+    const members = [...byMember.entries()]
+      .map(([memberId, stats]) => ({
+        memberId,
+        member_number: membersMap.get(memberId)?.member_number ?? null,
+        full_name: membersMap.get(memberId)?.full_name ?? "—",
+        instagram_handle: membersMap.get(memberId)?.instagram_handle ?? "",
+        ...stats,
+      }))
+      .sort((a, b) => b.total - a.total);
+
+    return {
+      total: events.length,
+      periodDays: data.days,
+      channels,
+      members,
+    };
+  });
