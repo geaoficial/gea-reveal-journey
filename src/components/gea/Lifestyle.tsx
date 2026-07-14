@@ -1,17 +1,20 @@
 import { motion } from "motion/react";
 import { Placeholder } from "./Placeholder";
+import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 
 type Frame = {
   label: string;
   tint: "black" | "sunset" | "silver";
+  image?: string;
   quote?: string;
 };
 
 const frames: Frame[] = [
-  { label: "SUV branco na estrada — pôr do sol", tint: "sunset", quote: "Algumas escolhas dizem tudo." },
+  { label: "Relógio ao pôr do sol — silhueta preta na estrada", tint: "sunset", image: lifestyle02.url, quote: "Algumas escolhas dizem tudo." },
   { label: "Close no relógio — pulso, luz dourada", tint: "silver", quote: "O tempo revela." },
   { label: "Moda — silhueta preta, expressão", tint: "black", quote: "Vista sua identidade." },
 ];
+
 
 export function Lifestyle() {
   return (
