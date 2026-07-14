@@ -163,6 +163,41 @@ export function Lifestyle() {
             />
           </motion.div>
 
+          {/* Fumaça cinematográfica — camadas contínuas em deriva */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-[-20%] bottom-[-10%] h-[85%] mix-blend-screen opacity-70"
+            animate={{ x: ["-6%", "6%", "-6%"], y: ["4%", "-3%", "4%"] }}
+            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(ellipse 55% 45% at 25% 70%, rgba(255,170,90,0.35) 0%, rgba(200,110,50,0.12) 40%, transparent 72%), radial-gradient(ellipse 50% 40% at 70% 60%, rgba(255,150,70,0.28) 0%, transparent 70%)",
+              filter: "blur(60px)",
+            }}
+          />
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-[-25%] top-[-5%] h-[75%] mix-blend-screen opacity-60"
+            animate={{ x: ["5%", "-5%", "5%"], y: ["-3%", "5%", "-3%"] }}
+            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(ellipse 45% 35% at 60% 40%, rgba(255,190,120,0.28) 0%, transparent 70%), radial-gradient(ellipse 55% 40% at 20% 30%, rgba(180,90,40,0.22) 0%, transparent 72%)",
+              filter: "blur(80px)",
+            }}
+          />
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-40"
+            animate={{ opacity: [0.25, 0.55, 0.25] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 50% at 50% 65%, rgba(232,138,58,0.35) 0%, transparent 70%)",
+              filter: "blur(50px)",
+            }}
+          />
+
 
           {/* Brilho pulsante sobre o dial */}
           <motion.div
