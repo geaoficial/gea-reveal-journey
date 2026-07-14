@@ -116,6 +116,38 @@ export function Lifestyle() {
             />
           </motion.div>
 
+          {/* Sombras progressivas — respiram conforme o scroll */}
+          <motion.div
+            aria-hidden
+            style={{ opacity: shadowOpacity }}
+            className="pointer-events-none absolute inset-0"
+          >
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.75) 78%, rgba(0,0,0,0.98) 100%)",
+              }}
+            />
+          </motion.div>
+
+          {/* Névoa âmbar — dissolve e reaparece com o scroll */}
+          <motion.div
+            aria-hidden
+            style={{ opacity: fogOpacity, y: fogY, scale: fogScale }}
+            className="pointer-events-none absolute inset-0 mix-blend-screen"
+          >
+            <div
+              className="absolute inset-x-[-10%] top-[10%] h-[80%]"
+              style={{
+                background:
+                  "radial-gradient(ellipse 60% 40% at 30% 55%, rgba(232,138,58,0.32) 0%, rgba(232,138,58,0.12) 35%, transparent 70%), radial-gradient(ellipse 55% 45% at 75% 50%, rgba(255,168,90,0.22) 0%, transparent 65%), radial-gradient(ellipse 90% 35% at 50% 80%, rgba(120,60,20,0.35) 0%, transparent 70%)",
+                filter: "blur(40px)",
+              }}
+            />
+          </motion.div>
+
+
           {/* Brilho pulsante sobre o dial */}
           <motion.div
             aria-hidden
