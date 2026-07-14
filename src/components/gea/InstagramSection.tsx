@@ -1,22 +1,31 @@
 import { motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Placeholder } from "./Placeholder";
 import { getInstagramFeed } from "@/lib/instagram.functions";
+import ig1 from "@/assets/gea-ig-1.jpg.asset.json";
+import ig2 from "@/assets/gea-ig-2.jpg.asset.json";
+import ig3 from "@/assets/gea-ig-3.jpg.asset.json";
+import ig4 from "@/assets/gea-ig-4.jpg.asset.json";
+import ig5 from "@/assets/gea-ig-5.jpg.asset.json";
+import ig6 from "@/assets/gea-ig-6.jpg.asset.json";
+import ig7 from "@/assets/gea-ig-7.jpg.asset.json";
+import ig8 from "@/assets/gea-ig-8.jpg.asset.json";
+import ig9 from "@/assets/gea-ig-9.jpg.asset.json";
 
 const IG_URL = "https://instagram.com/geastoree";
 
-const fallbackTiles: Array<{ label: string; tint: "black" | "sunset" | "silver" }> = [
-  { label: "feed 01", tint: "sunset" },
-  { label: "feed 02", tint: "black" },
-  { label: "feed 03", tint: "silver" },
-  { label: "feed 04", tint: "black" },
-  { label: "feed 05", tint: "sunset" },
-  { label: "feed 06", tint: "silver" },
-  { label: "feed 07", tint: "silver" },
-  { label: "feed 08", tint: "sunset" },
-  { label: "feed 09", tint: "black" },
+const fallbackTiles: Array<{ url: string; label: string }> = [
+  { url: ig1.url, label: "SUV branco ao pôr do sol" },
+  { url: ig2.url, label: "Relógio prata — luz dourada" },
+  { url: ig3.url, label: "Silhueta ao pôr do sol" },
+  { url: ig4.url, label: "Estrada até o horizonte" },
+  { url: ig5.url, label: "Detalhe preto — relógio" },
+  { url: ig6.url, label: "Mão ao volante — sunset" },
+  { url: ig7.url, label: "SUV branco — perfil" },
+  { url: ig8.url, label: "Flare do sol na estrada" },
+  { url: ig9.url, label: "Ajustando o relógio" },
 ];
+
 
 
 export function InstagramSection() {
@@ -101,14 +110,18 @@ export function InstagramSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.8, delay: i * 0.05 }}
-                  className="group relative block overflow-hidden"
+                  className="group relative block aspect-square overflow-hidden bg-gea-black/60"
                 >
-                  <div className="transition-transform duration-[1200ms] ease-out group-hover:scale-105">
-                    <Placeholder label={t.label} tint={t.tint} aspect="1 / 1" className="w-full" />
-                  </div>
+                  <img
+                    src={t.url}
+                    alt={t.label}
+                    loading="lazy"
+                    className="h-full w-full object-cover grayscale-[0.15] transition-all duration-[1200ms] ease-out group-hover:scale-105 group-hover:grayscale-0"
+                  />
                   <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/30" />
                 </motion.a>
               ))}
+
         </div>
 
 

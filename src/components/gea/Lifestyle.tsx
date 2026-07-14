@@ -1,19 +1,20 @@
 import { motion } from "motion/react";
-import { Placeholder } from "./Placeholder";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
+import lifestyle03 from "@/assets/gea-lifestyle-03-watch.jpg.asset.json";
+import lifestyle04 from "@/assets/gea-lifestyle-04-fashion.jpg.asset.json";
 
 type Frame = {
   label: string;
-  tint: "black" | "sunset" | "silver";
-  image?: string;
+  image: string;
   quote?: string;
 };
 
 const frames: Frame[] = [
-  { label: "Relógio ao pôr do sol — silhueta preta na estrada", tint: "sunset", image: lifestyle02.url, quote: "Algumas escolhas dizem tudo." },
-  { label: "Close no relógio — pulso, luz dourada", tint: "silver", quote: "O tempo revela." },
-  { label: "Moda — silhueta preta, expressão", tint: "black", quote: "Vista sua identidade." },
+  { label: "Relógio ao pôr do sol — silhueta preta na estrada", image: lifestyle02.url, quote: "Algumas escolhas dizem tudo." },
+  { label: "Close no relógio — pulso, luz dourada", image: lifestyle03.url, quote: "O tempo revela." },
+  { label: "Moda — silhueta preta ao pôr do sol", image: lifestyle04.url, quote: "Vista sua identidade." },
 ];
+
 
 
 export function Lifestyle() {
@@ -35,16 +36,13 @@ export function Lifestyle() {
               transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
               className="h-full w-full"
             >
-              {frame.image ? (
-                <img
-                  src={frame.image}
-                  alt={frame.label}
-                  loading="lazy"
-                  className="h-full w-full object-cover object-center"
-                />
-              ) : (
-                <Placeholder label={frame.label} tint={frame.tint} className="h-full w-full" />
-              )}
+              <img
+                src={frame.image}
+                alt={frame.label}
+                loading="lazy"
+                className="h-full w-full object-cover object-center"
+              />
+
 
             </motion.div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
