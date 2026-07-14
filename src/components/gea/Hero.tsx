@@ -7,6 +7,7 @@ export function Hero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const barHeight = useTransform(scrollYProgress, [0, 1], ["8vh", "14vh"]);
 
   return (
     <section ref={ref} className="relative h-[100dvh] w-full overflow-hidden bg-gea-black">
@@ -20,29 +21,69 @@ export function Hero() {
         />
       </motion.div>
 
-
       {/* Cinematic overlays */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-black/85" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.55)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/10 to-black/90" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)]" />
+
+      {/* Cinema letterbox bars */}
+      <motion.div
+        initial={{ height: "50vh" }}
+        animate={{ height: "8vh" }}
+        transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+        style={{ height: barHeight }}
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 bg-gea-black"
+      />
+      <motion.div
+        initial={{ height: "50vh" }}
+        animate={{ height: "8vh" }}
+        transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+        style={{ height: barHeight }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gea-black"
+      />
+
+      {/* Top-left brand mark */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, delay: 1.6 }}
+        className="absolute left-6 top-[calc(8vh+1.25rem)] z-30 text-[0.62rem] uppercase tracking-[0.5em] text-gea-cream/60 md:left-10"
+      >
+        GEA · Est.
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, delay: 1.6 }}
+        className="absolute right-6 top-[calc(8vh+1.25rem)] z-30 text-[0.62rem] uppercase tracking-[0.5em] text-gea-cream/60 md:right-10"
+      >
+        Ato I
+      </motion.div>
 
       <motion.div
         style={{ opacity }}
         className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
       >
         <motion.div
-          initial={{ opacity: 0, letterSpacing: "0.4em" }}
-          animate={{ opacity: 1, letterSpacing: "0.05em" }}
-          transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[clamp(4.5rem,18vw,12rem)] leading-none text-gea-cream font-display"
+          initial={{ opacity: 0, letterSpacing: "0.6em", y: 10 }}
+          animate={{ opacity: 1, letterSpacing: "0.02em", y: 0 }}
+          transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.6 }}
+          className="text-[clamp(4rem,15vw,10rem)] font-light leading-none text-gea-cream font-display"
         >
           GEA
         </motion.div>
 
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 1.4, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-8 h-px w-16 origin-center bg-gea-sunset/80"
+        />
+
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
-          className="mt-3 text-[clamp(1.1rem,2.4vw,1.8rem)] italic text-gea-cream/85 font-display"
+          transition={{ duration: 1.2, delay: 1.7 }}
+          className="mt-8 text-[clamp(0.95rem,1.6vw,1.2rem)] font-light text-gea-cream/90 font-display"
         >
           O tempo revela.
         </motion.p>
@@ -50,8 +91,8 @@ export function Hero() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, delay: 1.4 }}
-          className="mt-8 max-w-md text-[0.72rem] uppercase tracking-[0.42em] text-gea-cream/60"
+          transition={{ duration: 1.4, delay: 2.1 }}
+          className="mt-4 max-w-md text-[0.7rem] uppercase tracking-[0.42em] text-gea-cream/55"
         >
           Mais do que um relógio. Uma identidade.
         </motion.p>
@@ -60,7 +101,7 @@ export function Hero() {
           href="#instagram"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.8 }}
+          transition={{ duration: 1, delay: 2.5 }}
           className="plausible-event-name=CTA+Click plausible-event-location=hero plausible-event-label=Entrar+para+a+GEA group mt-14 inline-flex items-center gap-3 border border-gea-cream/40 px-8 py-4 text-[0.7rem] uppercase tracking-[0.32em] text-gea-cream backdrop-blur-sm transition-all duration-500 hover:border-gea-cream hover:bg-gea-cream hover:text-gea-black"
         >
           Entrar para a GEA
@@ -72,8 +113,8 @@ export function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.4, duration: 1 }}
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
+        transition={{ delay: 2.8, duration: 1 }}
+        className="absolute bottom-[calc(8vh+1.5rem)] left-1/2 z-30 -translate-x-1/2"
       >
         <div className="relative h-14 w-px overflow-hidden bg-gea-cream/20">
           <motion.div

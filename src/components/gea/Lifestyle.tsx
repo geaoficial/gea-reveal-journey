@@ -6,11 +6,19 @@ type Frame = {
   label: string;
   image: string;
   quote?: string;
+  zoom?: number;
+  position?: string;
 };
 
 const frames: Frame[] = [
   { label: "Relógio ao pôr do sol — silhueta preta na estrada", image: lifestyle02.url, quote: "Algumas escolhas dizem tudo." },
-  { label: "Close no relógio — pulso, luz dourada", image: lifestyle03.url, quote: "O tempo revela." },
+  {
+    label: "Close no relógio — pulso, luz dourada",
+    image: lifestyle03.url,
+    quote: "O tempo revela.",
+    zoom: 2.1,
+    position: "center 42%",
+  },
 ];
 
 
@@ -38,7 +46,12 @@ export function Lifestyle() {
                 src={frame.image}
                 alt={frame.label}
                 loading="lazy"
-                className="h-full w-full object-cover object-center"
+                className="h-full w-full object-cover"
+                style={{
+                  transform: frame.zoom ? `scale(${frame.zoom})` : undefined,
+                  transformOrigin: frame.position ?? "center center",
+                  objectPosition: frame.position ?? "center center",
+                }}
               />
 
 
