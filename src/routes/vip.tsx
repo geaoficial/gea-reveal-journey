@@ -494,7 +494,7 @@ function MemberPanel({
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               <input readOnly value={inviteUrl} className="flex-1 min-w-0 bg-transparent text-sm" />
-              <CopyInviteButton url={inviteUrl} />
+              <CopyInviteButton url={inviteUrl} onShared={() => qc.invalidateQueries({ queryKey: ["vip", "me"] })} />
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(
                   `Você foi convidado para o Clube GEA. Acesse: ${inviteUrl}`
