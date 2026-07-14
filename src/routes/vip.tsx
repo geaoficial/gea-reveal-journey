@@ -272,16 +272,57 @@ function MemberPanel({
 }) {
   const navigate = useNavigate();
   const logout = useServerFn(logoutVipMember);
+  const confirmFollow = useServerFn(confirmInstagramFollow);
   const qc = useQueryClient();
-  const { member, invites, benefits } = data;
+  const { member, invites, benefits, instagramFollowedAt } = data;
   const inviteUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/invite/${member.memberNumber}`
       : "";
 
+  const pendingRef = useRef(false);
+  const [justConfirmed, setJustConfirmed] = useState(false);
+
+  useEffect(() => {
+    function onVisible() {
+      if (document.visibilityState !== "visible" || !pendingRef.current) return;
+      pendingRef.current = false;
+      confirmFollow().then((r) => {
+        if (r.ok) {
+          setJustConfirmed(!r.already);
+          qc.invalidateQueries({ queryKey: ["vip", "me"] });
+        }
+      });
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
+    };
+  }, [confirmFollow, qc]);
+
+  function openInstagram() {
+    pendingRef.current = true;
+    window.open("https://instagram.com/geastoree", "_blank", "noopener,noreferrer");
+    try {
+      (window as unknown as { plausible?: (n: string) => void }).plausible?.("Follow Instagram");
+    } catch { /* ignore */ }
+  }
+
+  const followed = Boolean(instagramFollowedAt);
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-12 space-y-10">
-      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-8">
+      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-8 relative overflow-hidden">
+        {followed && (
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/[0.08] px-2.5 py-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span className="text-[9px] uppercase tracking-[0.3em] text-emerald-300">
+              Instagram confirmado
+            </span>
+          </div>
+        )}
         <p className="text-[10px] uppercase tracking-[0.5em] text-amber-300/70">
           Membro Exclusivo GEA
         </p>
@@ -298,6 +339,41 @@ function MemberPanel({
             desde<br />
             {new Date(member.unlockedAt).toLocaleDateString("pt-BR")}
           </div>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-white/10">
+          {followed ? (
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
+                  {justConfirmed ? "Bem-vindo ao círculo" : "Você já segue @geastoree"}
+                </div>
+                <div className="mt-1 text-xs text-white/50">
+                  Confirmado em{" "}
+                  {new Date(instagramFollowedAt!).toLocaleDateString("pt-BR")}
+                </div>
+              </div>
+              <button
+                onClick={openInstagram}
+                className="text-[10px] uppercase tracking-[0.3em] text-white/50 hover:text-white"
+              >
+                Abrir perfil ↗
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs text-white/60">
+                Complete seu cadastro no círculo: siga o Instagram oficial. Voltamos
+                automaticamente quando você retornar aqui.
+              </p>
+              <button
+                onClick={openInstagram}
+                className="mt-4 w-full rounded bg-white text-black py-3 text-xs uppercase tracking-[0.35em] hover:bg-white/90"
+              >
+                Seguir @geastoree
+              </button>
+            </>
+          )}
         </div>
       </section>
 
