@@ -123,6 +123,7 @@ export function BlurImage({
           <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
         ) : null}
         <img
+          decoding="async"
           {...imgProps}
           ref={imgRef}
           srcSet={srcSet}
