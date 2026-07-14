@@ -452,6 +452,7 @@ function MemberPanel({
                       "Share Invite WhatsApp"
                     );
                   } catch { /* ignore */ }
+                  logInviteShare({ data: { channel: "whatsapp" } }).catch(() => { /* ignore */ });
                 }}
                 className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-emerald-400/40 bg-emerald-400/[0.08] text-emerald-300 rounded hover:bg-emerald-400/[0.14]"
               >
