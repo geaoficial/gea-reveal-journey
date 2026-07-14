@@ -13,6 +13,10 @@ type BlurImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   avifSrcSet?: string;
   /** Optional WebP srcSet — served via <source type="image/webp"> */
   webpSrcSet?: string;
+  /** Explicit JPEG fallback URL — used as background-image if <picture> fails. */
+  fallbackSrc?: string;
+  /** Ms until a stalled image auto-falls-back to background-image. Default 6000. */
+  fallbackTimeoutMs?: number;
 };
 
 // Curva cinematográfica — desaceleração suave, sem overshoot.
@@ -42,6 +46,8 @@ export function BlurImage({
   webpSrcSet,
   sizes,
   srcSet,
+  fallbackSrc,
+  fallbackTimeoutMs = 6000,
   ...imgProps
 }: BlurImageProps) {
   const [revealed, setRevealed] = useState(false);
@@ -71,6 +77,25 @@ export function BlurImage({
     const img = imgRef.current;
     if (!img) return;
     let cancelled = false;
+    let timeoutId: number | undefined;
+
+    const armTimeout = () => {
+      // Safety net: some browsers (Safari iOS) can silently stall on
+      // AVIF/WebP decode without firing load/error. After N ms of no paint,
+      // switch to the JPEG background-image fallback so the visitor never
+      // sees a broken-image icon.
+      timeoutId = window.setTimeout(() => {
+        if (cancelled) return;
+        if (!img.complete || img.naturalWidth === 0) {
+          setFailed(true);
+          setRevealed(true);
+        }
+      }, fallbackTimeoutMs);
+    };
+
+    const clearTimer = () => {
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
 
     const run = async () => {
       try {
@@ -78,26 +103,34 @@ export function BlurImage({
       } catch {
         /* decode pode rejeitar em alguns navegadores; seguimos assim mesmo */
       }
+      clearTimer();
       if (!cancelled) reveal();
     };
 
     if (img.complete && img.naturalWidth > 0) {
       run();
     } else {
+      armTimeout();
       const onLoadNative = () => run();
-      const onError = () => reveal(); // nunca deixa o placeholder preso
+      const onError = () => {
+        clearTimer();
+        setFailed(true);
+        reveal();
+      };
       img.addEventListener("load", onLoadNative, { once: true });
       img.addEventListener("error", onError, { once: true });
       return () => {
         cancelled = true;
+        clearTimer();
         img.removeEventListener("load", onLoadNative);
         img.removeEventListener("error", onError);
       };
     }
     return () => {
       cancelled = true;
+      clearTimer();
     };
-  }, []);
+  }, [fallbackTimeoutMs]);
 
   const imgStyle: CSSProperties = {
     ...style,
@@ -114,9 +147,11 @@ export function BlurImage({
     willChange: "opacity",
   };
 
-  // Fallback JPEG url derivado do srcSet caso <picture> falhe em algum browser
-  // (Safari com AVIF/WebP problemático, CDN cache inconsistente, etc.)
+  // Fallback JPEG url usado quando <picture> falha (Safari iOS com AVIF/WebP
+  // problemático, CDN cache inconsistente, decode silencioso, etc.).
+  // Prioriza um fallbackSrc explícito; senão deriva do srcSet ou do src.
   const jpegFallback =
+    fallbackSrc ||
     (typeof srcSet === "string" && srcSet.split(",").pop()?.trim().split(" ")[0]) ||
     imgProps.src ||
     "";

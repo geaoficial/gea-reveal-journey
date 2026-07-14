@@ -101,6 +101,7 @@ export function Lifestyle() {
             webpSrcSet={lifestyleImage.webp}
             avifSrcSet={lifestyleImage.avif}
             sizes={lifestyleImage.sizes}
+            fallbackSrc={lifestyleImage.fallback}
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="eager"
             decoding="async"
@@ -160,6 +161,7 @@ export function Lifestyle() {
               webpSrcSet={mysteryImage.webp}
               avifSrcSet={mysteryImage.avif}
               sizes={mysteryImage.sizes}
+              fallbackSrc={mysteryImage.fallback}
               alt="Próximo drop GEA — em breve"
               loading="eager"
               decoding="async"

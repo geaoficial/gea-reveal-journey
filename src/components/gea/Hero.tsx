@@ -24,14 +24,28 @@ export function Hero() {
       (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(reveal);
       return;
     }
-    const onLoad = () => reveal();
+    // Rede de segurança: alguns browsers (Safari iOS) podem estagnar no decode
+    // AVIF/WebP sem disparar load/error. Depois de 6s sem paint, força o
+    // fallback JPEG via background-image para evitar ícone de imagem quebrada.
+    const timeoutId = window.setTimeout(() => {
+      if (!img.complete || img.naturalWidth === 0) {
+        setFailed(true);
+        reveal();
+      }
+    }, 6000);
+    const onLoad = () => {
+      window.clearTimeout(timeoutId);
+      reveal();
+    };
     const onError = () => {
+      window.clearTimeout(timeoutId);
       setFailed(true);
       reveal();
     };
     img.addEventListener("load", onLoad, { once: true });
     img.addEventListener("error", onError, { once: true });
     return () => {
+      window.clearTimeout(timeoutId);
       img.removeEventListener("load", onLoad);
       img.removeEventListener("error", onError);
     };
