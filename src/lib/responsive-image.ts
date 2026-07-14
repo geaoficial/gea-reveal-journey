@@ -35,8 +35,7 @@ const build = (v: { url: string }[]) =>
   v.map((a, i) => `${a.url} ${WIDTHS[i]}w`).join(", ");
 
 /** Art direction — full-bleed on every breakpoint; browser matches to DPR. */
-export const FULL_BLEED_SIZES =
-  "(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1920px";
+export const FULL_BLEED_SIZES = "100vw";
 
 export type ResponsiveImage = {
   /** JPEG fallback URL for <img src>. Universal support. */
