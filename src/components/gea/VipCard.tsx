@@ -280,7 +280,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
               </p>
             </div>
           </CardFace>
-        </div>
+        </motion.div>
       </div>
 
       {!exportMode && (
