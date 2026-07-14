@@ -276,14 +276,13 @@ function MemberPanel({
   const logout = useServerFn(logoutVipMember);
   const confirmFollow = useServerFn(confirmInstagramFollow);
   const qc = useQueryClient();
-  const { member, invites, benefits, allBenefits, instagramFollowedAt } = data;
-  // Benefício destacado no cartão: preferir welcome desbloqueado; senão,
-  // primeiro desbloqueado; senão, o mais próximo de desbloquear.
-  const highlightedBenefit =
-    allBenefits.find((b) => b.unlocked && b.type === "welcome") ??
-    allBenefits.find((b) => b.unlocked) ??
-    [...allBenefits].sort((a, b) => a.remaining - b.remaining)[0] ??
-    null;
+  const { member, invites, benefits, allBenefits, instagramFollowedAt, inviteSharedAt, cardUnlocked } = data;
+  // Cartão só desbloqueia com AMBAS as ações: seguir + compartilhar.
+  const highlightedBenefit = cardUnlocked
+    ? (allBenefits.find((b) => b.unlocked && b.type === "welcome") ??
+       allBenefits.find((b) => b.unlocked) ??
+       null)
+    : null;
   const inviteUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/invite/${member.memberNumber}`
@@ -291,7 +290,20 @@ function MemberPanel({
 
   const pendingRef = useRef(false);
   const clickedAtRef = useRef<number | null>(null);
-  const [justConfirmed, setJustConfirmed] = useState(false);
+  const prevUnlockedRef = useRef(cardUnlocked);
+  const [justUnlocked, setJustUnlocked] = useState(false);
+
+  // Dispara flip do cartão no instante em que ambas as condições ficam verdadeiras.
+  useEffect(() => {
+    if (cardUnlocked && !prevUnlockedRef.current) {
+      setJustUnlocked(true);
+      try {
+        (window as unknown as { plausible?: (n: string, o?: { props?: Record<string, unknown> }) => void })
+          .plausible?.("Vip Card Unlocked", { props: { memberId: member.id } });
+      } catch { /* ignore */ }
+    }
+    prevUnlockedRef.current = cardUnlocked;
+  }, [cardUnlocked, member.id]);
 
   function track(name: string, props?: Record<string, string | number | boolean>) {
     try {
