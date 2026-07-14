@@ -11,6 +11,7 @@ import { VipUnlockOverlay } from "@/components/gea/VipUnlockOverlay";
 import { VipArea } from "@/components/gea/VipArea";
 
 import ogAsset from "@/assets/gea-og-cover.jpg.asset.json";
+import heroAsset from "@/assets/gea-hero-sunset.jpeg.asset.json";
 import { getRequestOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/")({
@@ -52,7 +53,15 @@ export const Route = createFileRoute("/")({
           content: "Mais do que um relógio. Uma identidade.",
         },
       ],
-      links: [{ rel: "canonical", href: "/" }],
+      links: [
+        { rel: "canonical", href: "/" },
+        {
+          rel: "preload",
+          as: "image",
+          href: heroAsset.url,
+          fetchpriority: "high",
+        },
+      ],
       scripts: [
         {
           type: "application/ld+json",

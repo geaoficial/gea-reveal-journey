@@ -17,8 +17,12 @@ export function Hero() {
           alt="GEA — pôr do sol na estrada"
           className="h-full w-full object-cover object-center"
           loading="eager"
+          decoding="async"
           fetchPriority="high"
+          sizes="100vw"
+          draggable={false}
         />
+
       </motion.div>
 
       {/* Cinematic overlays */}
