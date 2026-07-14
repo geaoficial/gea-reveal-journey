@@ -197,7 +197,7 @@ export function Lifestyle() {
               style={{
                 background:
                   "radial-gradient(ellipse 60% 40% at 30% 55%, rgba(232,138,58,0.32) 0%, rgba(232,138,58,0.12) 35%, transparent 70%), radial-gradient(ellipse 55% 45% at 75% 50%, rgba(255,168,90,0.22) 0%, transparent 65%), radial-gradient(ellipse 90% 35% at 50% 80%, rgba(120,60,20,0.35) 0%, transparent 70%)",
-                filter: `blur(${lite ? 24 : 40}px)`,
+                filter: `blur(${blurFor(perfTier, lite ? 24 : 40)}px)`,
               }}
             />
           </motion.div>
