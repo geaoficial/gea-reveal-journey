@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { heroImage } from "@/lib/responsive-image";
+import { reportImageFailure } from "@/lib/image-telemetry";
 
 
 export function Hero() {
@@ -31,6 +32,13 @@ export function Hero() {
       if (!img.complete || img.naturalWidth === 0) {
         setFailed(true);
         reveal();
+        reportImageFailure({
+          asset: heroImage.fallback,
+          reason: "timeout",
+          section: "hero",
+          naturalWidth: img.naturalWidth,
+          naturalHeight: img.naturalHeight,
+        });
       }
     }, 6000);
     const onLoad = () => {
@@ -41,6 +49,13 @@ export function Hero() {
       window.clearTimeout(timeoutId);
       setFailed(true);
       reveal();
+      reportImageFailure({
+        asset: heroImage.fallback,
+        reason: "error",
+        section: "hero",
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+      });
     };
     img.addEventListener("load", onLoad, { once: true });
     img.addEventListener("error", onError, { once: true });
@@ -98,9 +113,17 @@ export function Hero() {
               decoding="async"
               fetchPriority="high"
               draggable={false}
-              onError={() => {
+              onError={(e) => {
                 setFailed(true);
                 setLoaded(true);
+                const el = e.currentTarget;
+                reportImageFailure({
+                  asset: heroImage.fallback,
+                  reason: "error",
+                  section: "hero",
+                  naturalWidth: el?.naturalWidth,
+                  naturalHeight: el?.naturalHeight,
+                });
               }}
             />
           </picture>

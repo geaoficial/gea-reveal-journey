@@ -102,6 +102,7 @@ export function Lifestyle() {
             avifSrcSet={lifestyleImage.avif}
             sizes={lifestyleImage.sizes}
             fallbackSrc={lifestyleImage.fallback}
+            telemetrySection="lifestyle-hero"
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="eager"
             decoding="async"
@@ -162,6 +163,7 @@ export function Lifestyle() {
               avifSrcSet={mysteryImage.avif}
               sizes={mysteryImage.sizes}
               fallbackSrc={mysteryImage.fallback}
+              telemetrySection="lifestyle-mystery"
               alt="Próximo drop GEA — em breve"
               loading="eager"
               decoding="async"
