@@ -51,20 +51,24 @@ export function Hero() {
           <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
           <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
           <img
+            ref={imgRef}
             src={heroImage.fallback}
             srcSet={heroImage.srcSet}
             sizes={heroImage.sizes}
             width={1920}
             height={1280}
             alt="GEA — pôr do sol na estrada"
-            className="h-full w-full object-cover object-center transition-opacity duration-700"
-            style={{ opacity: loaded ? 1 : 0 }}
+            className="h-full w-full object-cover object-center"
+            style={{
+              opacity: loaded ? 1 : 0,
+              transition: "opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
             loading="eager"
             decoding="async"
             fetchPriority="high"
             draggable={false}
-            onLoad={() => setLoaded(true)}
           />
+
         </picture>
 
 
