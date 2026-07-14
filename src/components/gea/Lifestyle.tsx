@@ -206,10 +206,10 @@ export function Lifestyle() {
             />
           </motion.div>
 
-          {/* Cortina de fumaça — base densa e permanente */}
+          {/* Cortina de fumaça — base densa e permanente (mais baixa no mobile p/ não cobrir o mostrador) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-[70%] mix-blend-screen"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] sm:h-[52%] md:h-[70%] mix-blend-screen"
             style={{
               background:
                 "linear-gradient(to top, rgba(20,10,4,0.95) 0%, rgba(80,40,15,0.6) 25%, rgba(200,110,50,0.25) 55%, transparent 100%)",
@@ -218,17 +218,17 @@ export function Lifestyle() {
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%]"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[32%] sm:h-[44%] md:h-[55%]"
             style={{
               background:
                 "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 40%, transparent 100%)",
             }}
           />
 
-          {/* Fumaça densa subindo — ancorada rigidamente na base em todos os breakpoints */}
+          {/* Fumaça densa subindo — ancorada na base, altura responsiva */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-0 right-0 bottom-0 h-[70%] mix-blend-screen origin-bottom"
+            className="pointer-events-none absolute left-0 right-0 bottom-0 h-[42%] sm:h-[56%] md:h-[70%] mix-blend-screen origin-bottom"
             style={{
               background:
                 "radial-gradient(ellipse 45% 55% at 30% 100%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 100%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 100%, rgba(120,55,20,0.6) 0%, transparent 72%)",
@@ -237,6 +237,7 @@ export function Lifestyle() {
               transform: "translateZ(0)",
             }}
           />
+
 
 
 
