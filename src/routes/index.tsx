@@ -10,6 +10,7 @@ import { ShareDock } from "@/components/gea/ShareDock";
 import { VipUnlockOverlay } from "@/components/gea/VipUnlockOverlay";
 import { VipArea } from "@/components/gea/VipArea";
 import { SilentBoundary } from "@/components/gea/SilentBoundary";
+import { DirectorSeal } from "@/components/gea/DirectorSeal";
 import { useDeviceCapability } from "@/lib/device-capability";
 
 import ogAsset from "@/assets/gea-og-cover.jpg.asset.json";
@@ -121,6 +122,7 @@ function Index() {
       <SilentBoundary><InstagramSection /></SilentBoundary>
       <SilentBoundary><VipArea /></SilentBoundary>
       <SilentBoundary><HiddenChapter /></SilentBoundary>
+      <SilentBoundary><DirectorSeal /></SilentBoundary>
       <SilentBoundary><CinematicFx /></SilentBoundary>
       <SilentBoundary><ShareDock /></SilentBoundary>
       <SilentBoundary><VipUnlockOverlay /></SilentBoundary>
