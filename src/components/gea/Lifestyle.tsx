@@ -116,9 +116,14 @@ export function Lifestyle() {
               src={watchMystery.url}
               alt="Próximo drop GEA — em breve"
               loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+              sizes="100vw"
+              draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
             />
+
           </motion.div>
 
           {/* Sombras progressivas — respiram conforme o scroll */}
