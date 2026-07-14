@@ -74,12 +74,14 @@ export function useVip() {
     setState(readState());
     setHydrated(true);
     const sync = () => setState(readState());
-    window.addEventListener(SYNC_EVENT, sync);
-    window.addEventListener("storage", (e) => {
+    const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) sync();
-    });
+    };
+    window.addEventListener(SYNC_EVENT, sync);
+    window.addEventListener("storage", onStorage);
     return () => {
       window.removeEventListener(SYNC_EVENT, sync);
+      window.removeEventListener("storage", onStorage);
     };
   }, []);
 
