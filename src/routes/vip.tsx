@@ -574,7 +574,7 @@ function Stat({ n, label }: { n: number; label: string }) {
   );
 }
 
-function CopyInviteButton({ url }: { url: string }) {
+function CopyInviteButton({ url, onShared }: { url: string; onShared?: () => void }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
@@ -588,7 +588,9 @@ function CopyInviteButton({ url }: { url: string }) {
               "Copy Invite Link"
             );
           } catch { /* ignore */ }
-          logInviteShare({ data: { channel: "copy_link" } }).catch(() => { /* ignore */ });
+          logInviteShare({ data: { channel: "copy_link" } })
+            .then(() => onShared?.())
+            .catch(() => { /* ignore */ });
         } catch { /* ignore */ }
       }}
       className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-white/20 rounded hover:border-white/40"
