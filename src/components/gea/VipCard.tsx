@@ -239,7 +239,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
                       fontFamily: "'Space Grotesk', system-ui, sans-serif",
                     }}
                   >
-                    Membro Exclusivo GEA
+                    {completerLabel}
                   </div>
                 </div>
 
