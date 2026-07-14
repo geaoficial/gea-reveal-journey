@@ -48,8 +48,10 @@ export type ResponsiveImage = {
   avif: string;
   /** Common sizes attribute for all sources. */
   sizes: string;
-  /** Highest-resolution JPEG (used as safe preload href). */
+  /** Highest-resolution JPEG (used as safe preload href fallback). */
   fallback: string;
+  /** Highest-resolution AVIF — matches the preload `type: image/avif`. */
+  preloadHref: string;
 };
 
 export const heroImage: ResponsiveImage = {
