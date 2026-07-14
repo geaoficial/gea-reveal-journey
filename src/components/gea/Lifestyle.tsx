@@ -161,6 +161,7 @@ export function Lifestyle() {
               webpSrcSet={mysteryImage.webp}
               avifSrcSet={mysteryImage.avif}
               sizes={mysteryImage.sizes}
+              fallbackSrc={mysteryImage.fallback}
               alt="Próximo drop GEA — em breve"
               loading="eager"
               decoding="async"
