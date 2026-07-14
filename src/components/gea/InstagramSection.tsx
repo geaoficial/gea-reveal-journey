@@ -54,7 +54,7 @@ export function InstagramSection() {
             <span className="text-gea-sunset">✦</span> Bastidores exclusivos
           </li>
           <li className="flex items-center justify-center gap-2">
-            <span className="text-gea-sunset">✦</span> Selo VIP de fundador
+            <span className="text-gea-sunset">✦</span> Selo VIP exclusivo
           </li>
         </motion.ul>
 
