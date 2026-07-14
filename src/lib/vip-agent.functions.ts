@@ -186,7 +186,7 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
 
   if (!member || member.status !== "active") return { ok: false as const };
 
-  const [{ data: invites }, { data: benefits }, { data: followEvent }] = await Promise.all([
+  const [{ data: invites }, { data: benefits }, { data: followEvent }, { data: shareEvent }] = await Promise.all([
     supabaseAdmin
       .from("vip_invites")
       .select("id, status, created_at, confirmed_at")
@@ -202,6 +202,14 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
       .select("created_at")
       .eq("member_id", memberId)
       .eq("type", "instagram_follow")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabaseAdmin
+      .from("vip_events")
+      .select("created_at")
+      .eq("member_id", memberId)
+      .eq("type", "invite_share")
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
@@ -253,6 +261,8 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
     benefits: eligibleBenefits,
     allBenefits,
     instagramFollowedAt: followEvent?.created_at ?? null,
+    inviteSharedAt: shareEvent?.created_at ?? null,
+    cardUnlocked: Boolean(followEvent && shareEvent),
   };
 });
 
