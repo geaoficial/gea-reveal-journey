@@ -68,7 +68,7 @@ export function Lifestyle() {
             fetchPriority="low"
             draggable={false}
             className="h-full w-full object-cover"
-            placeholder="radial-gradient(ellipse at 50% 65%, #d97a3c 0%, #7a2f1a 40%, #1a0e0a 80%, #000 100%)"
+            placeholder={lifestyleImage.placeholder}
           />
         </motion.div>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
@@ -128,7 +128,7 @@ export function Lifestyle() {
               draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
-              placeholder="radial-gradient(ellipse at 50% 50%, #4a2410 0%, #1a0d08 55%, #000 100%)"
+              placeholder={mysteryImage.placeholder}
             />
           </motion.div>
 

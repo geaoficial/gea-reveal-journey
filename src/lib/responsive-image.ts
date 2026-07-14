@@ -52,7 +52,17 @@ export type ResponsiveImage = {
   fallback: string;
   /** Highest-resolution AVIF — matches the preload `type: image/avif`. */
   preloadHref: string;
+  /**
+   * CSS background used as a blur-up placeholder while the real image loads.
+   * Built from dominant colors sampled from the asset itself so the tint
+   * matches the final frame instead of showing a generic gradient.
+   */
+  placeholder: string;
 };
+
+/** Radial gradient tuned to the image's dominant palette (dark → mid → accent). */
+const tint = (accent: string, mid: string, dark: string) =>
+  `radial-gradient(ellipse at 50% 62%, ${accent} 0%, ${mid} 38%, ${dark} 78%, #000 100%)`;
 
 export const heroImage: ResponsiveImage = {
   src: hero1280j.url,
@@ -62,6 +72,8 @@ export const heroImage: ResponsiveImage = {
   webp: build([hero640w, hero1280w, hero1920w]),
   avif: build([hero640a, hero1280a, hero1920a]),
   sizes: FULL_BLEED_SIZES,
+  // sampled dominant palette — sunset road
+  placeholder: tint("#e1a78b", "#9a7066", "#131a20"),
 };
 
 export const lifestyleImage: ResponsiveImage = {
@@ -72,6 +84,8 @@ export const lifestyleImage: ResponsiveImage = {
   webp: build([life640w, life1280w, life1920w]),
   avif: build([life640a, life1280a, life1920a]),
   sizes: FULL_BLEED_SIZES,
+  // sampled dominant palette — silhouette dusk
+  placeholder: tint("#ecd0af", "#6b8991", "#1d1d22"),
 };
 
 export const mysteryImage: ResponsiveImage = {
@@ -82,4 +96,6 @@ export const mysteryImage: ResponsiveImage = {
   webp: build([mystery640w, mystery1280w, mystery1920w]),
   avif: build([mystery640a, mystery1280a, mystery1920a]),
   sizes: FULL_BLEED_SIZES,
+  // sampled dominant palette — Life teaser, amber over dark teal
+  placeholder: tint("#965425", "#264946", "#060f0e"),
 };
