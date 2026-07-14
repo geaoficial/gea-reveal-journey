@@ -147,9 +147,11 @@ export function BlurImage({
     willChange: "opacity",
   };
 
-  // Fallback JPEG url derivado do srcSet caso <picture> falhe em algum browser
-  // (Safari com AVIF/WebP problemático, CDN cache inconsistente, etc.)
+  // Fallback JPEG url usado quando <picture> falha (Safari iOS com AVIF/WebP
+  // problemático, CDN cache inconsistente, decode silencioso, etc.).
+  // Prioriza um fallbackSrc explícito; senão deriva do srcSet ou do src.
   const jpegFallback =
+    fallbackSrc ||
     (typeof srcSet === "string" && srcSet.split(",").pop()?.trim().split(" ")[0]) ||
     imgProps.src ||
     "";
