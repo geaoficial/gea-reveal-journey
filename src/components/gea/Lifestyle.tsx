@@ -1,17 +1,20 @@
 import { motion } from "motion/react";
 import { Placeholder } from "./Placeholder";
+import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 
 type Frame = {
   label: string;
   tint: "black" | "sunset" | "silver";
+  image?: string;
   quote?: string;
 };
 
 const frames: Frame[] = [
-  { label: "SUV branco na estrada — pôr do sol", tint: "sunset", quote: "Algumas escolhas dizem tudo." },
+  { label: "Relógio ao pôr do sol — silhueta preta na estrada", tint: "sunset", image: lifestyle02.url, quote: "Algumas escolhas dizem tudo." },
   { label: "Close no relógio — pulso, luz dourada", tint: "silver", quote: "O tempo revela." },
   { label: "Moda — silhueta preta, expressão", tint: "black", quote: "Vista sua identidade." },
 ];
+
 
 export function Lifestyle() {
   return (
@@ -32,7 +35,17 @@ export function Lifestyle() {
               transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
               className="h-full w-full"
             >
-              <Placeholder label={frame.label} tint={frame.tint} className="h-full w-full" />
+              {frame.image ? (
+                <img
+                  src={frame.image}
+                  alt={frame.label}
+                  loading="lazy"
+                  className="h-full w-full object-cover object-center"
+                />
+              ) : (
+                <Placeholder label={frame.label} tint={frame.tint} className="h-full w-full" />
+              )}
+
             </motion.div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
           </motion.div>
