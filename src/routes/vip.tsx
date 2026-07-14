@@ -8,6 +8,7 @@ import {
   loginVipMember,
   logoutVipMember,
   confirmInstagramFollow,
+  logInviteShare,
 } from "@/lib/vip-agent.functions";
 import { VipCard } from "@/components/gea/VipCard";
 
