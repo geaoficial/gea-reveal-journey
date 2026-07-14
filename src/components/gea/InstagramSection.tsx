@@ -46,6 +46,8 @@ export function InstagramSection() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => vip.markPending()}
+            initial={{ opacity: 0, y: 20 }}
+
 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
