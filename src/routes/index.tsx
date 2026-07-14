@@ -80,9 +80,12 @@ function Index() {
       <Manifesto />
       <Lifestyle />
       <InstagramSection />
+      <VipArea />
       <HiddenChapter />
       <CinematicTrailer />
       <ShareDock />
+      <VipUnlockOverlay />
+
       {/* Global cinematic grain overlay, tied to --grain-opacity */}
       <div
         aria-hidden
