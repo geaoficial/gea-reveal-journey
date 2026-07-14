@@ -1,0 +1,381 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  getMyVipMember,
+  registerVipMember,
+  loginVipMember,
+  logoutVipMember,
+} from "@/lib/vip-agent.functions";
+
+export const Route = createFileRoute("/vip")({
+  head: () => ({
+    meta: [
+      { title: "Clube VIP — GEA" },
+      {
+        name: "description",
+        content: "Área exclusiva dos primeiros membros da GEA. Cartão digital, benefícios e convites.",
+      },
+      { property: "og:title", content: "Clube VIP — GEA" },
+      { property: "og:description", content: "Torne-se um dos Primeiros da GEA." },
+    ],
+  }),
+  component: VipPage,
+});
+
+function VipPage() {
+  const getMe = useServerFn(getMyVipMember);
+  const me = useQuery({ queryKey: ["vip", "me"], queryFn: () => getMe() });
+
+  if (me.isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white/60 flex items-center justify-center">
+        <div className="animate-pulse text-xs uppercase tracking-[0.4em]">Carregando…</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <header className="px-6 py-6 flex items-center justify-between border-b border-white/[0.06]">
+        <Link to="/" className="text-xs uppercase tracking-[0.5em]">
+          GEA
+        </Link>
+        <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
+          Clube VIP
+        </span>
+      </header>
+
+      {me.data?.ok ? <MemberPanel data={me.data} /> : <VisitorPanel />}
+    </div>
+  );
+}
+
+// ------------------------------------------------------------------
+function VisitorPanel() {
+  const [mode, setMode] = useState<"register" | "login">("register");
+  return (
+    <div className="mx-auto max-w-xl px-6 py-16">
+      <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Ato final</p>
+      <h1 className="mt-3 text-3xl md:text-4xl font-light leading-tight">
+        Torne-se um dos <em className="not-italic font-normal">Primeiros da GEA</em>.
+      </h1>
+      <p className="mt-4 text-sm text-white/60 leading-relaxed">
+        Cartão digital vitalício, acesso antecipado ao drop e benefícios exclusivos entregues
+        conforme você constrói o círculo. Cadastro único.
+      </p>
+
+      <div className="mt-10 flex gap-6 text-[11px] uppercase tracking-[0.35em]">
+        <button
+          onClick={() => setMode("register")}
+          className={mode === "register" ? "text-white" : "text-white/40"}
+        >
+          Novo membro
+        </button>
+        <button
+          onClick={() => setMode("login")}
+          className={mode === "login" ? "text-white" : "text-white/40"}
+        >
+          Já sou membro
+        </button>
+      </div>
+
+      <div className="mt-8">{mode === "register" ? <RegistrationForm /> : <LoginForm />}</div>
+    </div>
+  );
+}
+
+function RegistrationForm() {
+  const register = useServerFn(registerVipMember);
+  const qc = useQueryClient();
+  const [fullName, setFullName] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [city, setCity] = useState("");
+  const [accepted, setAccepted] = useState(false);
+  const [issued, setIssued] = useState<{ memberNumber: number; accessCode: string } | null>(null);
+
+  const mutation = useMutation({
+    mutationFn: (data: {
+      fullName: string;
+      instagram: string;
+      city: string | undefined;
+      acceptedTerms: true;
+    }) => register({ data }),
+    onSuccess: (res) => {
+      if (res.ok) {
+        setIssued({ memberNumber: res.member.memberNumber, accessCode: res.member.accessCode });
+        qc.invalidateQueries({ queryKey: ["vip", "me"] });
+      }
+    },
+  });
+
+  if (issued) {
+    return (
+      <div className="rounded border border-amber-400/30 bg-amber-400/[0.04] p-6">
+        <p className="text-[10px] uppercase tracking-[0.4em] text-amber-300/80">
+          Cadastro confirmado
+        </p>
+        <h2 className="mt-3 text-2xl font-light">
+          Membro Nº {String(issued.memberNumber).padStart(4, "0")}
+        </h2>
+        <p className="mt-3 text-sm text-white/60">
+          Anote seu <strong className="text-white">código de acesso</strong> — ele permite entrar
+          em qualquer aparelho:
+        </p>
+        <div className="mt-3 font-mono text-2xl tracking-[0.4em] text-white">{issued.accessCode}</div>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-6 w-full rounded bg-white text-black py-2.5 text-xs uppercase tracking-[0.3em]"
+        >
+          Ver meu cartão
+        </button>
+      </div>
+    );
+  }
+
+  const res = mutation.data;
+  const errMsg = res && !res.ok ? res.message : mutation.error ? "Erro inesperado." : null;
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!accepted) return;
+        mutation.mutate({
+          fullName,
+          instagram,
+          city: city || undefined,
+          acceptedTerms: true,
+        });
+      }}
+      className="space-y-4"
+    >
+      <Field label="Nome completo">
+        <input
+          required
+          minLength={2}
+          maxLength={80}
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="input"
+        />
+      </Field>
+      <Field label="Instagram (@)">
+        <input
+          required
+          value={instagram}
+          onChange={(e) => setInstagram(e.target.value.replace(/^@+/, ""))}
+          placeholder="seuuser"
+          className="input"
+        />
+      </Field>
+      <Field label="Cidade (opcional)">
+        <input
+          maxLength={80}
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          className="input"
+        />
+      </Field>
+
+      <label className="flex items-start gap-3 text-xs text-white/60 pt-2">
+        <input
+          type="checkbox"
+          checked={accepted}
+          onChange={(e) => setAccepted(e.target.checked)}
+          className="mt-0.5 accent-white"
+        />
+        <span>
+          Aceito receber comunicações da GEA e concordo com o regulamento do clube.
+        </span>
+      </label>
+
+      {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
+
+      <button
+        disabled={!accepted || mutation.isPending}
+        className="w-full rounded bg-white text-black py-3 text-xs uppercase tracking-[0.35em] disabled:opacity-30"
+      >
+        {mutation.isPending ? "Emitindo cartão…" : "Emitir meu cartão"}
+      </button>
+
+      <style>{`.input{margin-top:.5rem;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:.25rem;padding:.55rem .75rem;color:white;outline:none;transition:border-color .2s}.input:focus{border-color:rgba(255,255,255,.4)}`}</style>
+    </form>
+  );
+}
+
+function LoginForm() {
+  const login = useServerFn(loginVipMember);
+  const qc = useQueryClient();
+  const [instagram, setInstagram] = useState("");
+  const [accessCode, setAccessCode] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: (data: { instagram: string; accessCode: string }) => login({ data }),
+    onSuccess: (res) => {
+      if (res.ok) qc.invalidateQueries({ queryKey: ["vip", "me"] });
+    },
+  });
+
+  const res = mutation.data;
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        mutation.mutate({ instagram, accessCode });
+      }}
+      className="space-y-4"
+    >
+      <Field label="Instagram (@)">
+        <input
+          required
+          value={instagram}
+          onChange={(e) => setInstagram(e.target.value.replace(/^@+/, ""))}
+          className="input"
+        />
+      </Field>
+      <Field label="Código de acesso">
+        <input
+          required
+          value={accessCode}
+          onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+          className="input font-mono tracking-[0.3em]"
+        />
+      </Field>
+      {res && !res.ok && <p className="text-sm text-red-400">{res.message}</p>}
+      <button
+        disabled={mutation.isPending}
+        className="w-full rounded bg-white text-black py-3 text-xs uppercase tracking-[0.35em] disabled:opacity-30"
+      >
+        {mutation.isPending ? "…" : "Entrar"}
+      </button>
+    </form>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="text-[10px] uppercase tracking-[0.35em] text-white/40">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+// ------------------------------------------------------------------
+function MemberPanel({
+  data,
+}: {
+  data: Extract<Awaited<ReturnType<typeof getMyVipMember>>, { ok: true }>;
+}) {
+  const navigate = useNavigate();
+  const logout = useServerFn(logoutVipMember);
+  const qc = useQueryClient();
+  const { member, invites, benefits } = data;
+  const inviteUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/invite/${member.memberNumber}`
+      : "";
+
+  return (
+    <div className="mx-auto max-w-2xl px-6 py-12 space-y-10">
+      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-8">
+        <p className="text-[10px] uppercase tracking-[0.5em] text-amber-300/70">
+          Membro Exclusivo GEA
+        </p>
+        <h2 className="mt-3 text-3xl font-light">{member.fullName}</h2>
+        <div className="mt-1 text-sm text-white/50">@{member.instagram}</div>
+        <div className="mt-6 flex items-end justify-between">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.4em] text-white/40">Nº</div>
+            <div className="mt-1 font-mono text-3xl">
+              {String(member.memberNumber).padStart(4, "0")}
+            </div>
+          </div>
+          <div className="text-right text-[10px] uppercase tracking-[0.3em] text-white/40">
+            desde<br />
+            {new Date(member.unlockedAt).toLocaleDateString("pt-BR")}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3 className="text-[10px] uppercase tracking-[0.4em] text-white/40">
+          Seu círculo
+        </h3>
+        <div className="mt-3 grid grid-cols-3 gap-3">
+          <Stat n={invites.confirmed} label="Confirmados" />
+          <Stat n={invites.pending} label="Aguardando" />
+          <Stat n={invites.total} label="Total" />
+        </div>
+        {inviteUrl && (
+          <div className="mt-4 rounded border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-[10px] uppercase tracking-[0.35em] text-white/40">
+              Seu link de convite
+            </p>
+            <div className="mt-2 flex gap-2">
+              <input readOnly value={inviteUrl} className="flex-1 bg-transparent text-sm" />
+              <button
+                onClick={() => navigator.clipboard.writeText(inviteUrl)}
+                className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-white/20 rounded"
+              >
+                Copiar
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section>
+        <h3 className="text-[10px] uppercase tracking-[0.4em] text-white/40">
+          Benefícios disponíveis
+        </h3>
+        {benefits.length === 0 ? (
+          <p className="mt-3 text-sm text-white/50">
+            Continue convidando para desbloquear vantagens.
+          </p>
+        ) : (
+          <ul className="mt-3 space-y-3">
+            {benefits.map((b) => (
+              <li
+                key={b.id}
+                className="rounded border border-amber-400/20 bg-amber-400/[0.03] p-4"
+              >
+                <div className="text-sm">{b.title}</div>
+                {b.description && (
+                  <p className="mt-1 text-xs text-white/50">{b.description}</p>
+                )}
+                {b.code && (
+                  <div className="mt-2 font-mono text-amber-300 tracking-[0.3em] text-sm">
+                    {b.code}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <button
+        onClick={async () => {
+          await logout();
+          qc.invalidateQueries({ queryKey: ["vip", "me"] });
+          navigate({ to: "/vip" });
+        }}
+        className="text-[10px] uppercase tracking-[0.4em] text-white/30 hover:text-white/70"
+      >
+        Sair
+      </button>
+    </div>
+  );
+}
+
+function Stat({ n, label }: { n: number; label: string }) {
+  return (
+    <div className="rounded border border-white/10 bg-white/[0.02] p-4 text-center">
+      <div className="text-2xl font-light">{n}</div>
+      <div className="mt-1 text-[9px] uppercase tracking-[0.35em] text-white/40">{label}</div>
+    </div>
+  );
+}
