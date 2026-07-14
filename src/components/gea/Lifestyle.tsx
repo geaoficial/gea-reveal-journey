@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useRef, useState } from "react";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 import watchMystery from "@/assets/gea-life-mystery.jpg.asset.json";
 
