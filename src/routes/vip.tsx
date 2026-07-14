@@ -382,7 +382,9 @@ function MemberPanel({
             memberId={String(member.memberNumber).padStart(4, "0")}
             unlockedAt={member.unlockedAt}
             benefit={highlightedBenefit}
+            revealBack={justConfirmed}
           />
+
         </div>
 
 
