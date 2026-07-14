@@ -217,25 +217,28 @@ export function Lifestyle() {
             }}
           />
 
-          {/* Fumaça densa subindo — camada frontal */}
+          {/* Fumaça densa subindo — reage à velocidade e ao progresso do scroll */}
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute inset-x-[-15%] bottom-[-20%] h-[110%] mix-blend-screen opacity-90"
+            className="pointer-events-none absolute inset-x-[-15%] bottom-[-20%] h-[110%] mix-blend-screen"
+            style={{
+              background:
+                "radial-gradient(ellipse 45% 55% at 30% 85%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 80%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 95%, rgba(120,55,20,0.6) 0%, transparent 72%)",
+              filter: reducedMotion ? `blur(${lite ? 28 : 50}px)` : velocityBlur,
+              opacity: reducedMotion ? 0.9 : frontOpacity,
+              x: reducedMotion ? 0 : velocityShiftX,
+              y: reducedMotion ? 0 : velocityShiftY,
+              willChange: reducedMotion ? undefined : "transform, opacity, filter",
+              transform: "translateZ(0)",
+            }}
             animate={
               reducedMotion
                 ? undefined
                 : lite
-                  ? { y: ["6%", "-4%", "6%"] }
-                  : { x: ["-4%", "4%", "-4%"], y: ["8%", "-6%", "8%"], scale: [1, 1.08, 1] }
+                  ? { scale: [1, 1.04, 1] }
+                  : { scale: [1, 1.08, 1] }
             }
-            transition={{ duration: lite ? 24 : 18, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              background:
-                "radial-gradient(ellipse 45% 55% at 30% 85%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 80%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 95%, rgba(120,55,20,0.6) 0%, transparent 72%)",
-              filter: `blur(${lite ? 28 : 50}px)`,
-              willChange: reducedMotion ? undefined : "transform",
-              transform: "translateZ(0)",
-            }}
+            transition={{ duration: lite ? 26 : 20, repeat: Infinity, ease: "easeInOut" }}
           />
 
           {/* Fumaça lenta ascendente — meio da cena (desktop only) */}
