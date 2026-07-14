@@ -13,6 +13,7 @@ function AdminLayout() {
     { to: "/admin", label: "Visão geral" },
     { to: "/admin/members", label: "Membros" },
     { to: "/admin/invites", label: "Convites" },
+    { to: "/admin/invite-shares", label: "Compartilhamentos" },
     { to: "/admin/benefits", label: "Benefícios" },
   ] as const;
 

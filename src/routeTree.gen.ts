@@ -18,6 +18,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin.members'
 import { Route as AuthenticatedAdminInvitesRouteImport } from './routes/_authenticated/admin.invites'
+import { Route as AuthenticatedAdminInviteSharesRouteImport } from './routes/_authenticated/admin.invite-shares'
 import { Route as AuthenticatedAdminBenefitsRouteImport } from './routes/_authenticated/admin.benefits'
 
 const VipRoute = VipRouteImport.update({
@@ -66,6 +67,12 @@ const AuthenticatedAdminInvitesRoute =
     path: '/invites',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminInviteSharesRoute =
+  AuthenticatedAdminInviteSharesRouteImport.update({
+    id: '/invite-shares',
+    path: '/invite-shares',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminBenefitsRoute =
   AuthenticatedAdminBenefitsRouteImport.update({
     id: '/benefits',
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/invite/$memberNumber': typeof InviteMemberNumberRoute
   '/admin/benefits': typeof AuthenticatedAdminBenefitsRoute
+  '/admin/invite-shares': typeof AuthenticatedAdminInviteSharesRoute
   '/admin/invites': typeof AuthenticatedAdminInvitesRoute
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -90,6 +98,7 @@ export interface FileRoutesByTo {
   '/vip': typeof VipRoute
   '/invite/$memberNumber': typeof InviteMemberNumberRoute
   '/admin/benefits': typeof AuthenticatedAdminBenefitsRoute
+  '/admin/invite-shares': typeof AuthenticatedAdminInviteSharesRoute
   '/admin/invites': typeof AuthenticatedAdminInvitesRoute
   '/admin/members': typeof AuthenticatedAdminMembersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -103,6 +112,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/invite/$memberNumber': typeof InviteMemberNumberRoute
   '/_authenticated/admin/benefits': typeof AuthenticatedAdminBenefitsRoute
+  '/_authenticated/admin/invite-shares': typeof AuthenticatedAdminInviteSharesRoute
   '/_authenticated/admin/invites': typeof AuthenticatedAdminInvitesRoute
   '/_authenticated/admin/members': typeof AuthenticatedAdminMembersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/invite/$memberNumber'
     | '/admin/benefits'
+    | '/admin/invite-shares'
     | '/admin/invites'
     | '/admin/members'
     | '/admin/'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/vip'
     | '/invite/$memberNumber'
     | '/admin/benefits'
+    | '/admin/invite-shares'
     | '/admin/invites'
     | '/admin/members'
     | '/admin'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/invite/$memberNumber'
     | '/_authenticated/admin/benefits'
+    | '/_authenticated/admin/invite-shares'
     | '/_authenticated/admin/invites'
     | '/_authenticated/admin/members'
     | '/_authenticated/admin/'
@@ -216,6 +229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminInvitesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/invite-shares': {
+      id: '/_authenticated/admin/invite-shares'
+      path: '/invite-shares'
+      fullPath: '/admin/invite-shares'
+      preLoaderRoute: typeof AuthenticatedAdminInviteSharesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/benefits': {
       id: '/_authenticated/admin/benefits'
       path: '/benefits'
@@ -228,6 +248,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBenefitsRoute: typeof AuthenticatedAdminBenefitsRoute
+  AuthenticatedAdminInviteSharesRoute: typeof AuthenticatedAdminInviteSharesRoute
   AuthenticatedAdminInvitesRoute: typeof AuthenticatedAdminInvitesRoute
   AuthenticatedAdminMembersRoute: typeof AuthenticatedAdminMembersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -235,6 +256,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminBenefitsRoute: AuthenticatedAdminBenefitsRoute,
+  AuthenticatedAdminInviteSharesRoute: AuthenticatedAdminInviteSharesRoute,
   AuthenticatedAdminInvitesRoute: AuthenticatedAdminInvitesRoute,
   AuthenticatedAdminMembersRoute: AuthenticatedAdminMembersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
