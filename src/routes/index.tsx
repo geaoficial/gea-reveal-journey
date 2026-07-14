@@ -122,6 +122,7 @@ function Index() {
       <SilentBoundary><InstagramSection /></SilentBoundary>
       <SilentBoundary><VipArea /></SilentBoundary>
       <SilentBoundary><HiddenChapter /></SilentBoundary>
+      <SilentBoundary><DirectorSeal /></SilentBoundary>
       <SilentBoundary><CinematicFx /></SilentBoundary>
       <SilentBoundary><ShareDock /></SilentBoundary>
       <SilentBoundary><VipUnlockOverlay /></SilentBoundary>
