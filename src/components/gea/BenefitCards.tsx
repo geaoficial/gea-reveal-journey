@@ -105,14 +105,23 @@ export function BenefitCards() {
               <p className="mt-6 text-sm leading-relaxed text-gea-cream/70">
                 {open.detail}
               </p>
-              <a
-                href="https://instagram.com/geastoree"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-10 inline-flex items-center gap-3 border border-gea-cream/30 px-6 py-3 text-[0.65rem] uppercase tracking-[0.36em] text-gea-cream transition-colors duration-500 hover:bg-gea-cream hover:text-gea-black"
-              >
-                Seguir @geastoree <span>→</span>
-              </a>
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <a
+                  href="https://instagram.com/geastoree"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-3 border border-gea-cream/30 px-6 py-3 text-[0.65rem] uppercase tracking-[0.36em] text-gea-cream transition-colors duration-500 hover:bg-gea-cream hover:text-gea-black"
+                >
+                  Seguir @geastoree <span>→</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setOpen(null)}
+                  className="plausible-event-name=Benefit+Back inline-flex items-center justify-center gap-2 px-4 py-3 text-[0.6rem] uppercase tracking-[0.4em] text-gea-cream/55 transition-colors duration-500 hover:text-gea-cream"
+                >
+                  <span>←</span> Voltar aos cards
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
