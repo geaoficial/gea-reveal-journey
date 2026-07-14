@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getMyVipMember,
   registerVipMember,
   loginVipMember,
   logoutVipMember,
+  confirmInstagramFollow,
 } from "@/lib/vip-agent.functions";
 
 export const Route = createFileRoute("/vip")({
