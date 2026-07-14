@@ -11,7 +11,7 @@ import { VipUnlockOverlay } from "@/components/gea/VipUnlockOverlay";
 import { VipArea } from "@/components/gea/VipArea";
 
 import ogAsset from "@/assets/gea-og-cover.jpg.asset.json";
-import heroAsset from "@/assets/gea-hero-sunset.jpeg.asset.json";
+import { heroImage } from "@/lib/responsive-image";
 import { getRequestOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/")({
@@ -58,7 +58,9 @@ export const Route = createFileRoute("/")({
         {
           rel: "preload",
           as: "image",
-          href: heroAsset.url,
+          href: heroImage.fallback,
+          imagesrcset: heroImage.srcSet,
+          imagesizes: heroImage.sizes,
           fetchpriority: "high",
         },
       ],

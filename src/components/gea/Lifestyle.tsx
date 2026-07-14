@@ -1,7 +1,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
-import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
-import watchMystery from "@/assets/gea-life-mystery.jpg.asset.json";
+import { lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { BlurImage } from "./BlurImage";
 
 export function Lifestyle() {
@@ -58,12 +57,13 @@ export function Lifestyle() {
           className="relative h-full w-full"
         >
           <BlurImage
-            src={lifestyle02.url}
+            src={lifestyleImage.fallback}
+            srcSet={lifestyleImage.srcSet}
+            sizes={lifestyleImage.sizes}
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="lazy"
             decoding="async"
             fetchPriority="low"
-            sizes="100vw"
             draggable={false}
             className="h-full w-full object-cover"
             placeholder="radial-gradient(ellipse at 50% 65%, #d97a3c 0%, #7a2f1a 40%, #1a0e0a 80%, #000 100%)"
@@ -114,12 +114,13 @@ export function Lifestyle() {
             className="relative h-full w-full"
           >
             <BlurImage
-              src={watchMystery.url}
+              src={mysteryImage.fallback}
+              srcSet={mysteryImage.srcSet}
+              sizes={mysteryImage.sizes}
               alt="Próximo drop GEA — em breve"
               loading="lazy"
               decoding="async"
               fetchPriority="low"
-              sizes="100vw"
               draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
