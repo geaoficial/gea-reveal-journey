@@ -9,6 +9,8 @@ import { CinematicTrailer } from "@/components/gea/CinematicTrailer";
 import { ShareDock } from "@/components/gea/ShareDock";
 import { VipUnlockOverlay } from "@/components/gea/VipUnlockOverlay";
 import { VipArea } from "@/components/gea/VipArea";
+import { SilentBoundary } from "@/components/gea/SilentBoundary";
+import { useDeviceCapability } from "@/lib/device-capability";
 
 import ogAsset from "@/assets/gea-og-cover.jpg.asset.json";
 import { heroImage } from "@/lib/responsive-image";
