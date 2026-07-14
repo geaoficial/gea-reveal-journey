@@ -7,6 +7,9 @@ import { HiddenChapter } from "@/components/gea/HiddenChapter";
 import { CinematicControls } from "@/components/gea/CinematicControls";
 import { CinematicTrailer } from "@/components/gea/CinematicTrailer";
 import { ShareDock } from "@/components/gea/ShareDock";
+import { VipUnlockOverlay } from "@/components/gea/VipUnlockOverlay";
+import { VipArea } from "@/components/gea/VipArea";
+
 import ogAsset from "@/assets/gea-og-cover.jpg.asset.json";
 import { getRequestOrigin } from "@/lib/origin.functions";
 
@@ -77,9 +80,12 @@ function Index() {
       <Manifesto />
       <Lifestyle />
       <InstagramSection />
+      <VipArea />
       <HiddenChapter />
       <CinematicTrailer />
       <ShareDock />
+      <VipUnlockOverlay />
+
       {/* Global cinematic grain overlay, tied to --grain-opacity */}
       <div
         aria-hidden

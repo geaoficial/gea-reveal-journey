@@ -1,9 +1,12 @@
 import { motion } from "motion/react";
 import { FounderBadge } from "./FounderBadge";
+import { useVip } from "@/lib/vip";
 
 const IG_URL = "https://instagram.com/geastoree";
 
 export function InstagramSection() {
+  const vip = useVip();
+
   return (
     <section id="instagram" className="relative bg-gea-black py-40 md:py-56">
       <div className="mx-auto max-w-4xl px-6">
@@ -42,7 +45,10 @@ export function InstagramSection() {
             href={IG_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => vip.markPending()}
             initial={{ opacity: 0, y: 20 }}
+
+
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
