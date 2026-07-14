@@ -52,7 +52,15 @@ export const Route = createFileRoute("/")({
           content: "Mais do que um relógio. Uma identidade.",
         },
       ],
-      links: [{ rel: "canonical", href: "/" }],
+      links: [
+        { rel: "canonical", href: "/" },
+        {
+          rel: "preload",
+          as: "image",
+          href: heroAsset.url,
+          fetchpriority: "high",
+        },
+      ],
       scripts: [
         {
           type: "application/ld+json",
