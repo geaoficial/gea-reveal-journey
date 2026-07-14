@@ -84,15 +84,13 @@ export function Hero() {
           <div
             role="img"
             aria-label="GEA — pôr do sol na estrada"
-            className="relative z-[1] block h-full w-full"
+            className="relative z-[1] block h-full w-full bg-cover bg-no-repeat bg-[62%_55%] md:bg-center"
             style={{
               backgroundImage: `url("${heroImage.fallback}")`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
             }}
           />
         ) : (
+
           <picture className="relative z-[1] block h-full w-full">
             <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
             <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
