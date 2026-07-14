@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { FounderBadge } from "./FounderBadge";
 
 const IG_URL = "https://instagram.com/geastoree";
 
@@ -62,6 +63,8 @@ export function InstagramSection() {
             Junte-se aos primeiros que estão acompanhando essa jornada.
           </motion.p>
         </div>
+
+        <FounderBadge />
 
         <motion.p
           initial={{ opacity: 0 }}
