@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import { Placeholder } from "./Placeholder";
+import heroImage from "@/assets/gea-hero-sunset.jpeg.asset.json";
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
@@ -11,12 +11,15 @@ export function Hero() {
   return (
     <section ref={ref} className="relative h-[100dvh] w-full overflow-hidden bg-gea-black">
       <motion.div style={{ y }} className="absolute inset-0 scale-110">
-        <Placeholder
-          label="hero — estrada, SUV branco, pôr do sol"
-          tint="sunset"
-          className="h-full w-full"
+        <img
+          src={heroImage.url}
+          alt="GEA — pôr do sol na estrada"
+          className="h-full w-full object-cover object-center"
+          loading="eager"
+          fetchPriority="high"
         />
       </motion.div>
+
 
       {/* Cinematic overlays */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-black/85" />
