@@ -22,37 +22,44 @@ export const Route = createFileRoute("/")({
     return { origin };
   },
   head: ({ loaderData }) => {
-    const origin = loaderData?.origin ?? "";
+    // Fallback absoluto garante preview no WhatsApp/Instagram mesmo antes do SSR resolver o host.
+    const PUBLISHED_ORIGIN = "https://gea-reveal-journey.lovable.app";
+    const origin = loaderData?.origin || PUBLISHED_ORIGIN;
     const ogImage = `${origin}${ogAsset.url}`;
     const pageUrl = `${origin}/`;
+    const title = "GEA — Mais do que um relógio. Uma identidade.";
+    const description =
+      "GEA é uma marca cinematográfica de relógios e lifestyle. Presença, tempo e evolução. Siga @geastoree e entre para o clube.";
     return {
       meta: [
-        { title: "GEA — O tempo revela." },
-        {
-          name: "description",
-          content:
-            "GEA. Mais do que um relógio. Uma identidade. Uma marca cinematográfica para quem valoriza tempo, presença e evolução.",
-        },
-        { property: "og:title", content: "GEA — O tempo revela." },
-        {
-          property: "og:description",
-          content: "Mais do que um relógio. Uma identidade.",
-        },
+        { title },
+        { name: "description", content: description },
+        // Open Graph — WhatsApp, Instagram DM, Facebook, LinkedIn
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: pageUrl || "/" },
-        ...(origin
-          ? [
-              { property: "og:image", content: ogImage },
-              { property: "og:image:width", content: "1200" },
-              { property: "og:image:height", content: "630" },
-              { property: "twitter:image", content: ogImage },
-            ]
-          : []),
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: "GEA — O tempo revela." },
+        { property: "og:url", content: pageUrl },
+        { property: "og:site_name", content: "GEA" },
+        { property: "og:locale", content: "pt_BR" },
+        { property: "og:image", content: ogImage },
+        { property: "og:image:secure_url", content: ogImage },
+        { property: "og:image:type", content: "image/jpeg" },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
         {
-          name: "twitter:description",
-          content: "Mais do que um relógio. Uma identidade.",
+          property: "og:image:alt",
+          content: "GEA — estrada ao pôr do sol, atmosfera cinematográfica.",
+        },
+        // Twitter / X
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:site", content: "@geastoree" },
+        { name: "twitter:creator", content: "@geastoree" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: ogImage },
+        {
+          name: "twitter:image:alt",
+          content: "GEA — estrada ao pôr do sol, atmosfera cinematográfica.",
         },
       ],
       links: [
