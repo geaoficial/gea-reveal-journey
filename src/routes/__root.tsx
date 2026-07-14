@@ -96,6 +96,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap",
       },
     ],
+    scripts: [
+      // Plausible Analytics — privacy-first, no cookies.
+      // TODO: troque data-domain pelo domínio real cadastrado em plausible.io
+      // (pode ser separado por vírgula se quiser rastrear preview + produção).
+      {
+        defer: true,
+        "data-domain": "gea.lovable.app",
+        src: "https://plausible.io/js/script.tagged-events.outbound-links.js",
+      },
+      // Fila global para eventos customizados (rastreio dos cliques "Seguir @GEA").
+      {
+        children:
+          "window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}",
+      },
+    ],
 
   }),
   shellComponent: RootShell,

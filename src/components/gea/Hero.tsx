@@ -61,7 +61,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.8 }}
-          className="group mt-14 inline-flex items-center gap-3 border border-gea-cream/40 px-8 py-4 text-[0.7rem] uppercase tracking-[0.32em] text-gea-cream backdrop-blur-sm transition-all duration-500 hover:border-gea-cream hover:bg-gea-cream hover:text-gea-black"
+          className="plausible-event-name=CTA+Click plausible-event-location=hero plausible-event-label=Entrar+para+a+GEA group mt-14 inline-flex items-center gap-3 border border-gea-cream/40 px-8 py-4 text-[0.7rem] uppercase tracking-[0.32em] text-gea-cream backdrop-blur-sm transition-all duration-500 hover:border-gea-cream hover:bg-gea-cream hover:text-gea-black"
         >
           Entrar para a GEA
           <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">→</span>
