@@ -163,38 +163,81 @@ export function Lifestyle() {
             />
           </motion.div>
 
-          {/* Fumaça cinematográfica — camadas contínuas em deriva */}
-          <motion.div
+          {/* Cortina de fumaça — base densa e permanente */}
+          <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-[-20%] bottom-[-10%] h-[85%] mix-blend-screen opacity-70"
-            animate={{ x: ["-6%", "6%", "-6%"], y: ["4%", "-3%", "4%"] }}
-            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[70%] mix-blend-screen"
             style={{
               background:
-                "radial-gradient(ellipse 55% 45% at 25% 70%, rgba(255,170,90,0.35) 0%, rgba(200,110,50,0.12) 40%, transparent 72%), radial-gradient(ellipse 50% 40% at 70% 60%, rgba(255,150,70,0.28) 0%, transparent 70%)",
-              filter: "blur(60px)",
+                "linear-gradient(to top, rgba(20,10,4,0.95) 0%, rgba(80,40,15,0.6) 25%, rgba(200,110,50,0.25) 55%, transparent 100%)",
+              filter: "blur(20px)",
             }}
           />
-          <motion.div
+          <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-[-25%] top-[-5%] h-[75%] mix-blend-screen opacity-60"
-            animate={{ x: ["5%", "-5%", "5%"], y: ["-3%", "5%", "-3%"] }}
-            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%]"
             style={{
               background:
-                "radial-gradient(ellipse 45% 35% at 60% 40%, rgba(255,190,120,0.28) 0%, transparent 70%), radial-gradient(ellipse 55% 40% at 20% 30%, rgba(180,90,40,0.22) 0%, transparent 72%)",
-              filter: "blur(80px)",
+                "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 40%, transparent 100%)",
             }}
           />
+
+          {/* Fumaça densa subindo — camada frontal */}
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-40"
-            animate={{ opacity: [0.25, 0.55, 0.25] }}
-            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+            className="pointer-events-none absolute inset-x-[-15%] bottom-[-20%] h-[110%] mix-blend-screen opacity-90"
+            animate={{
+              x: ["-4%", "4%", "-4%"],
+              y: ["8%", "-6%", "8%"],
+              scale: [1, 1.08, 1],
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
             style={{
               background:
-                "radial-gradient(ellipse 70% 50% at 50% 65%, rgba(232,138,58,0.35) 0%, transparent 70%)",
+                "radial-gradient(ellipse 45% 55% at 30% 85%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 80%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 95%, rgba(120,55,20,0.6) 0%, transparent 72%)",
               filter: "blur(50px)",
+            }}
+          />
+
+          {/* Fumaça lenta ascendente — meio da cena */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-[-20%] bottom-[10%] h-[75%] mix-blend-screen opacity-75"
+            animate={{
+              x: ["3%", "-5%", "3%"],
+              y: ["6%", "-10%", "6%"],
+            }}
+            transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(ellipse 50% 45% at 45% 70%, rgba(255,180,100,0.4) 0%, transparent 72%), radial-gradient(ellipse 55% 40% at 20% 55%, rgba(180,90,40,0.32) 0%, transparent 74%)",
+              filter: "blur(75px)",
+            }}
+          />
+
+          {/* Névoa superior — dispersão fria */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-[-25%] top-[-10%] h-[55%] mix-blend-screen opacity-45"
+            animate={{ x: ["4%", "-4%", "4%"], y: ["-4%", "3%", "-4%"] }}
+            transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(ellipse 55% 45% at 55% 40%, rgba(220,150,90,0.22) 0%, transparent 72%), radial-gradient(ellipse 50% 40% at 25% 30%, rgba(150,75,35,0.18) 0%, transparent 74%)",
+              filter: "blur(90px)",
+            }}
+          />
+
+          {/* Pulso âmbar central — respiração do dial */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 mix-blend-overlay"
+            animate={{ opacity: [0.3, 0.65, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 45% at 50% 60%, rgba(232,138,58,0.45) 0%, transparent 70%)",
+              filter: "blur(55px)",
             }}
           />
 
