@@ -9,6 +9,7 @@ import {
   logoutVipMember,
   confirmInstagramFollow,
 } from "@/lib/vip-agent.functions";
+import { VipCard } from "@/components/gea/VipCard";
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
