@@ -129,26 +129,32 @@ export function HiddenChapter() {
             {launched ? "O drop está no ar" : "Próximo drop em"}
           </span>
 
-          <div className="grid grid-cols-4 gap-3 md:gap-6" aria-live="polite">
-            {[
-              { label: "Dias", value: days },
-              { label: "Hrs", value: hours },
-              { label: "Min", value: minutes },
-              { label: "Seg", value: seconds },
-            ].map((unit) => (
-              <div
-                key={unit.label}
-                className="flex min-w-[3.5rem] flex-col items-center gap-2 border border-gea-cream/10 bg-gea-black/60 px-3 py-4 md:min-w-[4.5rem] md:px-5 md:py-5"
-              >
-                <span className="font-display text-3xl font-light tabular-nums text-gea-cream md:text-4xl">
-                  {ready ? pad(unit.value) : "--"}
-                </span>
-                <span className="text-[0.5rem] uppercase tracking-[0.4em] text-gea-cream/40">
-                  {unit.label}
-                </span>
-              </div>
-            ))}
+          <div className="flex w-full max-w-md flex-col gap-3" aria-live="polite">
+            <div className="relative h-[3px] w-full overflow-hidden bg-gea-cream/10">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: revealed && ready ? `${percent}%` : 0 }}
+                transition={{ duration: 1.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-y-0 left-0"
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(232,138,58,0.35), rgba(232,138,58,1))",
+                  boxShadow: "0 0 14px rgba(232,138,58,0.55)",
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/55 tabular-nums">
+              <span>
+                {ready
+                  ? launched
+                    ? "Ao vivo"
+                    : `${pad(days)}d · ${pad(hours)}h · ${pad(minutes)}m · ${pad(seconds)}s`
+                  : "--"}
+              </span>
+              <span className="text-gea-sunset">{ready ? `${percent}%` : "--%"}</span>
+            </div>
           </div>
+
         </motion.div>
 
         {/* Badge dinâmico de progresso */}
