@@ -261,6 +261,8 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
     benefits: eligibleBenefits,
     allBenefits,
     instagramFollowedAt: followEvent?.created_at ?? null,
+    inviteSharedAt: shareEvent?.created_at ?? null,
+    cardUnlocked: Boolean(followEvent && shareEvent),
   };
 });
 
