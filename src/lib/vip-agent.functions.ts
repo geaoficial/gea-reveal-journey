@@ -310,3 +310,4 @@ export const logInviteShare = createServerFn({ method: "POST" })
     });
 
     return { ok: true as const };
+  });
