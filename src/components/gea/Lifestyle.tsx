@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 import { lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { BlurImage } from "./BlurImage";
+import { useDeviceCapability } from "@/lib/device-capability";
 
 export function Lifestyle() {
   const revealRef = useRef<HTMLDivElement>(null);
