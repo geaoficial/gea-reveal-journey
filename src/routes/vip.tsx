@@ -600,7 +600,7 @@ function CopyInviteButton({ url, onShared }: { url: string; onShared?: () => voi
   );
 }
 
-function InviteQrButton({ url, memberNumber }: { url: string; memberNumber: number }) {
+function InviteQrButton({ url, memberNumber, onShared }: { url: string; memberNumber: number; onShared?: () => void }) {
   const [open, setOpen] = useState(false);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
