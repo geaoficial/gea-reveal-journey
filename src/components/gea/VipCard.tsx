@@ -274,46 +274,66 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
                   className="text-[0.55rem] uppercase"
                   style={{
                     letterSpacing: "0.5em",
-                    color: "rgba(232,138,58,0.85)",
+                    color: benefitUnlocked
+                      ? "rgba(232,138,58,0.85)"
+                      : "rgba(200,200,200,0.55)",
                     fontFamily: "'Space Grotesk', system-ui, sans-serif",
                   }}
                 >
-                  Benefício de boas-vindas
+                  {benefitUnlocked ? "Benefício desbloqueado" : "Benefício bloqueado"}
                 </div>
                 <div
                   className="mt-2 leading-none"
                   style={{
                     ...silverText,
                     fontWeight: 500,
-                    fontSize: "clamp(2.2rem, 6vw, 3rem)",
+                    fontSize: "clamp(1.6rem, 5vw, 2.6rem)",
                     letterSpacing: "0.02em",
+                    opacity: benefitUnlocked ? 1 : 0.55,
                   }}
                 >
-                  10% OFF
+                  {benefitTitle}
                 </div>
-                <div
-                  className="mt-1 text-[0.55rem] uppercase"
-                  style={{
-                    letterSpacing: "0.42em",
-                    color: "rgba(220,220,220,0.6)",
-                    fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                  }}
-                >
-                  no seu primeiro pedido
-                </div>
+                {benefitSubtitle && (
+                  <div
+                    className="mt-1 text-[0.55rem] uppercase max-w-[80%]"
+                    style={{
+                      letterSpacing: "0.32em",
+                      color: "rgba(220,220,220,0.6)",
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                    }}
+                  >
+                    {benefitSubtitle}
+                  </div>
+                )}
 
-                <div
-                  className="mt-3 border border-dashed px-3 py-1 text-[0.7rem] tabular-nums"
-                  style={{
-                    borderColor: "rgba(210,210,210,0.35)",
-                    color: "rgba(240,240,240,0.9)",
-                    fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                    letterSpacing: "0.18em",
-                  }}
-                >
-                  {couponCode}
-                </div>
+                {benefitUnlocked && benefitCode ? (
+                  <div
+                    className="mt-3 border border-dashed px-3 py-1 text-[0.7rem] tabular-nums"
+                    style={{
+                      borderColor: "rgba(210,210,210,0.35)",
+                      color: "rgba(240,240,240,0.9)",
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                      letterSpacing: "0.18em",
+                    }}
+                  >
+                    {benefitCode}
+                  </div>
+                ) : (
+                  <div
+                    className="mt-3 rounded-full border px-3 py-1 text-[0.55rem] uppercase"
+                    style={{
+                      borderColor: "rgba(232,138,58,0.4)",
+                      color: "rgba(232,138,58,0.85)",
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                      letterSpacing: "0.32em",
+                    }}
+                  >
+                    {benefitLockedLabel ?? "Em breve"}
+                  </div>
+                )}
               </div>
+
 
               <p
                 className="text-center text-[0.5rem] uppercase leading-[1.6]"
