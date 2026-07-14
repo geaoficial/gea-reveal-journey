@@ -9,10 +9,22 @@ import {
 import { formatUnlockDate } from "@/lib/vip";
 import { useDeviceCapability } from "@/lib/device-capability";
 
+export type VipCardBenefit = {
+  id: string;
+  title: string;
+  description: string | null;
+  code: string | null;
+  unlocked: boolean;
+  minInvites: number;
+  remaining: number;
+};
+
 type Props = {
   name: string | null;
   memberId: string;
   unlockedAt: string | null;
+  /** Benefício destacado no verso do cartão. Se ausente, mostra o cupom padrão de 10% OFF. */
+  benefit?: VipCardBenefit | null;
   /** Modo estático para exportar como imagem (sem animações). */
   exportMode?: boolean;
 };
