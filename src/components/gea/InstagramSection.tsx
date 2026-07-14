@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { FounderBadge } from "./FounderBadge";
+import { BenefitCards } from "./BenefitCards";
 import { useVip } from "@/lib/vip";
 
 const IG_URL = "https://instagram.com/geastoree";
