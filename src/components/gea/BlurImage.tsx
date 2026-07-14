@@ -45,6 +45,7 @@ export function BlurImage({
   ...imgProps
 }: BlurImageProps) {
   const [revealed, setRevealed] = useState(false);
+  const [failed, setFailed] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
   // Detecta preferências de acessibilidade / rede lenta uma única vez.
