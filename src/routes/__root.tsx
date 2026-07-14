@@ -88,12 +88,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      {
-        rel: "preload",
-        as: "image",
-        href: "/__l5e/assets-v1/aead9837-f256-4ea6-9023-6e478d2fcfbd/gea-hero-graded.jpg",
-        fetchpriority: "high",
-      },
+      { rel: "dns-prefetch", href: "https://plausible.io" },
+      { rel: "preconnect", href: "https://plausible.io", crossOrigin: "anonymous" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
