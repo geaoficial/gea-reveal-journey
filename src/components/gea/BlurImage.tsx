@@ -114,6 +114,13 @@ export function BlurImage({
     willChange: "opacity",
   };
 
+  // Fallback JPEG url derivado do srcSet caso <picture> falhe em algum browser
+  // (Safari com AVIF/WebP problemático, CDN cache inconsistente, etc.)
+  const jpegFallback =
+    (typeof srcSet === "string" && srcSet.split(",").pop()?.trim().split(" ")[0]) ||
+    imgProps.src ||
+    "";
+
   return (
     <>
       <div
@@ -121,26 +128,45 @@ export function BlurImage({
         className="pointer-events-none absolute inset-0 z-0"
         style={placeholderStyle}
       />
-      <picture className="relative z-[1] block h-full w-full">
-        {avifSrcSet ? (
-          <source type="image/avif" srcSet={avifSrcSet} sizes={sizes} />
-        ) : null}
-        {webpSrcSet ? (
-          <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
-        ) : null}
-        <img
-          decoding="async"
-          {...imgProps}
-          ref={imgRef}
-          srcSet={srcSet}
-          sizes={sizes}
-          className={className}
-          style={imgStyle}
-          onLoad={(e) => {
-            onLoad?.(e);
+      {failed && jpegFallback ? (
+        <div
+          role="img"
+          aria-label={imgProps.alt || ""}
+          className={`relative z-[1] block h-full w-full ${className ?? ""}`}
+          style={{
+            ...style,
+            backgroundImage: `url("${jpegFallback}")`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         />
-      </picture>
+      ) : (
+        <picture className="relative z-[1] block h-full w-full">
+          {avifSrcSet ? (
+            <source type="image/avif" srcSet={avifSrcSet} sizes={sizes} />
+          ) : null}
+          {webpSrcSet ? (
+            <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
+          ) : null}
+          <img
+            decoding="async"
+            {...imgProps}
+            ref={imgRef}
+            srcSet={srcSet}
+            sizes={sizes}
+            className={className}
+            style={imgStyle}
+            onLoad={(e) => {
+              onLoad?.(e);
+            }}
+            onError={() => {
+              setFailed(true);
+              setRevealed(true);
+            }}
+          />
+        </picture>
+      )}
     </>
   );
 }
