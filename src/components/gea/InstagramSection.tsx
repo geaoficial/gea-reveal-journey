@@ -1,9 +1,12 @@
 import { motion } from "motion/react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { Placeholder } from "./Placeholder";
+import { getInstagramFeed } from "@/lib/instagram.functions";
 
 const IG_URL = "https://instagram.com/geastoree";
 
-const tiles: Array<{ label: string; tint: "black" | "sunset" | "silver" }> = [
+const fallbackTiles: Array<{ label: string; tint: "black" | "sunset" | "silver" }> = [
   { label: "feed 01", tint: "sunset" },
   { label: "feed 02", tint: "black" },
   { label: "feed 03", tint: "silver" },
@@ -14,6 +17,7 @@ const tiles: Array<{ label: string; tint: "black" | "sunset" | "silver" }> = [
   { label: "feed 08", tint: "sunset" },
   { label: "feed 09", tint: "black" },
 ];
+
 
 export function InstagramSection() {
   return (
