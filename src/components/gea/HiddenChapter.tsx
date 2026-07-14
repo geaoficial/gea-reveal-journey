@@ -161,19 +161,6 @@ export function HiddenChapter() {
             <span className="tabular-nums text-gea-sunset">{ready ? `${percent}%` : "--%"}</span>
           </div>
 
-          <div className="relative h-[2px] w-full overflow-hidden bg-gea-cream/10">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: revealed && ready ? `${percent}%` : 0 }}
-              transition={{ duration: 1.6, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-y-0 left-0"
-              style={{
-                background:
-                  "linear-gradient(90deg, rgba(232,138,58,0.4), rgba(232,138,58,1))",
-                boxShadow: "0 0 12px rgba(232,138,58,0.6)",
-              }}
-            />
-          </div>
 
           <span className="text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/35">
             Antecipação global
