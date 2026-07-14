@@ -9,6 +9,7 @@ import {
   logoutVipMember,
   confirmInstagramFollow,
 } from "@/lib/vip-agent.functions";
+import { VipCard } from "@/components/gea/VipCard";
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
@@ -314,34 +315,36 @@ function MemberPanel({
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12 space-y-10">
-      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent p-8 relative overflow-hidden">
-        {followed && (
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/[0.08] px-2.5 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            <span className="text-[9px] uppercase tracking-[0.3em] text-emerald-300">
-              Instagram confirmado
-            </span>
-          </div>
-        )}
-        <p className="text-[10px] uppercase tracking-[0.5em] text-amber-300/70">
-          Membro Exclusivo GEA
-        </p>
-        <h2 className="mt-3 text-3xl font-light">{member.fullName}</h2>
-        <div className="mt-1 text-sm text-white/50">@{member.instagram}</div>
-        <div className="mt-6 flex items-end justify-between">
-          <div>
-            <div className="text-[10px] uppercase tracking-[0.4em] text-white/40">Nº</div>
-            <div className="mt-1 font-mono text-3xl">
-              {String(member.memberNumber).padStart(4, "0")}
-            </div>
-          </div>
-          <div className="text-right text-[10px] uppercase tracking-[0.3em] text-white/40">
-            desde<br />
-            {new Date(member.unlockedAt).toLocaleDateString("pt-BR")}
-          </div>
+      <section className="relative">
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-[10px] uppercase tracking-[0.5em] text-amber-300/70">
+            Cartão do Membro
+          </p>
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] uppercase tracking-[0.3em] ${
+              member.status === "active"
+                ? "border-emerald-400/40 bg-emerald-400/[0.08] text-emerald-300"
+                : "border-white/20 bg-white/5 text-white/50"
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                member.status === "active" ? "bg-emerald-400" : "bg-white/40"
+              }`}
+            />
+            {member.status === "active" ? "Ativo" : member.status}
+          </span>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/10">
+        <div className="flex justify-center">
+          <VipCard
+            name={member.fullName}
+            memberId={String(member.memberNumber).padStart(4, "0")}
+            unlockedAt={member.unlockedAt}
+          />
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           {followed ? (
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -376,6 +379,7 @@ function MemberPanel({
           )}
         </div>
       </section>
+
 
       <section>
         <h3 className="text-[10px] uppercase tracking-[0.4em] text-white/40">

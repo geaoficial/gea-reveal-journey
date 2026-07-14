@@ -221,6 +221,7 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
       instagram: member.instagram_handle,
       city: member.city,
       unlockedAt: member.unlocked_at,
+      status: member.status,
     },
     invites: {
       confirmed,
