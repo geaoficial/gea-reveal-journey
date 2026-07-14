@@ -401,15 +401,30 @@ function MemberPanel({
           />
         </div>
 
+        {cardUnlocked && highlightedBenefit && (
+          <CouponRedeemPanel benefit={highlightedBenefit} memberId={member.id} />
+        )}
+
         <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           {cardUnlocked ? (
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
-                {justUnlocked ? "Cartão desbloqueado" : "Círculo completo"}
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
+                  {justUnlocked ? "Cartão desbloqueado" : "Círculo completo"}
+                </div>
+                <p className="mt-2 text-xs text-white/50">
+                  Você seguiu @geastoree e compartilhou seu convite.
+                </p>
               </div>
-              <p className="mt-2 text-xs text-white/50">
-                Você seguiu @geastoree e compartilhou seu convite. Vire o cartão para ver seu cupom.
-              </p>
+              {highlightedBenefit && (
+                <button
+                  type="button"
+                  onClick={() => setCouponOverlayOpen(true)}
+                  className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/[0.08] px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-amber-200 transition hover:bg-amber-400/20"
+                >
+                  Ver cupom
+                </button>
+              )}
             </div>
           ) : (
             <>
