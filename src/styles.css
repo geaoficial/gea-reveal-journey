@@ -95,3 +95,19 @@ html {
   }
 }
 
+
+/* Respeitar preferência do usuário por reduzir movimento */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Melhora o foco visível para navegação por teclado */
+:focus-visible {
+  outline: 2px solid var(--gea-sunset, #f59e0b);
+  outline-offset: 2px;
+}
