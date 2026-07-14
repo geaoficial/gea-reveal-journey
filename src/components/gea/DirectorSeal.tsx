@@ -18,7 +18,8 @@ export function DirectorSeal() {
 
   return (
     <>
-      <footer className="relative z-10 flex justify-center px-6 pb-10 pt-16 bg-gea-black">
+      <footer className="relative z-10 flex flex-col items-center gap-8 px-6 pb-10 pt-16 bg-gea-black">
+        <LegalLinks />
         <motion.button
           type="button"
           onClick={() => setOpen(true)}
