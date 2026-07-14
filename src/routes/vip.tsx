@@ -314,6 +314,7 @@ function MemberPanel({
   }
 
   const followed = Boolean(instagramFollowedAt);
+  const shared = Boolean(inviteSharedAt);
 
   // Impressão do CTA (uma vez por sessão de painel, quando ainda não seguiu)
   useEffect(() => {
