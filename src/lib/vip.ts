@@ -42,9 +42,12 @@ function readState(): VipState {
   }
 }
 
+const SYNC_EVENT = "gea:vip:sync";
+
 function writeState(state: VipState) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    window.dispatchEvent(new CustomEvent(SYNC_EVENT));
   } catch {
     /* ignore */
   }
@@ -70,6 +73,14 @@ export function useVip() {
   useEffect(() => {
     setState(readState());
     setHydrated(true);
+    const sync = () => setState(readState());
+    window.addEventListener(SYNC_EVENT, sync);
+    window.addEventListener("storage", (e) => {
+      if (e.key === STORAGE_KEY) sync();
+    });
+    return () => {
+      window.removeEventListener(SYNC_EVENT, sync);
+    };
   }, []);
 
   const persist = useCallback((next: VipState) => {
