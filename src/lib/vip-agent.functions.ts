@@ -210,7 +210,28 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
   const confirmed = (invites ?? []).filter((i) => i.status === "confirmed").length;
   const pending = (invites ?? []).filter((i) => i.status === "pending").length;
 
-  const eligibleBenefits = (benefits ?? []).filter((b) => (b.min_invites ?? 0) <= confirmed);
+  const allBenefits = (benefits ?? []).map((b) => {
+    const minInvites = b.min_invites ?? 0;
+    const unlocked = minInvites <= confirmed;
+    // Substitui {MEMBER_ID} no cupom (permite cupom dinâmico por membro).
+    const memberIdPad = String(member.member_number).padStart(4, "0");
+    const code = b.code ? b.code.replace(/\{MEMBER_ID\}/gi, memberIdPad) : null;
+    return {
+      id: b.id,
+      title: b.title,
+      description: b.description,
+      type: b.type,
+      code: unlocked ? code : null,
+      rawCode: code,
+      minInvites,
+      unlocked,
+      progress: minInvites === 0 ? 1 : Math.min(1, confirmed / minInvites),
+      remaining: Math.max(0, minInvites - confirmed),
+      endsAt: b.ends_at,
+    };
+  });
+
+  const eligibleBenefits = allBenefits.filter((b) => b.unlocked);
 
   return {
     ok: true as const,
@@ -230,6 +251,7 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
       list: invites ?? [],
     },
     benefits: eligibleBenefits,
+    allBenefits,
     instagramFollowedAt: followEvent?.created_at ?? null,
   };
 });
