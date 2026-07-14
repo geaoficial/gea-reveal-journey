@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, useVelocity, useSpring } from "motion/react";
 import { useRef, useState } from "react";
 import { lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { BlurImage } from "./BlurImage";
@@ -30,6 +30,38 @@ export function Lifestyle() {
     scrollYProgress,
     [0, 0.25, 0.5, 0.75, 1],
     [0.95, 0.55, 0.8, 0.5, 0.95],
+  );
+
+  // Velocidade do scroll — impulsiona a fumaça (direção + intensidade)
+  const scrollVelocity = useVelocity(scrollYProgress);
+  const smoothVelocity = useSpring(scrollVelocity, {
+    damping: 40,
+    stiffness: 180,
+    mass: 0.6,
+  });
+  // Intensidade extra da fumaça a partir da velocidade absoluta
+  const velocityBoost = useTransform(smoothVelocity, (v) => {
+    const abs = Math.min(Math.abs(v) * 0.9, 0.55);
+    return abs;
+  });
+  // Direção vertical: scroll rápido pra baixo empurra a fumaça pra cima (negativo)
+  const velocityShiftY = useTransform(smoothVelocity, (v) =>
+    `${Math.max(-14, Math.min(14, -v * 22))}%`,
+  );
+  // Leve deriva lateral seguindo o sentido do scroll
+  const velocityShiftX = useTransform(smoothVelocity, (v) =>
+    `${Math.max(-6, Math.min(6, v * 8))}%`,
+  );
+  // Blur reativo: quanto mais rápido o scroll, mais borrada a fumaça (efeito motion blur)
+  const velocityBlur = useTransform(smoothVelocity, (v) => {
+    const base = lite ? 28 : 50;
+    const extra = Math.min(Math.abs(v) * 30, lite ? 12 : 24);
+    return `blur(${base + extra}px)`;
+  });
+  // Opacidade combinada: baseline (fogOpacity) + boost por velocidade
+  const frontOpacity = useTransform(
+    [fogOpacity, velocityBoost] as never,
+    ([o, b]: number[]) => Math.min(1, 0.55 + o * 0.35 + b),
   );
 
   const updateFromEvent = (clientX: number, clientY: number) => {
@@ -185,25 +217,28 @@ export function Lifestyle() {
             }}
           />
 
-          {/* Fumaça densa subindo — camada frontal */}
+          {/* Fumaça densa subindo — reage à velocidade e ao progresso do scroll */}
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute inset-x-[-15%] bottom-[-20%] h-[110%] mix-blend-screen opacity-90"
+            className="pointer-events-none absolute inset-x-[-15%] bottom-[-20%] h-[110%] mix-blend-screen"
+            style={{
+              background:
+                "radial-gradient(ellipse 45% 55% at 30% 85%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 80%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 95%, rgba(120,55,20,0.6) 0%, transparent 72%)",
+              filter: reducedMotion ? `blur(${lite ? 28 : 50}px)` : velocityBlur,
+              opacity: reducedMotion ? 0.9 : frontOpacity,
+              x: reducedMotion ? 0 : velocityShiftX,
+              y: reducedMotion ? 0 : velocityShiftY,
+              willChange: reducedMotion ? undefined : "transform, opacity, filter",
+              transform: "translateZ(0)",
+            }}
             animate={
               reducedMotion
                 ? undefined
                 : lite
-                  ? { y: ["6%", "-4%", "6%"] }
-                  : { x: ["-4%", "4%", "-4%"], y: ["8%", "-6%", "8%"], scale: [1, 1.08, 1] }
+                  ? { scale: [1, 1.04, 1] }
+                  : { scale: [1, 1.08, 1] }
             }
-            transition={{ duration: lite ? 24 : 18, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              background:
-                "radial-gradient(ellipse 45% 55% at 30% 85%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 80%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 95%, rgba(120,55,20,0.6) 0%, transparent 72%)",
-              filter: `blur(${lite ? 28 : 50}px)`,
-              willChange: reducedMotion ? undefined : "transform",
-              transform: "translateZ(0)",
-            }}
+            transition={{ duration: lite ? 26 : 20, repeat: Infinity, ease: "easeInOut" }}
           />
 
           {/* Fumaça lenta ascendente — meio da cena (desktop only) */}
