@@ -380,8 +380,10 @@ function MemberPanel({
             name={member.fullName}
             memberId={String(member.memberNumber).padStart(4, "0")}
             unlockedAt={member.unlockedAt}
+            benefit={highlightedBenefit}
           />
         </div>
+
 
         <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           {followed ? (
