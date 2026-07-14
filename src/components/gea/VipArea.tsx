@@ -140,14 +140,10 @@ export function VipArea() {
         <div className="mx-auto mt-20 max-w-md">
           <div className="flex items-center justify-between text-[0.55rem] uppercase tracking-[0.5em] text-gea-cream/50">
             <span>Próximo drop</span>
-            <span className="tabular-nums text-gea-sunset">
-              {cd.ready ? `${pad(cd.d)}d · ${pad(cd.h)}h · ${pad(cd.m)}m · ${pad(cd.s)}s` : "--"}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-[0.55rem] uppercase tracking-[0.5em] text-gea-cream/50">
-            <span>Próximo drop</span>
             <span className="tabular-nums text-gea-sunset">68%</span>
           </div>
+        </div>
+
 
         {/* Stats + Ações */}
         <div className="mt-16 grid gap-10 md:grid-cols-3 md:items-end">
