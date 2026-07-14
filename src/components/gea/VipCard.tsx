@@ -436,7 +436,7 @@ function VerticalDivider() {
   return (
     <div
       aria-hidden
-      className="mx-4 w-px shrink-0 self-stretch sm:mx-6"
+      className="mx-4 w-px shrink-0 self-stretch"
       style={{
         background:
           "linear-gradient(180deg, transparent 0%, rgba(210,210,210,0.55) 20%, rgba(210,210,210,0.55) 80%, transparent 100%)",
