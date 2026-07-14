@@ -61,7 +61,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
         className="relative aspect-[1.75/1] w-full cursor-pointer select-none [perspective:1600px] focus:outline-none"
       >
         <div
-          className="relative h-full w-full transition-transform duration-[1200ms] [transform-style:preserve-3d]"
+          className="relative h-full w-full transition-transform duration-[2200ms] [transform-style:preserve-3d]"
           style={{
             transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
             transform: flipped ? "rotateY(360deg)" : "rotateY(0deg)",
