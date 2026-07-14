@@ -11,6 +11,7 @@ import {
   logInviteShare,
 } from "@/lib/vip-agent.functions";
 import { VipCard } from "@/components/gea/VipCard";
+import { CouponRedeemPanel, CouponUnlockOverlay } from "@/components/gea/CouponReveal";
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
@@ -292,15 +293,20 @@ function MemberPanel({
   const clickedAtRef = useRef<number | null>(null);
   const prevUnlockedRef = useRef(cardUnlocked);
   const [justUnlocked, setJustUnlocked] = useState(false);
+  const [couponOverlayOpen, setCouponOverlayOpen] = useState(false);
 
-  // Dispara flip do cartão no instante em que ambas as condições ficam verdadeiras.
+  // Dispara flip do cartão + overlay de cupom no instante em que ambas as condições ficam verdadeiras.
   useEffect(() => {
     if (cardUnlocked && !prevUnlockedRef.current) {
       setJustUnlocked(true);
+      // Aguarda o giro do cartão antes de revelar o overlay do cupom.
+      const t = setTimeout(() => setCouponOverlayOpen(true), 900);
       try {
         (window as unknown as { plausible?: (n: string, o?: { props?: Record<string, unknown> }) => void })
           .plausible?.("Vip Card Unlocked", { props: { memberId: member.id } });
       } catch { /* ignore */ }
+      prevUnlockedRef.current = cardUnlocked;
+      return () => clearTimeout(t);
     }
     prevUnlockedRef.current = cardUnlocked;
   }, [cardUnlocked, member.id]);
@@ -395,15 +401,30 @@ function MemberPanel({
           />
         </div>
 
+        {cardUnlocked && highlightedBenefit && (
+          <CouponRedeemPanel benefit={highlightedBenefit} memberId={member.id} />
+        )}
+
         <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           {cardUnlocked ? (
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
-                {justUnlocked ? "Cartão desbloqueado" : "Círculo completo"}
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
+                  {justUnlocked ? "Cartão desbloqueado" : "Círculo completo"}
+                </div>
+                <p className="mt-2 text-xs text-white/50">
+                  Você seguiu @geastoree e compartilhou seu convite.
+                </p>
               </div>
-              <p className="mt-2 text-xs text-white/50">
-                Você seguiu @geastoree e compartilhou seu convite. Vire o cartão para ver seu cupom.
-              </p>
+              {highlightedBenefit && (
+                <button
+                  type="button"
+                  onClick={() => setCouponOverlayOpen(true)}
+                  className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/[0.08] px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-amber-200 transition hover:bg-amber-400/20"
+                >
+                  Ver cupom
+                </button>
+              )}
             </div>
           ) : (
             <>
@@ -561,6 +582,15 @@ function MemberPanel({
       >
         Sair
       </button>
+
+      {highlightedBenefit && (
+        <CouponUnlockOverlay
+          open={couponOverlayOpen}
+          onClose={() => setCouponOverlayOpen(false)}
+          benefit={highlightedBenefit}
+          memberId={member.id}
+        />
+      )}
     </div>
   );
 }
