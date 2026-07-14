@@ -456,8 +456,8 @@ function MemberPanel({
               >
                 WhatsApp
               </a>
+              <InviteQrButton url={inviteUrl} memberNumber={member.memberNumber} />
             </div>
-
           </div>
         )}
       </section>
