@@ -8,10 +8,21 @@ const lines = [
   "o tempo, a presença e a evolução.",
 ];
 
-const about = [
-  "A GEA é para quem entende que estilo é presença.",
-  "Cada peça foi pensada para marcar o pulso de quem se move com propósito — no volante, na rua, na foto que fica.",
-  "Um relógio GEA não completa um look. Ele confirma uma identidade.",
+const essenceIntro =
+  "A GEA nasceu para quem acredita que presença vale mais do que aparência.";
+
+const essenceParagraphs = [
+  "Não seguimos tendências passageiras. Criamos uma identidade baseada em elegância, atitude e autenticidade. Cada detalhe da marca é pensado para transmitir confiança, sofisticação e um estilo de vida que valoriza o tempo, as escolhas e a forma como cada pessoa se apresenta ao mundo.",
+  "A GEA acredita que luxo não precisa chamar atenção. Ele é percebido nos detalhes, na qualidade, na simplicidade e na forma como uma experiência faz alguém se sentir.",
+  "Nossa inspiração vem da arquitetura contemporânea, da fotografia editorial, do cinema e do design minimalista. Esses elementos se unem para criar uma marca com personalidade forte, moderna e atemporal.",
+  "Mais do que produtos, estamos construindo uma comunidade formada por pessoas que valorizam performance, disciplina, elegância e evolução constante. Pessoas que entendem que o verdadeiro diferencial não está em seguir a multidão, mas em construir a própria identidade.",
+  "Cada imagem, cada campanha e cada experiência criada pela GEA tem um propósito: despertar emoções antes mesmo de apresentar qualquer produto. Queremos que cada visitante sinta curiosidade, pertencimento e expectativa ao entrar em nosso universo.",
+  "A GEA representa movimento, precisão, presença e propósito. É uma marca para quem acredita que grandes histórias começam muito antes do primeiro lançamento.",
+];
+
+const essenceClosing = [
+  "Você não chegou até aqui por acaso.",
+  "Bem-vindo ao início da história.",
 ];
 
 export function Manifesto() {
@@ -61,20 +72,73 @@ export function Manifesto() {
           Sobre a GEA
         </motion.span>
 
-        <div className="mt-10 space-y-5 text-center md:space-y-6">
-          {about.map((line, i) => (
+        <motion.h3
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 text-center text-[clamp(1.6rem,3.2vw,2.4rem)] leading-[1.25] text-gea-cream font-display italic"
+        >
+          A Essência da GEA
+        </motion.h3>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1.2, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mt-12 max-w-2xl text-center text-[clamp(1.1rem,1.9vw,1.35rem)] leading-[1.55] text-gea-cream/90"
+        >
+          {essenceIntro}
+        </motion.p>
+
+        <div className="mt-12 space-y-8 md:mt-16 md:space-y-10">
+          {essenceParagraphs.map((line, i) => (
             <motion.p
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 1, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="mx-auto max-w-2xl text-[clamp(1rem,1.6vw,1.15rem)] leading-[1.7] text-gea-cream/70"
+              transition={{ duration: 1, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="mx-auto max-w-2xl text-[clamp(0.95rem,1.5vw,1.05rem)] leading-[1.8] text-gea-cream/65"
             >
               {line}
             </motion.p>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1.2 }}
+          className="mx-auto mt-24 h-px w-10 bg-gea-sunset/40 md:mt-32"
+        />
+
+        <div className="mt-16 space-y-4 text-center md:space-y-5">
+          {essenceClosing.map((line, i) => (
+            <motion.p
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 1.2, delay: i * 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[clamp(1.2rem,2.4vw,1.8rem)] leading-[1.35] text-gea-cream/85 font-display italic"
+            >
+              {line}
+            </motion.p>
+          ))}
+        </div>
+
+        <motion.p
+          initial={{ opacity: 0, letterSpacing: "0.6em" }}
+          whileInView={{ opacity: 1, letterSpacing: "0.42em" }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-16 text-center text-[0.72rem] uppercase text-gea-sunset/70"
+        >
+          GEA — O tempo revela.
+        </motion.p>
       </div>
     </section>
   );
