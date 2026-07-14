@@ -531,6 +531,7 @@ function CopyInviteButton({ url }: { url: string }) {
               "Copy Invite Link"
             );
           } catch { /* ignore */ }
+          logInviteShare({ data: { channel: "copy_link" } }).catch(() => { /* ignore */ });
         } catch { /* ignore */ }
       }}
       className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-white/20 rounded hover:border-white/40"
