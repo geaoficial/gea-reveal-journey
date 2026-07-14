@@ -51,6 +51,7 @@ export function BlurImage({
   srcSet,
   fallbackSrc,
   fallbackTimeoutMs = 6000,
+  telemetrySection,
   ...imgProps
 }: BlurImageProps) {
   const [revealed, setRevealed] = useState(false);
