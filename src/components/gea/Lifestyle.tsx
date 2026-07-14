@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
-import lifeWatch from "@/assets/gea-life-watch.jpg.asset.json";
+import watchEditorial from "@/assets/gea-watch-editorial.jpg.asset.json";
 
 type Frame = {
   label: string;
@@ -13,8 +13,8 @@ type Frame = {
 const frames: Frame[] = [
   { label: "Relógio ao pôr do sol — silhueta preta na estrada", image: lifestyle02.url, quote: "Algumas escolhas dizem tudo." },
   {
-    label: "LIFE — smartwatch Wearzone",
-    image: lifeWatch.url,
+    label: "Smartwatch editorial — composição planetária ao pôr do sol",
+    image: watchEditorial.url,
     quote: "O tempo revela.",
   },
 ];
