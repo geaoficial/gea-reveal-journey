@@ -25,19 +25,24 @@ export function Hero() {
             transform: "scale(1.05)",
           }}
         />
-        <img
-          src={heroImage.fallback}
-          srcSet={heroImage.srcSet}
-          sizes={heroImage.sizes}
-          alt="GEA — pôr do sol na estrada"
-          className="h-full w-full object-cover object-center transition-opacity duration-700"
-          style={{ opacity: loaded ? 1 : 0 }}
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          draggable={false}
-          onLoad={() => setLoaded(true)}
-        />
+        <picture>
+          <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
+          <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
+          <img
+            src={heroImage.fallback}
+            srcSet={heroImage.srcSet}
+            sizes={heroImage.sizes}
+            alt="GEA — pôr do sol na estrada"
+            className="h-full w-full object-cover object-center transition-opacity duration-700"
+            style={{ opacity: loaded ? 1 : 0 }}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            draggable={false}
+            onLoad={() => setLoaded(true)}
+          />
+        </picture>
+
 
 
       </motion.div>
