@@ -59,7 +59,16 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
   const animateOn = !exportMode && !prefersReduced;
   // FX pesados (shine com blur, rotateX/scale wobble, sombra dinâmica) só em alto tier
   const heavyFx = animateOn && allowHeavyFx;
-  const displayName = (name || "MEMBRO EXCLUSIVO").toUpperCase();
+  const trimmedName = (name || "").trim();
+  const displayName = (trimmedName || "MEMBRO EXCLUSIVO").toUpperCase();
+  // Nome curto (primeiro + último) do concluidor do passo a passo — substitui o
+  // rótulo genérico "Membro Exclusivo GEA" quando o cadastro foi finalizado.
+  const completerLabel = (() => {
+    if (!trimmedName) return "Membro Exclusivo GEA";
+    const parts = trimmedName.split(/\s+/);
+    const short = parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1]}` : parts[0];
+    return `Concluído por ${short}`;
+  })();
   const defaultCoupon = memberId ? `GEA10-${memberId}` : "GEA10-----";
   const benefitUnlocked = benefit ? benefit.unlocked : true;
   const benefitTitle = benefit?.title ?? "10% OFF";
@@ -230,7 +239,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
                       fontFamily: "'Space Grotesk', system-ui, sans-serif",
                     }}
                   >
-                    Membro Exclusivo GEA
+                    {completerLabel}
                   </div>
                 </div>
 
