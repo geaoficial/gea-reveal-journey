@@ -25,9 +25,10 @@ export function Lifestyle() {
   });
   const fogOpacity = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.4, 0.6, 0.8, 1],
-    [0, 0.85, 0.35, 0.9, 0.4, 0],
+    [0, 0.15, 0.5, 0.85, 1],
+    [0.72, 0.85, 0.78, 0.85, 0.72],
   );
+
   const fogY = useTransform(scrollYProgress, [0, 1], ["12%", "-14%"]);
   const fogScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1.25, 1.05]);
   const shadowOpacity = useTransform(
