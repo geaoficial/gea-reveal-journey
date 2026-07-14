@@ -85,11 +85,14 @@ export function HiddenChapter() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revealed]);
 
+  const vip = useVip();
   const handleReturn = () => {
     if (typeof window === "undefined") return;
+    vip.markPending();
     const p = (window as unknown as { plausible?: (event: string, opts?: { props?: Record<string, string> }) => void }).plausible;
     p?.("Follow Instagram", { props: { location: "hidden-chapter" } });
   };
+
 
   const percent = Math.round(progress * 100);
 
