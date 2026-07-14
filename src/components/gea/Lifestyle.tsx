@@ -128,7 +128,7 @@ export function Lifestyle() {
               draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
-              placeholder="radial-gradient(ellipse at 50% 50%, #4a2410 0%, #1a0d08 55%, #000 100%)"
+              placeholder={mysteryImage.placeholder}
             />
           </motion.div>
 
