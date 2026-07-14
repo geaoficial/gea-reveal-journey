@@ -537,3 +537,99 @@ function CopyInviteButton({ url }: { url: string }) {
     </button>
   );
 }
+
+function InviteQrButton({ url, memberNumber }: { url: string; memberNumber: number }) {
+  const [open, setOpen] = useState(false);
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function generate() {
+    setLoading(true);
+    try {
+      const QR = await import("qrcode");
+      // Cinematográfico: fundo preto absoluto, módulos em prata clara.
+      const png = await QR.toDataURL(url, {
+        errorCorrectionLevel: "H",
+        margin: 2,
+        width: 720,
+        color: { dark: "#f0f0f0ff", light: "#000000ff" },
+      });
+      setDataUrl(png);
+      setOpen(true);
+      try {
+        (window as unknown as { plausible?: (n: string) => void }).plausible?.(
+          "Generate Invite QR"
+        );
+      } catch { /* ignore */ }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function download() {
+    if (!dataUrl) return;
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `gea-convite-${String(memberNumber).padStart(4, "0")}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    try {
+      (window as unknown as { plausible?: (n: string) => void }).plausible?.(
+        "Download Invite QR"
+      );
+    } catch { /* ignore */ }
+  }
+
+  return (
+    <>
+      <button
+        onClick={generate}
+        disabled={loading}
+        className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-amber-400/40 bg-amber-400/[0.06] text-amber-300 rounded hover:bg-amber-400/[0.12] disabled:opacity-40"
+      >
+        {loading ? "Gerando…" : "QR Code"}
+      </button>
+
+      {open && dataUrl && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-6"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm rounded-2xl border border-white/10 bg-black p-6 text-center"
+          >
+            <p className="text-[10px] uppercase tracking-[0.4em] text-amber-300/80">
+              Convite Nº {String(memberNumber).padStart(4, "0")}
+            </p>
+            <div className="mt-4 rounded-lg bg-black p-3">
+              <img
+                src={dataUrl}
+                alt="QR code do link de convite"
+                className="mx-auto h-64 w-64"
+              />
+            </div>
+            <p className="mt-4 break-all text-[10px] text-white/40">{url}</p>
+            <div className="mt-5 flex gap-2">
+              <button
+                onClick={download}
+                className="flex-1 rounded bg-white text-black py-2.5 text-[10px] uppercase tracking-[0.3em]"
+              >
+                Baixar PNG
+              </button>
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded border border-white/20 px-4 py-2.5 text-[10px] uppercase tracking-[0.3em] text-white/70 hover:text-white"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
