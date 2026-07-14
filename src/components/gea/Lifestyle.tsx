@@ -62,11 +62,24 @@ export function Lifestyle() {
       {/* Cena 2 — teaser misterioso do próximo drop */}
       <div className="relative">
         <motion.div
+          ref={revealRef}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 1.6 }}
-          className="relative h-[100dvh] w-full overflow-hidden bg-black"
+          onMouseMove={(e) => updateFromEvent(e.clientX, e.clientY)}
+          onMouseEnter={(e) => updateFromEvent(e.clientX, e.clientY)}
+          onMouseLeave={() => setReveal((r) => ({ ...r, active: false }))}
+          onTouchStart={(e) => {
+            const t = e.touches[0];
+            if (t) updateFromEvent(t.clientX, t.clientY);
+          }}
+          onTouchMove={(e) => {
+            const t = e.touches[0];
+            if (t) updateFromEvent(t.clientX, t.clientY);
+          }}
+          onTouchEnd={() => setReveal((r) => ({ ...r, active: false }))}
+          className="relative h-[100dvh] w-full overflow-hidden bg-black cursor-none touch-none"
         >
           <motion.div
             initial={{ scale: 1.2, opacity: 0.6 }}
