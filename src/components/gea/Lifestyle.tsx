@@ -225,27 +225,19 @@ export function Lifestyle() {
             }}
           />
 
-          {/* Fumaça densa subindo — fixa, sem reagir ao scroll */}
-          <motion.div
+          {/* Fumaça densa subindo — ancorada rigidamente na base em todos os breakpoints */}
+          <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-[-15%] bottom-[-20%] h-[110%] mix-blend-screen"
+            className="pointer-events-none absolute left-0 right-0 bottom-0 h-[70%] mix-blend-screen origin-bottom"
             style={{
               background:
-                "radial-gradient(ellipse 45% 55% at 30% 85%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 80%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 95%, rgba(120,55,20,0.6) 0%, transparent 72%)",
+                "radial-gradient(ellipse 45% 55% at 30% 100%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 100%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 100%, rgba(120,55,20,0.6) 0%, transparent 72%)",
               filter: `blur(${blurFor(perfTier, lite ? 28 : 50)}px)`,
               opacity: 0.9,
-              willChange: reducedMotion ? undefined : "transform",
               transform: "translateZ(0)",
             }}
-            animate={
-              reducedMotion
-                ? undefined
-                : lite
-                  ? { scale: [1, 1.04, 1] }
-                  : { scale: [1, 1.08, 1] }
-            }
-            transition={{ duration: lite ? 26 : 20, repeat: Infinity, ease: "easeInOut" }}
           />
+
 
 
           {/* Fumaça lenta ascendente — meio da cena (desktop only) */}
