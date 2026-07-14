@@ -36,16 +36,13 @@ export function Lifestyle() {
               transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
               className="h-full w-full"
             >
-              {frame.image ? (
-                <img
-                  src={frame.image}
-                  alt={frame.label}
-                  loading="lazy"
-                  className="h-full w-full object-cover object-center"
-                />
-              ) : (
-                <Placeholder label={frame.label} tint={frame.tint} className="h-full w-full" />
-              )}
+              <img
+                src={frame.image}
+                alt={frame.label}
+                loading="lazy"
+                className="h-full w-full object-cover object-center"
+              />
+
 
             </motion.div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
