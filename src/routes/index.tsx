@@ -88,24 +88,33 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <main className="bg-gea-black text-gea-cream">
-      <Hero />
-      <Manifesto />
-      <Lifestyle />
-      <InstagramSection />
-      <VipArea />
-      <HiddenChapter />
-      <CinematicTrailer />
-      <ShareDock />
-      <VipUnlockOverlay />
+      <SilentBoundary><Hero /></SilentBoundary>
+      <SilentBoundary><Manifesto /></SilentBoundary>
+      <SilentBoundary><Lifestyle /></SilentBoundary>
+      <SilentBoundary><InstagramSection /></SilentBoundary>
+      <SilentBoundary><VipArea /></SilentBoundary>
+      <SilentBoundary><HiddenChapter /></SilentBoundary>
+      <SilentBoundary><CinematicFx /></SilentBoundary>
+      <SilentBoundary><ShareDock /></SilentBoundary>
+      <SilentBoundary><VipUnlockOverlay /></SilentBoundary>
+    </main>
+  );
+}
 
+function CinematicFx() {
+  const { allowHeavyFx, reducedMotion } = useDeviceCapability();
+  return (
+    <>
+      {allowHeavyFx && <CinematicTrailer />}
       {/* Global cinematic grain overlay, tied to --grain-opacity */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 z-40 mix-blend-overlay"
         style={{
-          opacity: "var(--grain-opacity)",
-          backgroundImage:
-            "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+          opacity: allowHeavyFx ? "var(--grain-opacity)" : 0,
+          backgroundImage: allowHeavyFx
+            ? "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")"
+            : "none",
           transition: "opacity 400ms ease",
         }}
       />
@@ -119,7 +128,7 @@ function Index() {
           transition: "background 400ms ease",
         }}
       />
-      <CinematicControls />
-    </main>
+      {!reducedMotion && <CinematicControls />}
+    </>
   );
 }
