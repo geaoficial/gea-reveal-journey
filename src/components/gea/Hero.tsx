@@ -104,7 +104,7 @@ export function Hero() {
               width={1920}
               height={1280}
               alt="GEA — pôr do sol na estrada"
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-cover object-[62%_55%] md:object-center"
               style={{
                 opacity: 1,
                 imageRendering: "auto",
