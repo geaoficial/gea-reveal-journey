@@ -14,16 +14,211 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vip_benefits: {
+        Row: {
+          active: boolean
+          code: string | null
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          min_invites: number
+          starts_at: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          min_invites?: number
+          starts_at?: string | null
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          min_invites?: number
+          starts_at?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      vip_events: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string | null
+          payload: Json
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id?: string | null
+          payload?: Json
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string | null
+          payload?: Json
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vip_events_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "vip_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vip_invites: {
+        Row: {
+          confirmed_at: string | null
+          created_at: string
+          id: string
+          invitee_id: string | null
+          sponsor_id: string
+          status: string
+        }
+        Insert: {
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          invitee_id?: string | null
+          sponsor_id: string
+          status?: string
+        }
+        Update: {
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          invitee_id?: string | null
+          sponsor_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vip_invites_invitee_id_fkey"
+            columns: ["invitee_id"]
+            isOneToOne: false
+            referencedRelation: "vip_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vip_invites_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "vip_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vip_members: {
+        Row: {
+          accepted_terms_at: string
+          access_code: string
+          benefits_history: Json
+          city: string | null
+          full_name: string
+          id: string
+          instagram_handle: string
+          invited_by: string | null
+          member_number: number
+          status: string
+          unlocked_at: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_terms_at?: string
+          access_code: string
+          benefits_history?: Json
+          city?: string | null
+          full_name: string
+          id?: string
+          instagram_handle: string
+          invited_by?: string | null
+          member_number?: number
+          status?: string
+          unlocked_at?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_terms_at?: string
+          access_code?: string
+          benefits_history?: Json
+          city?: string | null
+          full_name?: string
+          id?: string
+          instagram_handle?: string
+          invited_by?: string | null
+          member_number?: number
+          status?: string
+          unlocked_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vip_members_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "vip_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +345,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
