@@ -1,15 +1,38 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { heroImage } from "@/lib/responsive-image";
 
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const barHeight = useTransform(scrollYProgress, [0, 1], ["8vh", "14vh"]);
+
+  // Reveal quando a imagem estiver decodificada — cobre também o caso
+  // em que a imagem já veio pronta do cache/SSR (onLoad não dispara).
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+    const reveal = () =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setLoaded(true)));
+    if (img.complete && img.naturalWidth > 0) {
+      (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(reveal);
+      return;
+    }
+    const onLoad = () => reveal();
+    const onError = () => reveal();
+    img.addEventListener("load", onLoad, { once: true });
+    img.addEventListener("error", onError, { once: true });
+    return () => {
+      img.removeEventListener("load", onLoad);
+      img.removeEventListener("error", onError);
+    };
+  }, []);
+
 
   return (
     <section ref={ref} className="relative h-[100dvh] w-full overflow-hidden bg-gea-black">
