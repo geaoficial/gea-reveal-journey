@@ -13,6 +13,10 @@ type BlurImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   avifSrcSet?: string;
   /** Optional WebP srcSet — served via <source type="image/webp"> */
   webpSrcSet?: string;
+  /** Explicit JPEG fallback URL — used as background-image if <picture> fails. */
+  fallbackSrc?: string;
+  /** Ms until a stalled image auto-falls-back to background-image. Default 6000. */
+  fallbackTimeoutMs?: number;
 };
 
 // Curva cinematográfica — desaceleração suave, sem overshoot.
