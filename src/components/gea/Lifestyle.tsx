@@ -102,6 +102,7 @@ export function Lifestyle() {
             avifSrcSet={lifestyleImage.avif}
             sizes={lifestyleImage.sizes}
             fallbackSrc={lifestyleImage.fallback}
+            telemetrySection="lifestyle-hero"
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="eager"
             decoding="async"
