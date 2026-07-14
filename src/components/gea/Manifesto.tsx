@@ -9,15 +9,11 @@ const lines = [
 ];
 
 const essenceIntro =
-  "A GEA nasceu para quem acredita que presença vale mais do que aparência.";
+  "Uma marca para quem acredita que presença vale mais do que aparência.";
 
 const essenceParagraphs = [
-  "Não seguimos tendências passageiras. Criamos uma identidade baseada em elegância, atitude e autenticidade. Cada detalhe da marca é pensado para transmitir confiança, sofisticação e um estilo de vida que valoriza o tempo, as escolhas e a forma como cada pessoa se apresenta ao mundo.",
-  "A GEA acredita que luxo não precisa chamar atenção. Ele é percebido nos detalhes, na qualidade, na simplicidade e na forma como uma experiência faz alguém se sentir.",
-  "Nossa inspiração vem da arquitetura contemporânea, da fotografia editorial, do cinema e do design minimalista. Esses elementos se unem para criar uma marca com personalidade forte, moderna e atemporal.",
-  "Mais do que produtos, estamos construindo uma comunidade formada por pessoas que valorizam performance, disciplina, elegância e evolução constante. Pessoas que entendem que o verdadeiro diferencial não está em seguir a multidão, mas em construir a própria identidade.",
-  "Cada imagem, cada campanha e cada experiência criada pela GEA tem um propósito: despertar emoções antes mesmo de apresentar qualquer produto. Queremos que cada visitante sinta curiosidade, pertencimento e expectativa ao entrar em nosso universo.",
-  "A GEA representa movimento, precisão, presença e propósito. É uma marca para quem acredita que grandes histórias começam muito antes do primeiro lançamento.",
+  "Elegância, atitude e autenticidade em cada detalhe.",
+  "Inspirada na arquitetura, no cinema e no design minimalista.",
 ];
 
 const essenceClosing = [
