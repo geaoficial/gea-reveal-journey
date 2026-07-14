@@ -111,9 +111,9 @@ export function Lifestyle() {
             whileInView={{ scale: 1.04, opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
-            className="h-full w-full"
+            className="relative h-full w-full"
           >
-            <img
+            <BlurImage
               src={watchMystery.url}
               alt="Próximo drop GEA — em breve"
               loading="lazy"
@@ -123,8 +123,8 @@ export function Lifestyle() {
               draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
+              placeholder="radial-gradient(ellipse at 50% 50%, #4a2410 0%, #1a0d08 55%, #000 100%)"
             />
-
           </motion.div>
 
           {/* Sombras progressivas — respiram conforme o scroll */}
