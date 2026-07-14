@@ -222,7 +222,7 @@ export const listAdminInvites = createServerFn({ method: "GET" })
     const { data } = await supabaseAdmin
       .from("vip_invites")
       .select(
-        "id, status, created_at, confirmed_at, sponsor:sponsor_id(id, member_number, full_name, instagram_handle), invitee:invitee_id(id, member_number, full_name, instagram_handle)",
+        "id, status, created_at, confirmed_at, sponsor:vip_members!vip_invites_sponsor_id_fkey(id, member_number, full_name, instagram_handle), invitee:vip_members!vip_invites_invitee_id_fkey(id, member_number, full_name, instagram_handle)",
       )
       .order("created_at", { ascending: false })
       .limit(500);
