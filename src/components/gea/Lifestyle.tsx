@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
-import watchMystery from "@/assets/gea-smartwatch-mystery.jpg.asset.json";
+import watchMystery from "@/assets/gea-life-mystery.jpg.asset.json";
 
 export function Lifestyle() {
   return (
