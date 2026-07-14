@@ -582,6 +582,15 @@ function MemberPanel({
       >
         Sair
       </button>
+
+      {highlightedBenefit && (
+        <CouponUnlockOverlay
+          open={couponOverlayOpen}
+          onClose={() => setCouponOverlayOpen(false)}
+          benefit={highlightedBenefit}
+          memberId={member.id}
+        />
+      )}
     </div>
   );
 }
