@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type ImgHTMLAttributes,
 } from "react";
+import { reportImageFailure } from "@/lib/image-telemetry";
 
 type BlurImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   /** CSS background used as the blurred placeholder (gradient or solid). */
@@ -17,6 +18,8 @@ type BlurImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   fallbackSrc?: string;
   /** Ms until a stalled image auto-falls-back to background-image. Default 6000. */
   fallbackTimeoutMs?: number;
+  /** Nome da seção usado nos eventos de telemetria (ex.: "lifestyle-hero"). */
+  telemetrySection?: string;
 };
 
 // Curva cinematográfica — desaceleração suave, sem overshoot.
