@@ -32,6 +32,8 @@ export function Hero() {
             src={heroImage.fallback}
             srcSet={heroImage.srcSet}
             sizes={heroImage.sizes}
+            width={1920}
+            height={1280}
             alt="GEA — pôr do sol na estrada"
             className="h-full w-full object-cover object-center transition-opacity duration-700"
             style={{ opacity: loaded ? 1 : 0 }}
