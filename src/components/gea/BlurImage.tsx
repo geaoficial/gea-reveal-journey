@@ -46,6 +46,8 @@ export function BlurImage({
   webpSrcSet,
   sizes,
   srcSet,
+  fallbackSrc,
+  fallbackTimeoutMs = 6000,
   ...imgProps
 }: BlurImageProps) {
   const [revealed, setRevealed] = useState(false);
