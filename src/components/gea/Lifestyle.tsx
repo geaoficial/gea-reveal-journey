@@ -4,6 +4,22 @@ import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 import watchMystery from "@/assets/gea-life-mystery.jpg.asset.json";
 
 export function Lifestyle() {
+  const revealRef = useRef<HTMLDivElement>(null);
+  const [reveal, setReveal] = useState<{ x: number; y: number; active: boolean }>({
+    x: 50,
+    y: 55,
+    active: false,
+  });
+
+  const updateFromEvent = (clientX: number, clientY: number) => {
+    const el = revealRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
+    setReveal({ x, y, active: true });
+  };
+
   return (
     <section className="relative bg-gea-black">
       {/* Cena 1 — lifestyle sunset */}
