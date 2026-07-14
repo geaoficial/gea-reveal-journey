@@ -330,12 +330,7 @@ function MemberPanel({
       confirmFollow().then((r) => {
         if (r.ok) {
           if (!r.already) {
-            track("Vip Follow Confirmed", {
-              memberId: member.id,
-              elapsedMs,
-            });
-            // flip do cartão é disparado no useEffect que observa cardUnlocked
-          } else if (r.ok) {
+            track("Vip Follow Confirmed", { memberId: member.id, elapsedMs });
           } else {
             track("Vip Follow Reconfirmed", { memberId: member.id });
           }
