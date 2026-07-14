@@ -644,7 +644,9 @@ function InviteQrButton({ url, memberNumber, onShared }: { url: string; memberNu
         "Download Invite QR"
       );
     } catch { /* ignore */ }
-    logInviteShare({ data: { channel: "qr_download" } }).catch(() => { /* ignore */ });
+    logInviteShare({ data: { channel: "qr_download" } })
+      .then(() => onShared?.())
+      .catch(() => { /* ignore */ });
   }
 
   return (
