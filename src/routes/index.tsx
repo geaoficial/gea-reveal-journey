@@ -13,7 +13,7 @@ import { SilentBoundary } from "@/components/gea/SilentBoundary";
 import { useDeviceCapability } from "@/lib/device-capability";
 
 import ogAsset from "@/assets/gea-og-cover.jpg.asset.json";
-import { heroImage } from "@/lib/responsive-image";
+import { heroImage, lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { getRequestOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/")({
@@ -62,9 +62,27 @@ export const Route = createFileRoute("/")({
           as: "image",
           type: "image/avif",
           href: heroImage.preloadHref,
-          imagesrcset: heroImage.avif,
-          imagesizes: heroImage.sizes,
-          fetchpriority: "high",
+          imageSrcSet: heroImage.avif,
+          imageSizes: heroImage.sizes,
+          fetchPriority: "high",
+        },
+        {
+          rel: "preload",
+          as: "image",
+          type: "image/avif",
+          href: lifestyleImage.preloadHref,
+          imageSrcSet: lifestyleImage.avif,
+          imageSizes: lifestyleImage.sizes,
+          fetchPriority: "low",
+        },
+        {
+          rel: "preload",
+          as: "image",
+          type: "image/avif",
+          href: mysteryImage.preloadHref,
+          imageSrcSet: mysteryImage.avif,
+          imageSizes: mysteryImage.sizes,
+          fetchPriority: "low",
         },
       ],
       scripts: [
