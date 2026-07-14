@@ -111,3 +111,47 @@ html {
   outline: 2px solid var(--gea-sunset, #f59e0b);
   outline-offset: 2px;
 }
+
+/* Legal pages typography (Instrument Serif headings, Inter body) */
+.legal-prose h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: #efefef;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.01em;
+}
+.legal-prose h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: #a8a8a8;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.legal-prose p { margin-bottom: 1rem; }
+.legal-prose ul { list-style: none; padding-left: 0; margin-bottom: 1rem; }
+.legal-prose ul li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.legal-prose ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 0.5rem;
+  height: 1px;
+  background: rgba(201, 201, 201, 0.35);
+}
+.legal-prose a {
+  color: #e0e0e0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(201, 201, 201, 0.35);
+}
+.legal-prose a:hover { color: #ffffff; }
+.legal-prose strong { color: #e8e8e8; font-weight: 500; }
