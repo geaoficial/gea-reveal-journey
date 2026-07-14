@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { FounderBadge } from "./FounderBadge";
+import { BenefitCards } from "./BenefitCards";
 import { useVip } from "@/lib/vip";
 
 const IG_URL = "https://instagram.com/geastoree";
@@ -40,23 +41,7 @@ export function InstagramSection() {
           Os bastidores, lançamentos e novidades aparecem primeiro no Instagram.
         </motion.p>
 
-        <motion.ul
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="mx-auto mt-14 flex max-w-2xl flex-col gap-3 text-center text-[0.7rem] uppercase tracking-[0.32em] text-gea-cream/70 sm:flex-row sm:justify-center sm:gap-8"
-        >
-          <li className="flex items-center justify-center gap-2">
-            <span className="text-gea-sunset">✦</span> Acesso antecipado aos drops
-          </li>
-          <li className="flex items-center justify-center gap-2">
-            <span className="text-gea-sunset">✦</span> Bastidores exclusivos
-          </li>
-          <li className="flex items-center justify-center gap-2">
-            <span className="text-gea-sunset">✦</span> Selo VIP exclusivo
-          </li>
-        </motion.ul>
+        <BenefitCards />
 
         <div className="mt-10 flex flex-col items-center">
           <motion.a
