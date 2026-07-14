@@ -25,9 +25,10 @@ export function Lifestyle() {
   });
   const fogOpacity = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.5, 0.85, 1],
-    [0.72, 0.85, 0.78, 0.85, 0.72],
+    [0, 0.5, 1],
+    [0.88, 0.92, 0.88],
   );
+
 
   const fogY = useTransform(scrollYProgress, [0, 1], ["12%", "-14%"]);
   const fogScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1.25, 1.05]);
@@ -194,7 +195,7 @@ export function Lifestyle() {
           {/* Névoa âmbar — dissolve e reaparece com o scroll */}
           <motion.div
             aria-hidden
-            style={{ opacity: fogOpacity, y: fogY, scale: fogScale }}
+            style={{ opacity: fogOpacity }}
             className="pointer-events-none absolute inset-0 mix-blend-screen"
           >
             <div
