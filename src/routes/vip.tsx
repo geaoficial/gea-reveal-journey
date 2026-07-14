@@ -293,15 +293,20 @@ function MemberPanel({
   const clickedAtRef = useRef<number | null>(null);
   const prevUnlockedRef = useRef(cardUnlocked);
   const [justUnlocked, setJustUnlocked] = useState(false);
+  const [couponOverlayOpen, setCouponOverlayOpen] = useState(false);
 
-  // Dispara flip do cartão no instante em que ambas as condições ficam verdadeiras.
+  // Dispara flip do cartão + overlay de cupom no instante em que ambas as condições ficam verdadeiras.
   useEffect(() => {
     if (cardUnlocked && !prevUnlockedRef.current) {
       setJustUnlocked(true);
+      // Aguarda o giro do cartão antes de revelar o overlay do cupom.
+      const t = setTimeout(() => setCouponOverlayOpen(true), 900);
       try {
         (window as unknown as { plausible?: (n: string, o?: { props?: Record<string, unknown> }) => void })
           .plausible?.("Vip Card Unlocked", { props: { memberId: member.id } });
       } catch { /* ignore */ }
+      prevUnlockedRef.current = cardUnlocked;
+      return () => clearTimeout(t);
     }
     prevUnlockedRef.current = cardUnlocked;
   }, [cardUnlocked, member.id]);
