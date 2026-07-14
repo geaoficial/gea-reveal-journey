@@ -11,6 +11,7 @@ import {
   logInviteShare,
 } from "@/lib/vip-agent.functions";
 import { VipCard } from "@/components/gea/VipCard";
+import { CouponRedeemPanel, CouponUnlockOverlay } from "@/components/gea/CouponReveal";
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
