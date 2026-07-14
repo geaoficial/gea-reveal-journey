@@ -40,15 +40,31 @@ export function InstagramSection() {
           Os bastidores, lançamentos e novidades aparecem primeiro no Instagram.
         </motion.p>
 
-        <div className="mt-16 flex flex-col items-center">
+        <motion.ul
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="mx-auto mt-14 flex max-w-2xl flex-col gap-3 text-center text-[0.7rem] uppercase tracking-[0.32em] text-gea-cream/70 sm:flex-row sm:justify-center sm:gap-8"
+        >
+          <li className="flex items-center justify-center gap-2">
+            <span className="text-gea-sunset">✦</span> Acesso antecipado aos drops
+          </li>
+          <li className="flex items-center justify-center gap-2">
+            <span className="text-gea-sunset">✦</span> Bastidores exclusivos
+          </li>
+          <li className="flex items-center justify-center gap-2">
+            <span className="text-gea-sunset">✦</span> Selo VIP de fundador
+          </li>
+        </motion.ul>
+
+        <div className="mt-10 flex flex-col items-center">
           <motion.a
             href={IG_URL}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => vip.markPending()}
             initial={{ opacity: 0, y: 20 }}
-
-
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
@@ -64,9 +80,9 @@ export function InstagramSection() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.4 }}
-            className="mt-8 max-w-md text-center text-xs italic text-gea-cream/45 font-display"
+            className="mt-6 max-w-md text-center text-xs italic text-gea-cream/45 font-display"
           >
-            Junte-se aos primeiros que estão acompanhando essa jornada.
+            Ao seguir, você entra na comunidade fundadora e desbloqueia seu Selo VIP.
           </motion.p>
         </div>
 
