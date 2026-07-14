@@ -46,7 +46,7 @@ export function InstagramSection() {
             viewport={{ once: true }}
             transition={{ duration: 1 }}
             whileHover={{ scale: 1.02 }}
-            className="group relative inline-flex items-center gap-4 bg-gea-cream px-10 py-5 text-[0.72rem] uppercase tracking-[0.36em] text-gea-black transition-colors duration-500 hover:bg-gea-sunset"
+            className="plausible-event-name=Follow+Instagram plausible-event-location=instagram-section group relative inline-flex items-center gap-4 bg-gea-cream px-10 py-5 text-[0.72rem] uppercase tracking-[0.36em] text-gea-black transition-colors duration-500 hover:bg-gea-sunset"
           >
             Seguir @geastoree
             <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">→</span>
