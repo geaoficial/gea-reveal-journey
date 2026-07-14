@@ -26,7 +26,11 @@
   --foreground: #f5f2ec;
   --font-display: "Instrument Serif", ui-serif, Georgia, serif;
   --font-body: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  /* Cinematic treatment intensity (0 = off, 1 = strong). Overridden at runtime. */
+  --grain-opacity: 0.06;
+  --vignette-opacity: 0.55;
 }
+
 
 html {
   scroll-behavior: smooth;
