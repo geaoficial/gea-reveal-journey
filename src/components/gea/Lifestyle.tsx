@@ -194,7 +194,7 @@ export function Lifestyle() {
           {/* Névoa âmbar — dissolve e reaparece com o scroll */}
           <motion.div
             aria-hidden
-            style={{ opacity: fogOpacity, y: fogY, scale: fogScale }}
+            style={{ opacity: fogOpacity }}
             className="pointer-events-none absolute inset-0 mix-blend-screen"
           >
             <div
