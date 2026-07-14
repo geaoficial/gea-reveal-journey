@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 import watchMystery from "@/assets/gea-life-mystery.jpg.asset.json";
@@ -11,6 +11,24 @@ export function Lifestyle() {
     active: false,
   });
 
+  // Névoa âmbar dirigida por scroll — dissolve e reaparece conforme o teaser cruza a viewport
+  const { scrollYProgress } = useScroll({
+    target: revealRef,
+    offset: ["start end", "end start"],
+  });
+  const fogOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    [0, 0.85, 0.35, 0.9, 0.4, 0],
+  );
+  const fogY = useTransform(scrollYProgress, [0, 1], ["12%", "-14%"]);
+  const fogScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1.25, 1.05]);
+  const shadowOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.5, 0.75, 1],
+    [0.95, 0.55, 0.8, 0.5, 0.95],
+  );
+
   const updateFromEvent = (clientX: number, clientY: number) => {
     const el = revealRef.current;
     if (!el) return;
@@ -19,6 +37,7 @@ export function Lifestyle() {
     const y = ((clientY - rect.top) / rect.height) * 100;
     setReveal({ x, y, active: true });
   };
+
 
   return (
     <section className="relative bg-gea-black">
