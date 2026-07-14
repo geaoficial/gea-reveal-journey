@@ -390,47 +390,91 @@ function MemberPanel({
             memberId={String(member.memberNumber).padStart(4, "0")}
             unlockedAt={member.unlockedAt}
             benefit={highlightedBenefit}
-            revealBack={justConfirmed}
+            revealBack={justUnlocked || cardUnlocked}
           />
-
         </div>
 
-
         <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-          {followed ? (
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
-                  {justConfirmed ? "Bem-vindo ao círculo" : "Você já segue @geastoree"}
-                </div>
-                <div className="mt-1 text-xs text-white/50">
-                  Confirmado em{" "}
-                  {new Date(instagramFollowedAt!).toLocaleDateString("pt-BR")}
-                </div>
+          {cardUnlocked ? (
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
+                {justUnlocked ? "Cartão desbloqueado" : "Círculo completo"}
               </div>
-              <button
-                onClick={openInstagram}
-                className="text-[10px] uppercase tracking-[0.3em] text-white/50 hover:text-white"
-              >
-                Abrir perfil ↗
-              </button>
+              <p className="mt-2 text-xs text-white/50">
+                Você seguiu @geastoree e compartilhou seu convite. Vire o cartão para ver seu cupom.
+              </p>
             </div>
           ) : (
             <>
-              <p className="text-xs text-white/60">
-                Complete seu cadastro no círculo: siga o Instagram oficial. Voltamos
-                automaticamente quando você retornar aqui.
+              <p className="text-[10px] uppercase tracking-[0.35em] text-amber-300/70">
+                Desbloqueio do cartão · 2 passos
               </p>
-              <button
-                onClick={openInstagram}
-                className="mt-4 w-full rounded bg-white text-black py-3 text-xs uppercase tracking-[0.35em] hover:bg-white/90"
-              >
-                Seguir @geastoree
-              </button>
+              <ol className="mt-4 space-y-3">
+                <li className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span
+                        className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${
+                          followed
+                            ? "border-emerald-400/50 bg-emerald-400/20 text-emerald-300"
+                            : "border-white/25 text-white/50"
+                        }`}
+                      >
+                        {followed ? "✓" : "1"}
+                      </span>
+                      <span className={followed ? "text-white/60 line-through" : "text-white"}>
+                        Siga @geastoree no Instagram
+                      </span>
+                    </div>
+                    {followed && instagramFollowedAt && (
+                      <div className="mt-1 pl-7 text-[10px] uppercase tracking-[0.3em] text-white/40">
+                        Confirmado em {new Date(instagramFollowedAt).toLocaleDateString("pt-BR")}
+                      </div>
+                    )}
+                  </div>
+                  {!followed && (
+                    <button
+                      onClick={openInstagram}
+                      className="shrink-0 rounded bg-white px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-black hover:bg-white/90"
+                    >
+                      Seguir
+                    </button>
+                  )}
+                </li>
+                <li className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span
+                        className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${
+                          shared
+                            ? "border-emerald-400/50 bg-emerald-400/20 text-emerald-300"
+                            : "border-white/25 text-white/50"
+                        }`}
+                      >
+                        {shared ? "✓" : "2"}
+                      </span>
+                      <span className={shared ? "text-white/60 line-through" : "text-white"}>
+                        Compartilhe seu convite pessoal
+                      </span>
+                    </div>
+                    <div className="mt-1 pl-7 text-[10px] uppercase tracking-[0.3em] text-white/40">
+                      {shared
+                        ? `Compartilhado em ${new Date(inviteSharedAt!).toLocaleDateString("pt-BR")}`
+                        : "Use um dos botões de compartilhamento abaixo"}
+                    </div>
+                  </div>
+                </li>
+              </ol>
+              <p className="mt-4 text-[11px] text-white/40">
+                Ao concluir as duas ações seu cartão vira automaticamente e revela o cupom exclusivo.
+              </p>
             </>
           )}
         </div>
       </section>
+
+
+
 
 
       <section>
