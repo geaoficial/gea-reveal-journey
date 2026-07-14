@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useVelocity, useSpring, useMotionTemplate } from "motion/react";
+import { motion, useScroll, useTransform, useVelocity, useSpring } from "motion/react";
 import { useRef, useState } from "react";
 import { lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { BlurImage } from "./BlurImage";
