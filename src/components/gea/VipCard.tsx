@@ -10,175 +10,135 @@ type Props = {
 };
 
 /**
- * Cartão VIP GEA — preto fosco, detalhes em prata, aparência premium.
- * Usa `forwardRef` para permitir captura em canvas (compartilhamento).
+ * Cartão Clube GEA — inspirado no cartão de visita oficial da marca:
+ * preto fosco absoluto, logo GEA em prata escovada com relevo,
+ * divisor vertical fino e tipografia técnica minimalista.
  */
 export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
   { name, memberId, unlockedAt, exportMode = false },
   ref
 ) {
+  const silverText: React.CSSProperties = {
+    background:
+      "linear-gradient(180deg, #f4f4f4 0%, #d4d4d4 40%, #8a8a8a 70%, #cfcfcf 100%)",
+    WebkitBackgroundClip: "text",
+    backgroundClip: "text",
+    color: "transparent",
+    fontFamily: "'Space Grotesk', system-ui, sans-serif",
+  };
+
   return (
     <div
       ref={ref}
-      className="relative aspect-[1.586/1] w-full max-w-md overflow-hidden"
+      className="relative aspect-[1.75/1] w-full max-w-md overflow-hidden rounded-[14px]"
       style={{
         background:
-          "linear-gradient(140deg, #0a0a0a 0%, #141414 45%, #050505 100%)",
+          "radial-gradient(120% 100% at 30% 20%, #141414 0%, #0a0a0a 55%, #050505 100%)",
         boxShadow: exportMode
           ? "none"
-          : "0 30px 80px -30px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,200,200,0.08)",
+          : "0 40px 100px -40px rgba(0,0,0,0.95), 0 0 0 1px rgba(200,200,200,0.06)",
       }}
     >
-      {/* Textura metálica sutil */}
+      {/* Textura de papel fosco */}
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.18]"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 15% 10%, rgba(220,220,220,0.35) 0%, transparent 55%), radial-gradient(90% 70% at 85% 90%, rgba(232,138,58,0.18) 0%, transparent 60%)",
-          mixBlendMode: "screen",
-        }}
-      />
-      {/* Padrão guilhoché discreto */}
-      <div
-        aria-hidden
-        className="absolute inset-0 opacity-[0.05]"
+        className="absolute inset-0 opacity-[0.35] mix-blend-overlay"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(45deg, rgba(255,255,255,0.6) 0 1px, transparent 1px 6px)",
+            "radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), radial-gradient(rgba(0,0,0,0.4) 1px, transparent 1px)",
+          backgroundSize: "3px 3px, 5px 5px",
+          backgroundPosition: "0 0, 1px 2px",
         }}
       />
-      {/* Moldura prateada */}
+      {/* Luz superior sutil */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-[6px] border"
+        className="absolute inset-0"
         style={{
-          borderColor: "rgba(200,200,200,0.22)",
+          background:
+            "linear-gradient(160deg, rgba(255,255,255,0.05) 0%, transparent 45%)",
         }}
       />
 
-      <div className="relative flex h-full flex-col justify-between p-6 sm:p-7">
-        {/* Topo */}
-        <div className="flex items-start justify-between">
+      <div className="relative flex h-full items-stretch px-6 py-6 sm:px-8 sm:py-7">
+        {/* Logo GEA — lado esquerdo */}
+        <div className="flex flex-1 items-center justify-center">
+          <div
+            className="text-5xl sm:text-6xl leading-none"
+            style={{
+              ...silverText,
+              fontWeight: 400,
+              letterSpacing: "0.04em",
+              textShadow: exportMode
+                ? undefined
+                : "0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.6)",
+            }}
+          >
+            GEA
+          </div>
+        </div>
+
+        {/* Divisor vertical prateado */}
+        <div
+          aria-hidden
+          className="mx-4 w-px shrink-0 self-stretch sm:mx-6"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 0%, rgba(210,210,210,0.55) 20%, rgba(210,210,210,0.55) 80%, transparent 100%)",
+          }}
+        />
+
+        {/* Bloco de informações — lado direito */}
+        <div className="flex flex-[1.4] flex-col justify-center gap-3">
           <div>
             <div
-              className="text-[0.55rem] uppercase"
-              style={{
-                letterSpacing: "0.5em",
-                color: "rgba(220,220,220,0.55)",
-              }}
+              className="text-[0.85rem] sm:text-[0.95rem] leading-tight"
+              style={{ ...silverText, fontWeight: 500, letterSpacing: "0.08em" }}
             >
-              GEA · Est. 2024
+              {(name || "MEMBRO ANÔNIMO").toUpperCase()}
             </div>
             <div
-              className="mt-3 text-3xl sm:text-4xl"
+              className="mt-1 text-[0.5rem] uppercase"
               style={{
+                letterSpacing: "0.42em",
+                color: "rgba(200,200,200,0.5)",
                 fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                fontWeight: 500,
-                letterSpacing: "0.08em",
-                background:
-                  "linear-gradient(180deg, #f5f5f5 0%, #b8b8b8 55%, #7a7a7a 100%)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
               }}
             >
-              GEA
+              Membro Fundador · GEA
             </div>
           </div>
 
           <div
-            className="text-right text-[0.55rem] uppercase"
-            style={{
-              letterSpacing: "0.4em",
-              color: "rgba(220,220,220,0.55)",
-            }}
-          >
-            <div>Selo</div>
-            <div
-              className="mt-1"
-              style={{ color: "#e8e8e8", letterSpacing: "0.32em" }}
-            >
-              VIP MEMBER
-            </div>
-          </div>
-        </div>
-
-        {/* Meio — chip prateado */}
-        <div className="flex items-center gap-4">
-          <div
-            className="relative h-9 w-12 sm:h-10 sm:w-14 overflow-hidden"
+            aria-hidden
+            className="h-px w-full"
             style={{
               background:
-                "linear-gradient(135deg, #c9c9c9 0%, #7d7d7d 45%, #eaeaea 60%, #6b6b6b 100%)",
-              borderRadius: 3,
+                "linear-gradient(90deg, rgba(210,210,210,0.35), transparent)",
             }}
-          >
-            <div
-              aria-hidden
-              className="absolute inset-[3px]"
-              style={{
-                background:
-                  "repeating-linear-gradient(0deg, rgba(0,0,0,0.35) 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, rgba(0,0,0,0.35) 0 1px, transparent 1px 4px)",
-                mixBlendMode: "multiply",
-              }}
-            />
-          </div>
-          <div
-            className="text-[0.6rem] uppercase"
-            style={{
-              letterSpacing: "0.42em",
-              color: "rgba(232,138,58,0.85)",
-            }}
-          >
-            Primeiros da GEA
-          </div>
-        </div>
+          />
 
-        {/* Rodapé */}
-        <div className="flex items-end justify-between gap-4">
-          <div className="min-w-0">
-            <div
-              className="text-[0.5rem] uppercase"
-              style={{
-                letterSpacing: "0.5em",
-                color: "rgba(220,220,220,0.45)",
-              }}
-            >
-              Membro
-            </div>
-            <div
-              className="mt-1 truncate text-sm sm:text-base"
-              style={{
-                fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                color: "#f0f0f0",
-                letterSpacing: "0.12em",
-              }}
-            >
-              {(name || "Anônimo").toUpperCase()}
-            </div>
-          </div>
-          <div className="text-right">
-            <div
-              className="text-[0.5rem] uppercase"
-              style={{
-                letterSpacing: "0.5em",
-                color: "rgba(220,220,220,0.45)",
-              }}
-            >
-              Nº · Desde
-            </div>
-            <div
-              className="mt-1 text-sm sm:text-base tabular-nums"
-              style={{
-                fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                color: "#f0f0f0",
-                letterSpacing: "0.1em",
-              }}
-            >
-              {memberId ? memberId : "----"} · {formatUnlockDate(unlockedAt)}
-            </div>
-          </div>
+          <ul
+            className="flex flex-col gap-1.5 text-[0.68rem] sm:text-[0.72rem]"
+            style={{
+              fontFamily: "'Space Grotesk', system-ui, sans-serif",
+              color: "rgba(230,230,230,0.85)",
+              letterSpacing: "0.08em",
+            }}
+          >
+            <li className="flex items-center gap-2">
+              <Dot />
+              <span className="tabular-nums">Nº {memberId || "----"}</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Dot />
+              <span>@geastoree</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Dot />
+              <span>Desde {formatUnlockDate(unlockedAt)}</span>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -189,10 +149,24 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%)",
+              "linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%)",
           }}
         />
       )}
     </div>
   );
 });
+
+function Dot() {
+  return (
+    <span
+      aria-hidden
+      className="inline-block h-[5px] w-[5px] shrink-0 rounded-full"
+      style={{
+        background:
+          "radial-gradient(circle at 30% 30%, #f0f0f0 0%, #9a9a9a 60%, #4a4a4a 100%)",
+        boxShadow: "0 0 4px rgba(220,220,220,0.25)",
+      }}
+    />
+  );
+}
