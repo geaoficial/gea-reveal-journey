@@ -275,7 +275,14 @@ function MemberPanel({
   const logout = useServerFn(logoutVipMember);
   const confirmFollow = useServerFn(confirmInstagramFollow);
   const qc = useQueryClient();
-  const { member, invites, benefits, instagramFollowedAt } = data;
+  const { member, invites, benefits, allBenefits, instagramFollowedAt } = data;
+  // Benefício destacado no cartão: preferir welcome desbloqueado; senão,
+  // primeiro desbloqueado; senão, o mais próximo de desbloquear.
+  const highlightedBenefit =
+    allBenefits.find((b) => b.unlocked && b.type === "welcome") ??
+    allBenefits.find((b) => b.unlocked) ??
+    [...allBenefits].sort((a, b) => a.remaining - b.remaining)[0] ??
+    null;
   const inviteUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/invite/${member.memberNumber}`
