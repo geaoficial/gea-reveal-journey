@@ -1,4 +1,5 @@
 import { forwardRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { formatUnlockDate } from "@/lib/vip";
 
 type Props = {
