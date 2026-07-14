@@ -195,10 +195,10 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
           )}
           {/* FRENTE */}
           <CardFace exportMode={exportMode}>
-            <div className="relative flex h-full items-stretch px-6 py-6 sm:px-8 sm:py-7">
+            <div className="relative flex h-full items-stretch px-6 py-6">
               <div className="flex flex-1 items-center justify-center">
                 <div
-                  className="text-5xl leading-none sm:text-6xl"
+                  className="text-5xl leading-none"
                   style={{
                     ...silverText,
                     fontWeight: 400,
@@ -217,7 +217,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
               <div className="flex flex-[1.4] flex-col justify-center gap-3">
                 <div>
                   <div
-                    className="text-[0.85rem] leading-tight sm:text-[0.95rem]"
+                    className="text-[0.85rem] leading-tight"
                     style={{ ...silverText, fontWeight: 500, letterSpacing: "0.08em" }}
                   >
                     {displayName}
@@ -237,7 +237,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
                 <HairLine />
 
                 <ul
-                  className="flex flex-col gap-1.5 text-[0.68rem] sm:text-[0.72rem]"
+                  className="flex flex-col gap-1.5 text-[0.68rem]"
                   style={{
                     fontFamily: "'Space Grotesk', system-ui, sans-serif",
                     color: "rgba(230,230,230,0.85)",
@@ -259,6 +259,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
                 </ul>
               </div>
             </div>
+
           </CardFace>
 
           {/* VERSO */}
