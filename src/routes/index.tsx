@@ -58,8 +58,9 @@ export const Route = createFileRoute("/")({
         {
           rel: "preload",
           as: "image",
+          type: "image/avif",
           href: heroImage.fallback,
-          imagesrcset: heroImage.srcSet,
+          imagesrcset: heroImage.avif,
           imagesizes: heroImage.sizes,
           fetchpriority: "high",
         },
