@@ -80,15 +80,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "GEA — O tempo revela." },
       { name: "description", content: "GEA. Mais do que um relógio. Uma identidade." },
       { name: "author", content: "GEA" },
-      { property: "og:title", content: "GEA — O tempo revela." },
-      { property: "og:description", content: "Mais do que um relógio. Uma identidade." },
-      { property: "og:type", content: "website" },
       { property: "og:site_name", content: "GEA" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:locale", content: "pt_BR" },
+      { name: "twitter:site", content: "@geastoree" },
+      { name: "theme-color", content: "#0a0a0a" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/__l5e/assets-v1/aead9837-f256-4ea6-9023-6e478d2fcfbd/gea-hero-graded.jpg",
+        fetchpriority: "high",
+      },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -98,14 +103,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       // Plausible Analytics — privacy-first, no cookies.
-      // TODO: troque data-domain pelo domínio real cadastrado em plausible.io
-      // (pode ser separado por vírgula se quiser rastrear preview + produção).
       {
         defer: true,
         "data-domain": "gea.lovable.app",
         src: "https://plausible.io/js/script.tagged-events.outbound-links.js",
       },
-      // Fila global para eventos customizados (rastreio dos cliques "Seguir @GEA").
+      // Fila global para eventos customizados.
       {
         children:
           "window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}",
