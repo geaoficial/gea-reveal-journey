@@ -113,9 +113,17 @@ export function Hero() {
               decoding="async"
               fetchPriority="high"
               draggable={false}
-              onError={() => {
+              onError={(e) => {
                 setFailed(true);
                 setLoaded(true);
+                const el = e.currentTarget;
+                reportImageFailure({
+                  asset: heroImage.fallback,
+                  reason: "error",
+                  section: "hero",
+                  naturalWidth: el?.naturalWidth,
+                  naturalHeight: el?.naturalHeight,
+                });
               }}
             />
           </picture>
