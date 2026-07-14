@@ -134,23 +134,10 @@ export function HiddenChapter() {
             {launched ? "O drop está no ar" : "Próximo drop em"}
           </span>
 
-          <div className="flex w-full max-w-md flex-col gap-3" aria-live="polite">
-            <div className="relative h-[3px] w-full overflow-hidden bg-gea-cream/10">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: revealed && ready ? `${percent}%` : 0 }}
-                transition={{ duration: 1.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute inset-y-0 left-0"
-                style={{
-                  background:
-                    "linear-gradient(90deg, rgba(232,138,58,0.35), rgba(232,138,58,1))",
-                  boxShadow: "0 0 14px rgba(232,138,58,0.55)",
-                }}
-              />
-            </div>
-            <div className="flex items-center justify-end text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/55 tabular-nums">
-              <span className="text-gea-sunset">{ready ? `${percent}%` : "--%"}</span>
-            </div>
+          <div className="flex w-full max-w-md items-center justify-center" aria-live="polite">
+            <span className="text-[0.7rem] uppercase tracking-[0.4em] text-gea-sunset tabular-nums">
+              {ready ? `${percent}%` : "--%"}
+            </span>
           </div>
 
 
