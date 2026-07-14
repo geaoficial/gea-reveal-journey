@@ -206,3 +206,25 @@ export function DirectorSeal() {
     </>
   );
 }
+
+function LegalLinks() {
+  const openPrefs = () => window.dispatchEvent(new CustomEvent("gea:open-consent"));
+  const linkClass =
+    "text-[#7a7a7a] transition-colors hover:text-[#e8e8e8]";
+  return (
+    <nav
+      className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[0.55rem] uppercase tracking-[0.36em]"
+      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+    >
+      <Link to="/privacidade" className={linkClass}>Privacidade</Link>
+      <span aria-hidden className="text-[#3a3a3a]">·</span>
+      <Link to="/cookies" className={linkClass}>Cookies</Link>
+      <span aria-hidden className="text-[#3a3a3a]">·</span>
+      <Link to="/termos" className={linkClass}>Termos</Link>
+      <span aria-hidden className="text-[#3a3a3a]">·</span>
+      <button type="button" onClick={openPrefs} className={linkClass}>
+        Preferências
+      </button>
+    </nav>
+  );
+}
