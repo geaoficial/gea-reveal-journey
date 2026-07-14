@@ -60,8 +60,13 @@ export function Lifestyle() {
             src={lifestyle02.url}
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            sizes="100vw"
+            draggable={false}
             className="h-full w-full object-cover"
           />
+
         </motion.div>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
       </motion.div>
