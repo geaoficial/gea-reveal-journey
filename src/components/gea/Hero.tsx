@@ -7,6 +7,7 @@ export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
@@ -24,7 +25,10 @@ export function Hero() {
       return;
     }
     const onLoad = () => reveal();
-    const onError = () => reveal();
+    const onError = () => {
+      setFailed(true);
+      reveal();
+    };
     img.addEventListener("load", onLoad, { once: true });
     img.addEventListener("error", onError, { once: true });
     return () => {
@@ -41,35 +45,52 @@ export function Hero() {
           aria-hidden
           className="absolute inset-0 z-0 transition-opacity duration-300"
           style={{
-            opacity: loaded ? 0 : 1,
+            opacity: loaded && !failed ? 0 : 1,
             background: heroImage.placeholder,
             filter: "blur(12px)",
             transform: "scale(1.05)",
           }}
         />
-        <picture className="relative z-[1] block h-full w-full">
-          <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
-          <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
-          <img
-            ref={imgRef}
-            src={heroImage.fallback}
-            srcSet={heroImage.srcSet}
-            sizes={heroImage.sizes}
-            width={1920}
-            height={1280}
-            alt="GEA — pôr do sol na estrada"
-            className="h-full w-full object-cover object-center"
+        {failed ? (
+          <div
+            role="img"
+            aria-label="GEA — pôr do sol na estrada"
+            className="relative z-[1] block h-full w-full"
             style={{
-              opacity: 1,
-              imageRendering: "auto",
+              backgroundImage: `url("${heroImage.fallback}")`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
             }}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-            draggable={false}
           />
-
-        </picture>
+        ) : (
+          <picture className="relative z-[1] block h-full w-full">
+            <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
+            <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
+            <img
+              ref={imgRef}
+              src={heroImage.fallback}
+              srcSet={heroImage.srcSet}
+              sizes={heroImage.sizes}
+              width={1920}
+              height={1280}
+              alt="GEA — pôr do sol na estrada"
+              className="h-full w-full object-cover object-center"
+              style={{
+                opacity: 1,
+                imageRendering: "auto",
+              }}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              draggable={false}
+              onError={() => {
+                setFailed(true);
+                setLoaded(true);
+              }}
+            />
+          </picture>
+        )}
 
 
 
