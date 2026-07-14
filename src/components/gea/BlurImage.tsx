@@ -47,7 +47,20 @@ export function BlurImage({
   const [revealed, setRevealed] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
+  // Detecta preferências de acessibilidade / rede lenta uma única vez.
+  const lightMode =
+    typeof window !== "undefined" &&
+    (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ||
+      // @ts-expect-error Network Information API (non-standard)
+      !!(navigator.connection?.saveData) ||
+      // @ts-expect-error idem
+      /2g/.test(navigator.connection?.effectiveType ?? ""));
+
   const reveal = () => {
+    if (lightMode) {
+      setRevealed(true);
+      return;
+    }
     // Duplo rAF garante que o primeiro frame decodificado da imagem seja
     // pintado antes do placeholder começar o fade — elimina o flicker.
     requestAnimationFrame(() => requestAnimationFrame(() => setRevealed(true)));
