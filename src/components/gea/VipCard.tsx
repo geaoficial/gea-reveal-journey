@@ -44,7 +44,7 @@ const silverText: React.CSSProperties = {
  * Vira em 360° ao clique/toque.
  */
 export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
-  { name, memberId, unlockedAt, exportMode = false },
+  { name, memberId, unlockedAt, benefit, exportMode = false },
   ref
 ) {
   const [flipped, setFlipped] = useState(false);
@@ -54,7 +54,16 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
   // FX pesados (shine com blur, rotateX/scale wobble, sombra dinâmica) só em alto tier
   const heavyFx = animateOn && allowHeavyFx;
   const displayName = (name || "MEMBRO EXCLUSIVO").toUpperCase();
-  const couponCode = memberId ? `GEA10-${memberId}` : "GEA10-----";
+  const defaultCoupon = memberId ? `GEA10-${memberId}` : "GEA10-----";
+  const benefitUnlocked = benefit ? benefit.unlocked : true;
+  const benefitTitle = benefit?.title ?? "10% OFF";
+  const benefitSubtitle =
+    benefit?.description ??
+    (benefit ? null : "no seu primeiro pedido");
+  const benefitCode = benefit ? benefit.code : defaultCoupon;
+  const benefitLockedLabel = benefit && !benefit.unlocked
+    ? `Desbloqueia com ${benefit.remaining} convite${benefit.remaining === 1 ? "" : "s"}`
+    : null;
 
   // Angulo mestre da rotação — dirige rotateY (+ FX pesados quando ligados)
   const angle = useMotionValue(0);
