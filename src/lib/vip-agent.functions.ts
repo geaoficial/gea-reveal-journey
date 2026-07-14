@@ -186,7 +186,7 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
 
   if (!member || member.status !== "active") return { ok: false as const };
 
-  const [{ data: invites }, { data: benefits }] = await Promise.all([
+  const [{ data: invites }, { data: benefits }, { data: followEvent }] = await Promise.all([
     supabaseAdmin
       .from("vip_invites")
       .select("id, status, created_at, confirmed_at")
@@ -197,6 +197,14 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
       .select("id, title, description, type, code, min_invites, ends_at")
       .eq("active", true)
       .order("created_at", { ascending: false }),
+    supabaseAdmin
+      .from("vip_events")
+      .select("created_at")
+      .eq("member_id", memberId)
+      .eq("type", "instagram_follow")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const confirmed = (invites ?? []).filter((i) => i.status === "confirmed").length;
@@ -221,5 +229,36 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
       list: invites ?? [],
     },
     benefits: eligibleBenefits,
+    instagramFollowedAt: followEvent?.created_at ?? null,
   };
+});
+
+// ------------------------------------------------------------------
+// confirmInstagramFollow — registra que o membro voltou do Instagram
+// ------------------------------------------------------------------
+export const confirmInstagramFollow = createServerFn({ method: "POST" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { readSessionCookie } = await import("./vip-session.server");
+
+  const memberId = readSessionCookie();
+  if (!memberId) return { ok: false as const };
+
+  // Verifica se já existe (idempotente)
+  const { data: existing } = await supabaseAdmin
+    .from("vip_events")
+    .select("id, created_at")
+    .eq("member_id", memberId)
+    .eq("type", "instagram_follow")
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) return { ok: true as const, confirmedAt: existing.created_at, already: true };
+
+  const { data: inserted } = await supabaseAdmin
+    .from("vip_events")
+    .insert({ member_id: memberId, type: "instagram_follow", payload: { source: "vip_panel" } })
+    .select("created_at")
+    .single();
+
+  return { ok: true as const, confirmedAt: inserted?.created_at ?? new Date().toISOString(), already: false };
 });
