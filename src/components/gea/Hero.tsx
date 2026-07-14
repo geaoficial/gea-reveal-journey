@@ -19,8 +19,7 @@ export function Hero() {
           className="absolute inset-0 transition-opacity duration-700"
           style={{
             opacity: loaded ? 0 : 1,
-            background:
-              "radial-gradient(ellipse at 50% 65%, #d97a3c 0%, #7a2f1a 35%, #1a0e0a 75%, #000 100%)",
+            background: heroImage.placeholder,
             filter: "blur(24px)",
             transform: "scale(1.05)",
           }}
