@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 import lifestyle02 from "@/assets/gea-lifestyle-02.jpeg.asset.json";
 import watchMystery from "@/assets/gea-life-mystery.jpg.asset.json";
+import { BlurImage } from "./BlurImage";
 
 export function Lifestyle() {
   const revealRef = useRef<HTMLDivElement>(null);
@@ -54,9 +55,9 @@ export function Lifestyle() {
           whileInView={{ scale: 1 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
-          className="h-full w-full"
+          className="relative h-full w-full"
         >
-          <img
+          <BlurImage
             src={lifestyle02.url}
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="lazy"
@@ -65,8 +66,8 @@ export function Lifestyle() {
             sizes="100vw"
             draggable={false}
             className="h-full w-full object-cover"
+            placeholder="radial-gradient(ellipse at 50% 65%, #d97a3c 0%, #7a2f1a 40%, #1a0e0a 80%, #000 100%)"
           />
-
         </motion.div>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
       </motion.div>
@@ -110,9 +111,9 @@ export function Lifestyle() {
             whileInView={{ scale: 1.04, opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
-            className="h-full w-full"
+            className="relative h-full w-full"
           >
-            <img
+            <BlurImage
               src={watchMystery.url}
               alt="Próximo drop GEA — em breve"
               loading="lazy"
@@ -122,8 +123,8 @@ export function Lifestyle() {
               draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
+              placeholder="radial-gradient(ellipse at 50% 50%, #4a2410 0%, #1a0d08 55%, #000 100%)"
             />
-
           </motion.div>
 
           {/* Sombras progressivas — respiram conforme o scroll */}
