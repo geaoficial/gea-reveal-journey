@@ -515,7 +515,7 @@ function MemberPanel({
               >
                 WhatsApp
               </a>
-              <InviteQrButton url={inviteUrl} memberNumber={member.memberNumber} />
+              <InviteQrButton url={inviteUrl} memberNumber={member.memberNumber} onShared={() => qc.invalidateQueries({ queryKey: ["vip", "me"] })} />
             </div>
           </div>
         )}
