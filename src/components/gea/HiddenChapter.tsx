@@ -1,17 +1,65 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 
 const IG_URL = "https://instagram.com/geastoree";
 
+// Data-alvo do próximo drop. Ajuste para a data real do lançamento.
+// Usa UTC para evitar surpresas com fuso horário no SSR/CDN.
+const LAUNCH_ISO = "2026-08-15T21:00:00-03:00";
+// Janela de antecipação em que o progresso vai de 0 → 100 (padrão 45 dias).
+const ANTICIPATION_WINDOW_MS = 45 * 24 * 60 * 60 * 1000;
+
+function useCountdown(targetISO: string) {
+  const target = useMemo(() => new Date(targetISO).getTime(), [targetISO]);
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (now === null) {
+    return { ready: false, days: 0, hours: 0, minutes: 0, seconds: 0, progress: 0, launched: false } as const;
+  }
+
+  const diff = Math.max(0, target - now);
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const elapsed = ANTICIPATION_WINDOW_MS - diff;
+  const progress = Math.max(0, Math.min(1, elapsed / ANTICIPATION_WINDOW_MS));
+
+  return {
+    ready: true,
+    days,
+    hours,
+    minutes,
+    seconds,
+    progress,
+    launched: diff === 0,
+  } as const;
+}
+
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
 /**
- * Cena final oculta — surge apenas após 1.8s de permanência real na
- * seção. Cria sensação de descoberta e recompensa o scroll completo.
- * O texto é reforço final, minimal, com um único CTA de retorno.
+ * Cena final oculta — surge após 1.8s de permanência real na seção.
+ * Recompensa o scroll com contagem regressiva do próximo drop e um
+ * badge dinâmico "Insider Nº X · Progresso Y%" que evolui junto com
+ * a antecipação global. Cria pertencimento, mistério e urgência.
  */
 export function HiddenChapter() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-30%" });
   const [revealed, setRevealed] = useState(false);
+  const { ready, days, hours, minutes, seconds, progress, launched } = useCountdown(LAUNCH_ISO);
+  const [founderNumber, setFounderNumber] = useState<string | null>(null);
 
   useEffect(() => {
     if (!inView) return;
@@ -19,11 +67,29 @@ export function HiddenChapter() {
     return () => clearTimeout(t);
   }, [inView]);
 
+  useEffect(() => {
+    try {
+      const n = window.localStorage.getItem("gea.founder.number");
+      if (n) setFounderNumber(String(n).padStart(4, "0"));
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    if (!revealed || typeof window === "undefined") return;
+    const p = (window as unknown as { plausible?: (event: string, opts?: { props?: Record<string, string> }) => void }).plausible;
+    p?.("Hidden Chapter Reached", {
+      props: { progress: `${Math.round(progress * 100)}%` },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealed]);
+
   const handleReturn = () => {
     if (typeof window === "undefined") return;
     const p = (window as unknown as { plausible?: (event: string, opts?: { props?: Record<string, string> }) => void }).plausible;
     p?.("Follow Instagram", { props: { location: "hidden-chapter" } });
   };
+
+  const percent = Math.round(progress * 100);
 
   return (
     <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center bg-gea-black px-6 py-40">
@@ -52,10 +118,80 @@ export function HiddenChapter() {
           Você é um deles.
         </motion.h2>
 
+        {/* Contagem regressiva */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+          transition={{ duration: 1.4, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-14 flex flex-col items-center gap-4"
+        >
+          <span className="text-[0.55rem] uppercase tracking-[0.5em] text-gea-cream/45">
+            {launched ? "O drop está no ar" : "Próximo drop em"}
+          </span>
+
+          <div className="grid grid-cols-4 gap-3 md:gap-6" aria-live="polite">
+            {[
+              { label: "Dias", value: days },
+              { label: "Hrs", value: hours },
+              { label: "Min", value: minutes },
+              { label: "Seg", value: seconds },
+            ].map((unit) => (
+              <div
+                key={unit.label}
+                className="flex min-w-[3.5rem] flex-col items-center gap-2 border border-gea-cream/10 bg-gea-black/60 px-3 py-4 md:min-w-[4.5rem] md:px-5 md:py-5"
+              >
+                <span className="font-display text-3xl font-light tabular-nums text-gea-cream md:text-4xl">
+                  {ready ? pad(unit.value) : "--"}
+                </span>
+                <span className="text-[0.5rem] uppercase tracking-[0.4em] text-gea-cream/40">
+                  {unit.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Badge dinâmico de progresso */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 1.4, delay: 0.9 }}
+          className="mt-10 flex w-full max-w-sm flex-col items-center gap-4 border-y border-gea-cream/10 py-6"
+        >
+          <div className="flex w-full items-center justify-between text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/55">
+            <span className="flex items-center gap-2">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gea-sunset/60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-gea-sunset" />
+              </span>
+              Insider {founderNumber ? `Nº ${founderNumber}` : "GEA"}
+            </span>
+            <span className="tabular-nums text-gea-sunset">{ready ? `${percent}%` : "--%"}</span>
+          </div>
+
+          <div className="relative h-[2px] w-full overflow-hidden bg-gea-cream/10">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: revealed && ready ? `${percent}%` : 0 }}
+              transition={{ duration: 1.6, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-y-0 left-0"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(232,138,58,0.4), rgba(232,138,58,1))",
+                boxShadow: "0 0 12px rgba(232,138,58,0.6)",
+              }}
+            />
+          </div>
+
+          <span className="text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/35">
+            Antecipação global
+          </span>
+        </motion.div>
+
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: revealed ? 1 : 0 }}
-          transition={{ duration: 1.4, delay: 0.4 }}
+          transition={{ duration: 1.4, delay: 1.2 }}
           className="mt-10 max-w-md text-[0.7rem] uppercase tracking-[0.36em] text-gea-cream/50"
         >
           O restante da história acontece no Instagram.
@@ -68,8 +204,8 @@ export function HiddenChapter() {
           onClick={handleReturn}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 20 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="group mt-12 inline-flex items-center gap-3 border border-gea-cream/30 px-8 py-4 text-[0.68rem] uppercase tracking-[0.36em] text-gea-cream transition-all duration-500 hover:border-gea-sunset hover:bg-gea-sunset hover:text-gea-black"
+          transition={{ duration: 1, delay: 1.4 }}
+          className="group mt-10 inline-flex items-center gap-3 border border-gea-cream/30 px-8 py-4 text-[0.68rem] uppercase tracking-[0.36em] text-gea-cream transition-all duration-500 hover:border-gea-sunset hover:bg-gea-sunset hover:text-gea-black"
         >
           Entrar no círculo
           <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">→</span>
@@ -78,7 +214,7 @@ export function HiddenChapter() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: revealed ? 1 : 0 }}
-          transition={{ duration: 1.4, delay: 1 }}
+          transition={{ duration: 1.4, delay: 1.6 }}
           className="mt-24 flex flex-col items-center gap-3"
         >
           <span className="h-px w-10 bg-gea-cream/20" />
