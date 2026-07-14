@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { heroImage } from "@/lib/responsive-image";
+import { reportImageFailure } from "@/lib/image-telemetry";
 
 
 export function Hero() {
