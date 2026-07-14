@@ -264,7 +264,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
 
           {/* VERSO */}
           <CardFace exportMode={exportMode} back>
-            <div className="relative flex h-full flex-col justify-between px-6 py-6 sm:px-8 sm:py-7">
+            <div className="relative flex h-full flex-col justify-between px-6 py-6">
               <div className="flex items-start justify-between">
                 <span
                   className="text-[0.5rem] uppercase"
