@@ -286,7 +286,7 @@ export function Lifestyle() {
             style={{
               background:
                 "radial-gradient(ellipse 60% 45% at 50% 60%, rgba(232,138,58,0.45) 0%, transparent 70%)",
-              filter: `blur(${lite ? 32 : 55}px)`,
+              filter: `blur(${blurFor(perfTier, lite ? 32 : 55)}px)`,
             }}
           />
 
