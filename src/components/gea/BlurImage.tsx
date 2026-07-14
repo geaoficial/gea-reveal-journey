@@ -226,9 +226,20 @@ export function BlurImage({
             onLoad={(e) => {
               onLoad?.(e);
             }}
-            onError={() => {
+            onError={(e) => {
               setFailed(true);
               setRevealed(true);
+              const el = e.currentTarget;
+              reportImageFailure({
+                asset:
+                  (typeof imgProps.src === "string" && imgProps.src) ||
+                  jpegFallback ||
+                  "unknown",
+                reason: "error",
+                section: telemetrySection,
+                naturalWidth: el?.naturalWidth,
+                naturalHeight: el?.naturalHeight,
+              });
             }}
           />
         </picture>
