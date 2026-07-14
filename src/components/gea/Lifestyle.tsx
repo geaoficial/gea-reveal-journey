@@ -118,6 +118,8 @@ export function Lifestyle() {
             <BlurImage
               src={mysteryImage.fallback}
               srcSet={mysteryImage.srcSet}
+              webpSrcSet={mysteryImage.webp}
+              avifSrcSet={mysteryImage.avif}
               sizes={mysteryImage.sizes}
               alt="Próximo drop GEA — em breve"
               loading="lazy"
