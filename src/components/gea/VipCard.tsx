@@ -1,4 +1,5 @@
 import { forwardRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { formatUnlockDate } from "@/lib/vip";
 
 type Props = {
@@ -28,11 +29,22 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
   ref
 ) {
   const [flipped, setFlipped] = useState(false);
+  const prefersReduced = useReducedMotion();
+  const animate = !exportMode && !prefersReduced;
   const displayName = (name || "MEMBRO EXCLUSIVO").toUpperCase();
   const couponCode = memberId ? `GEA10-${memberId}` : "GEA10-----";
 
   return (
-    <div className="w-full max-w-md">
+    <motion.div
+      className="w-full max-w-md"
+      initial={animate ? { opacity: 0, y: 24, scale: 0.97 } : false}
+      whileInView={animate ? { opacity: 1, y: 0, scale: 1 } : undefined}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={animate ? { y: -4, scale: 1.015 } : undefined}
+      whileTap={animate ? { scale: 0.995 } : undefined}
+      style={{ transition: "box-shadow 600ms cubic-bezier(0.22,1,0.36,1)" }}
+    >
       <div
         ref={ref}
         role={exportMode ? undefined : "button"}
@@ -213,7 +225,7 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
           <span className="inline-block h-px w-6 bg-gea-cream/20" />
         </div>
       )}
-    </div>
+    </motion.div>
   );
 });
 
