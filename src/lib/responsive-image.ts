@@ -57,6 +57,7 @@ export type ResponsiveImage = {
 export const heroImage: ResponsiveImage = {
   src: hero1280j.url,
   fallback: hero1920j.url,
+  preloadHref: hero1920a.url,
   srcSet: build([hero640j, hero1280j, hero1920j]),
   webp: build([hero640w, hero1280w, hero1920w]),
   avif: build([hero640a, hero1280a, hero1920a]),
@@ -66,6 +67,7 @@ export const heroImage: ResponsiveImage = {
 export const lifestyleImage: ResponsiveImage = {
   src: life1280j.url,
   fallback: life1920j.url,
+  preloadHref: life1920a.url,
   srcSet: build([life640j, life1280j, life1920j]),
   webp: build([life640w, life1280w, life1920w]),
   avif: build([life640a, life1280a, life1920a]),
@@ -75,6 +77,7 @@ export const lifestyleImage: ResponsiveImage = {
 export const mysteryImage: ResponsiveImage = {
   src: mystery1280j.url,
   fallback: mystery1920j.url,
+  preloadHref: mystery1920a.url,
   srcSet: build([mystery640j, mystery1280j, mystery1920j]),
   webp: build([mystery640w, mystery1280w, mystery1920w]),
   avif: build([mystery640a, mystery1280a, mystery1920a]),
