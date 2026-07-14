@@ -27,6 +27,12 @@ type Props = {
   benefit?: VipCardBenefit | null;
   /** Modo estático para exportar como imagem (sem animações). */
   exportMode?: boolean;
+  /**
+   * Comando externo para revelar o verso (cupom).
+   * Ex.: após confirmar o follow no Instagram, o cartão vira sozinho.
+   * O usuário ainda pode virar/desvirar manualmente clicando depois.
+   */
+  revealBack?: boolean;
 };
 
 const silverText: React.CSSProperties = {
@@ -44,7 +50,7 @@ const silverText: React.CSSProperties = {
  * Vira em 360° ao clique/toque.
  */
 export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
-  { name, memberId, unlockedAt, benefit, exportMode = false },
+  { name, memberId, unlockedAt, benefit, exportMode = false, revealBack = false },
   ref
 ) {
   const [flipped, setFlipped] = useState(false);
