@@ -3,10 +3,14 @@ import { useRef, useState } from "react";
 import { lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { BlurImage } from "./BlurImage";
 import { useDeviceCapability } from "@/lib/device-capability";
+import { usePerfTier, blurFor } from "@/lib/perf-monitor";
 
 export function Lifestyle() {
   const { allowHeavyFx, reducedMotion } = useDeviceCapability();
-  const lite = !allowHeavyFx; // mobile / low-end / save-data / reduced motion
+  const perfTier = usePerfTier();
+  // Fallback dinâmico: dispositivo fraco OU FPS medido caindo → reduz camadas
+  const lite = !allowHeavyFx || perfTier !== "cinema";
+  const minimal = perfTier === "lite"; // corte agressivo quando FPS desaba
   const revealRef = useRef<HTMLDivElement>(null);
   const [reveal, setReveal] = useState<{ x: number; y: number; active: boolean }>({
     x: 50,
@@ -54,7 +58,7 @@ export function Lifestyle() {
   );
   // Blur reativo: quanto mais rápido o scroll, mais borrada a fumaça (efeito motion blur)
   const velocityBlur = useTransform(smoothVelocity, (v) => {
-    const base = lite ? 28 : 50;
+    const base = blurFor(perfTier, lite ? 28 : 50);
     const extra = Math.min(Math.abs(v) * 30, lite ? 12 : 24);
     return `blur(${base + extra}px)`;
   });
@@ -193,7 +197,7 @@ export function Lifestyle() {
               style={{
                 background:
                   "radial-gradient(ellipse 60% 40% at 30% 55%, rgba(232,138,58,0.32) 0%, rgba(232,138,58,0.12) 35%, transparent 70%), radial-gradient(ellipse 55% 45% at 75% 50%, rgba(255,168,90,0.22) 0%, transparent 65%), radial-gradient(ellipse 90% 35% at 50% 80%, rgba(120,60,20,0.35) 0%, transparent 70%)",
-                filter: `blur(${lite ? 24 : 40}px)`,
+                filter: `blur(${blurFor(perfTier, lite ? 24 : 40)}px)`,
               }}
             />
           </motion.div>
@@ -273,18 +277,20 @@ export function Lifestyle() {
             />
           )}
 
-          {/* Pulso âmbar central — respiração do dial */}
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 mix-blend-overlay"
-            animate={reducedMotion ? undefined : { opacity: [0.3, 0.65, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              background:
-                "radial-gradient(ellipse 60% 45% at 50% 60%, rgba(232,138,58,0.45) 0%, transparent 70%)",
-              filter: `blur(${lite ? 32 : 55}px)`,
-            }}
-          />
+          {/* Pulso âmbar central — respiração do dial (desliga quando FPS baixo) */}
+          {!minimal && (
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 mix-blend-overlay"
+              animate={reducedMotion ? undefined : { opacity: [0.3, 0.65, 0.3] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background:
+                  "radial-gradient(ellipse 60% 45% at 50% 60%, rgba(232,138,58,0.45) 0%, transparent 70%)",
+                filter: `blur(${blurFor(perfTier, lite ? 32 : 55)}px)`,
+              }}
+            />
+          )}
 
 
           {/* Brilho pulsante sobre o dial */}
