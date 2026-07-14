@@ -277,18 +277,20 @@ export function Lifestyle() {
             />
           )}
 
-          {/* Pulso âmbar central — respiração do dial */}
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 mix-blend-overlay"
-            animate={reducedMotion ? undefined : { opacity: [0.3, 0.65, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              background:
-                "radial-gradient(ellipse 60% 45% at 50% 60%, rgba(232,138,58,0.45) 0%, transparent 70%)",
-              filter: `blur(${blurFor(perfTier, lite ? 32 : 55)}px)`,
-            }}
-          />
+          {/* Pulso âmbar central — respiração do dial (desliga quando FPS baixo) */}
+          {!minimal && (
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 mix-blend-overlay"
+              animate={reducedMotion ? undefined : { opacity: [0.3, 0.65, 0.3] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background:
+                  "radial-gradient(ellipse 60% 45% at 50% 60%, rgba(232,138,58,0.45) 0%, transparent 70%)",
+                filter: `blur(${blurFor(perfTier, lite ? 32 : 55)}px)`,
+              }}
+            />
+          )}
 
 
           {/* Brilho pulsante sobre o dial */}
