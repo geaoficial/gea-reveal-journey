@@ -88,14 +88,8 @@ export function Hero() {
           O tempo revela.
         </motion.p>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, delay: 2.1 }}
-          className="mt-4 max-w-md text-[0.7rem] uppercase tracking-[0.42em] text-gea-cream/55"
-        >
-          Mais do que um relógio. Uma identidade.
-        </motion.p>
+
+
 
         <motion.a
           href="#instagram"
