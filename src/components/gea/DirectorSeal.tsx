@@ -28,7 +28,7 @@ export function DirectorSeal() {
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           whileHover={{ y: -2 }}
-          className="group relative overflow-hidden rounded-[2px] border border-white/10 bg-[#0a0a0a] px-5 py-3 text-left transition-all duration-500 hover:border-[#c9c9c9]/40 hover:shadow-[0_10px_40px_-20px_rgba(201,201,201,0.35)]"
+          className="group relative overflow-hidden rounded-[2px] border border-white/10 bg-[#0a0a0a] px-3 py-1.5 text-left transition-all duration-500 hover:border-[#c9c9c9]/40 hover:shadow-[0_6px_24px_-14px_rgba(201,201,201,0.35)]"
           style={{
             backgroundImage:
               "linear-gradient(135deg, #0a0a0a 0%, #101010 50%, #070707 100%)",
@@ -41,47 +41,39 @@ export function DirectorSeal() {
             className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-[1400ms] ease-out group-hover:translate-x-full"
           />
 
-          <span className="relative flex items-center gap-4">
+          <span className="relative flex items-center gap-2.5">
             {/* Signature mark icon */}
             <span
               aria-hidden
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#c9c9c9]/25 bg-black/60"
+              className="flex h-4 w-4 items-center justify-center rounded-full border border-[#c9c9c9]/25 bg-black/60"
             >
               <svg
-                width="14"
-                height="14"
+                width="9"
+                height="9"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.2"
+                strokeWidth="1.4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="text-[#d9d9d9]"
               >
                 <path d="M3 18c3-6 6-10 9-10s2 6 5 6 4-4 4-4" />
-                <path d="M4 21h16" opacity="0.5" />
               </svg>
             </span>
 
-            <span className="flex flex-col leading-tight">
-              <span
-                className="text-[0.55rem] uppercase tracking-[0.42em] text-[#8a8a8a] transition-colors duration-500 group-hover:text-[#c9c9c9]"
-                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-              >
-                Creative Director
-              </span>
-              <span
-                className="mt-1 text-[0.95rem] font-light tracking-[0.02em] text-[#e8e8e8]"
-                style={{ fontFamily: "'Instrument Serif', serif" }}
-              >
-                Breno Elias
-              </span>
-              <span
-                className="mt-0.5 text-[0.55rem] uppercase tracking-[0.28em] text-[#5c5c5c]"
-                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-              >
-                Creator of the GEA Experience
-              </span>
+            <span
+              className="text-[0.5rem] uppercase tracking-[0.36em] text-[#7a7a7a] transition-colors duration-500 group-hover:text-[#c9c9c9]"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              Direção criativa
+            </span>
+            <span aria-hidden className="h-2.5 w-px bg-white/10" />
+            <span
+              className="text-[0.65rem] font-light tracking-[0.02em] text-[#d0d0d0]"
+              style={{ fontFamily: "'Instrument Serif', serif" }}
+            >
+              Breno Elias
             </span>
           </span>
         </motion.button>
