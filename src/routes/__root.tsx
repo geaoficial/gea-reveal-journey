@@ -97,19 +97,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap",
       },
     ],
-    scripts: [
-      // Plausible Analytics — privacy-first, no cookies.
-      {
-        defer: true,
-        "data-domain": "gea.lovable.app",
-        src: "https://plausible.io/js/script.tagged-events.outbound-links.js",
-      },
-      // Fila global para eventos customizados.
-      {
-        children:
-          "window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}",
-      },
-    ],
+    // Plausible e demais analytics são carregados dinamicamente após consentimento
+    // (ver ConsentScripts.tsx). LGPD: nada de terceiros antes do opt-in.
 
   }),
   shellComponent: RootShell,
