@@ -58,7 +58,7 @@ export function Lifestyle() {
   );
   // Blur reativo: quanto mais rápido o scroll, mais borrada a fumaça (efeito motion blur)
   const velocityBlur = useTransform(smoothVelocity, (v) => {
-    const base = lite ? 28 : 50;
+    const base = blurFor(perfTier, lite ? 28 : 50);
     const extra = Math.min(Math.abs(v) * 30, lite ? 12 : 24);
     return `blur(${base + extra}px)`;
   });
