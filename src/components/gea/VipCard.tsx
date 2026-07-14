@@ -36,20 +36,56 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
 ) {
   const [flipped, setFlipped] = useState(false);
   const prefersReduced = useReducedMotion();
-  const animate = !exportMode && !prefersReduced;
+  const animateOn = !exportMode && !prefersReduced;
   const displayName = (name || "MEMBRO EXCLUSIVO").toUpperCase();
   const couponCode = memberId ? `GEA10-${memberId}` : "GEA10-----";
+
+  // Angulo mestre da rotação — dirige rotateY, brilho e sombra
+  const angle = useMotionValue(0);
+
+  useEffect(() => {
+    if (!animateOn) {
+      angle.set(flipped ? 360 : 0);
+      return;
+    }
+    const controls = animate(angle, flipped ? 360 : 0, {
+      duration: 2.6,
+      ease: [0.16, 0.84, 0.24, 1],
+    });
+    return () => controls.stop();
+  }, [flipped, animateOn, angle]);
+
+  // Derivações cinematográficas do ângulo
+  const rotateY = useTransform(angle, (a) => `${a}deg`);
+  // Leve inclinação em X: sobe no meio do giro (efeito de "levantar" o cartão)
+  const rotateX = useTransform(angle, (a) => `${-Math.sin((a * Math.PI) / 180) * 6}deg`);
+  // Dip de escala no meio do flip (perspectiva cinematográfica)
+  const scale = useTransform(angle, (a) => 1 - Math.abs(Math.sin((a * Math.PI) / 180)) * 0.04);
+  // Sombra projetada — mais forte e deslocada quando o cartão está de perfil
+  const boxShadow = useTransform(angle, (a) => {
+    const s = Math.abs(Math.sin((a * Math.PI) / 180));
+    const yOff = 40 + s * 60;
+    const blur = 100 + s * 80;
+    const spread = -40 + s * 10;
+    const alpha = 0.55 + s * 0.35;
+    return `0 ${yOff}px ${blur}px ${spread}px rgba(0,0,0,${alpha.toFixed(2)}), 0 0 0 1px rgba(200,200,200,0.06)`;
+  });
+  // Varredura de brilho especular acompanhando o giro (0% → 100%)
+  const shineX = useTransform(angle, [0, 360], ["-30%", "130%"]);
+  const shineOpacity = useTransform(angle, (a) => {
+    const s = Math.abs(Math.sin((a * Math.PI) / 180));
+    return 0.05 + s * 0.35;
+  });
 
   return (
     <motion.div
       className="w-full max-w-md"
-      initial={animate ? { opacity: 0, y: 24, scale: 0.97 } : false}
-      whileInView={animate ? { opacity: 1, y: 0, scale: 1 } : undefined}
+      initial={animateOn ? { opacity: 0, y: 24, scale: 0.97 } : false}
+      whileInView={animateOn ? { opacity: 1, y: 0, scale: 1 } : undefined}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={animate ? { y: -4, scale: 1.015 } : undefined}
-      whileTap={animate ? { scale: 0.995 } : undefined}
-      style={{ transition: "box-shadow 600ms cubic-bezier(0.22,1,0.36,1)" }}
+      whileHover={animateOn ? { y: -4 } : undefined}
+      whileTap={animateOn ? { scale: 0.995 } : undefined}
     >
       <div
         ref={ref}
@@ -64,15 +100,38 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
             setFlipped((f) => !f);
           }
         }}
-        className="relative aspect-[1.75/1] w-full cursor-pointer select-none [perspective:1600px] focus:outline-none"
+        className="relative aspect-[1.75/1] w-full cursor-pointer select-none [perspective:2000px] focus:outline-none"
+        style={{ perspectiveOrigin: "50% 40%" }}
       >
-        <div
-          className="relative h-full w-full transition-transform duration-[2600ms] [transform-style:preserve-3d]"
+        <motion.div
+          className="relative h-full w-full [transform-style:preserve-3d]"
           style={{
-            transitionTimingFunction: "cubic-bezier(0.16, 0.84, 0.24, 1)",
-            transform: flipped ? "rotateY(360deg)" : "rotateY(0deg)",
+            rotateY,
+            rotateX,
+            scale,
+            boxShadow: exportMode ? undefined : boxShadow,
+            borderRadius: 14,
           }}
         >
+          {/* Varredura especular global — acompanha o ângulo */}
+          {!exportMode && (
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 overflow-hidden rounded-[14px]"
+              style={{ opacity: shineOpacity }}
+            >
+              <motion.div
+                className="absolute inset-y-[-20%] w-[45%]"
+                style={{
+                  left: shineX,
+                  background:
+                    "linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%)",
+                  filter: "blur(10px)",
+                  transform: "translateZ(1px)",
+                }}
+              />
+            </motion.div>
+          )}
           {/* FRENTE */}
           <CardFace exportMode={exportMode}>
             <div className="relative flex h-full items-stretch px-6 py-6 sm:px-8 sm:py-7">
