@@ -564,6 +564,7 @@ function InviteQrButton({ url, memberNumber }: { url: string; memberNumber: numb
           "Generate Invite QR"
         );
       } catch { /* ignore */ }
+      logInviteShare({ data: { channel: "qr_generate" } }).catch(() => { /* ignore */ });
     } finally {
       setLoading(false);
     }
