@@ -87,6 +87,14 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
     return () => controls.stop();
   }, [flipped, animateOn, heavyFx, angle]);
 
+  // Comando externo para revelar o verso (ex.: após confirmar follow no Instagram)
+  useEffect(() => {
+    if (revealBack && !flipped) {
+      const t = setTimeout(() => setFlipped(true), 600);
+      return () => clearTimeout(t);
+    }
+  }, [revealBack, flipped]);
+
   // Derivações — sempre GPU-friendly (transform/opacity)
   const rotateY = useTransform(angle, (a) => `${a}deg`);
   const rotateX = useTransform(angle, (a) =>
