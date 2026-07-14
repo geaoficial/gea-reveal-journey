@@ -36,18 +36,18 @@ export function Hero() {
 
   return (
     <section ref={ref} className="relative h-[100dvh] w-full overflow-hidden bg-gea-black">
-      <motion.div style={{ y }} className="absolute inset-0 scale-110">
+      <motion.div style={{ y }} className="absolute inset-x-0 top-[-10%] h-[120%]">
         <div
           aria-hidden
-          className="absolute inset-0 transition-opacity duration-700"
+          className="absolute inset-0 z-0 transition-opacity duration-300"
           style={{
             opacity: loaded ? 0 : 1,
             background: heroImage.placeholder,
-            filter: "blur(24px)",
+            filter: "blur(12px)",
             transform: "scale(1.05)",
           }}
         />
-        <picture>
+        <picture className="relative z-[1] block h-full w-full">
           <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
           <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
           <img
@@ -60,8 +60,8 @@ export function Hero() {
             alt="GEA — pôr do sol na estrada"
             className="h-full w-full object-cover object-center"
             style={{
-              opacity: loaded ? 1 : 0,
-              transition: "opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1)",
+              opacity: 1,
+              imageRendering: "auto",
             }}
             loading="eager"
             decoding="async"

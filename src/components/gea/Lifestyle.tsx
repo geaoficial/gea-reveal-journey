@@ -50,8 +50,8 @@ export function Lifestyle() {
         className="relative h-[90dvh] w-full overflow-hidden"
       >
         <motion.div
-          initial={{ scale: 1.15 }}
-          whileInView={{ scale: 1 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
           className="relative h-full w-full"
@@ -63,9 +63,9 @@ export function Lifestyle() {
             avifSrcSet={lifestyleImage.avif}
             sizes={lifestyleImage.sizes}
             alt="Silhueta ao pôr do sol — a espera antes do drop"
-            loading="lazy"
+            loading="eager"
             decoding="async"
-            fetchPriority="low"
+            fetchPriority="high"
             draggable={false}
             className="h-full w-full object-cover"
             placeholder={lifestyleImage.placeholder}
@@ -109,8 +109,8 @@ export function Lifestyle() {
           className="relative h-[100dvh] w-full overflow-hidden bg-black cursor-none touch-none"
         >
           <motion.div
-            initial={{ scale: 1.2, opacity: 0.6 }}
-            whileInView={{ scale: 1.04, opacity: 1 }}
+            initial={{ y: 24, opacity: 0.6 }}
+            whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
             className="relative h-full w-full"
@@ -122,9 +122,9 @@ export function Lifestyle() {
               avifSrcSet={mysteryImage.avif}
               sizes={mysteryImage.sizes}
               alt="Próximo drop GEA — em breve"
-              loading="lazy"
+              loading="eager"
               decoding="async"
-              fetchPriority="low"
+              fetchPriority="high"
               draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
