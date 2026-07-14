@@ -334,7 +334,8 @@ function MemberPanel({
               memberId: member.id,
               elapsedMs,
             });
-            setJustConfirmed(true);
+            // flip do cartão é disparado no useEffect que observa cardUnlocked
+          } else if (r.ok) {
           } else {
             track("Vip Follow Reconfirmed", { memberId: member.id });
           }
