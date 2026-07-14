@@ -225,18 +225,16 @@ export function Lifestyle() {
             }}
           />
 
-          {/* Fumaça densa subindo — reage à velocidade e ao progresso do scroll */}
+          {/* Fumaça densa subindo — fixa, sem reagir ao scroll */}
           <motion.div
             aria-hidden
             className="pointer-events-none absolute inset-x-[-15%] bottom-[-20%] h-[110%] mix-blend-screen"
             style={{
               background:
                 "radial-gradient(ellipse 45% 55% at 30% 85%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 80%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 95%, rgba(120,55,20,0.6) 0%, transparent 72%)",
-              filter: reducedMotion ? `blur(${lite ? 28 : 50}px)` : velocityBlur,
-              opacity: reducedMotion ? 0.9 : frontOpacity,
-              x: reducedMotion ? 0 : velocityShiftX,
-              y: reducedMotion ? 0 : velocityShiftY,
-              willChange: reducedMotion ? undefined : "transform, opacity, filter",
+              filter: `blur(${blurFor(perfTier, lite ? 28 : 50)}px)`,
+              opacity: 0.9,
+              willChange: reducedMotion ? undefined : "transform",
               transform: "translateZ(0)",
             }}
             animate={
@@ -248,6 +246,7 @@ export function Lifestyle() {
             }
             transition={{ duration: lite ? 26 : 20, repeat: Infinity, ease: "easeInOut" }}
           />
+
 
           {/* Fumaça lenta ascendente — meio da cena (desktop only) */}
           {!lite && (
