@@ -239,11 +239,12 @@ export const setInviteStatus = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = { status: data.status };
-    if (data.status === "confirmed") patch.confirmed_at = new Date().toISOString();
     const { error } = await supabaseAdmin
       .from("vip_invites")
-      .update(patch)
+      .update({
+        status: data.status,
+        confirmed_at: data.status === "confirmed" ? new Date().toISOString() : null,
+      })
       .eq("id", data.inviteId);
     if (error) throw new Error(error.message);
     return { ok: true as const };
