@@ -163,6 +163,7 @@ export function Lifestyle() {
               avifSrcSet={mysteryImage.avif}
               sizes={mysteryImage.sizes}
               fallbackSrc={mysteryImage.fallback}
+              telemetrySection="lifestyle-mystery"
               alt="Próximo drop GEA — em breve"
               loading="eager"
               decoding="async"
