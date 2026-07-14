@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import heroImage from "@/assets/gea-hero-sunset.jpeg.asset.json";
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
@@ -12,18 +13,32 @@ export function Hero() {
   return (
     <section ref={ref} className="relative h-[100dvh] w-full overflow-hidden bg-gea-black">
       <motion.div style={{ y }} className="absolute inset-0 scale-110">
+        <div
+          aria-hidden
+          className="absolute inset-0 transition-opacity duration-700"
+          style={{
+            opacity: loaded ? 0 : 1,
+            background:
+              "radial-gradient(ellipse at 50% 65%, #d97a3c 0%, #7a2f1a 35%, #1a0e0a 75%, #000 100%)",
+            filter: "blur(24px)",
+            transform: "scale(1.05)",
+          }}
+        />
         <img
           src={heroImage.url}
           alt="GEA — pôr do sol na estrada"
-          className="h-full w-full object-cover object-center"
+          className="h-full w-full object-cover object-center transition-opacity duration-700"
+          style={{ opacity: loaded ? 1 : 0 }}
           loading="eager"
           decoding="async"
           fetchPriority="high"
           sizes="100vw"
           draggable={false}
+          onLoad={() => setLoaded(true)}
         />
 
       </motion.div>
+
 
       {/* Cinematic overlays */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/10 to-black/90" />
