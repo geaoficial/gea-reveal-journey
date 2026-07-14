@@ -101,6 +101,7 @@ export function Lifestyle() {
             webpSrcSet={lifestyleImage.webp}
             avifSrcSet={lifestyleImage.avif}
             sizes={lifestyleImage.sizes}
+            fallbackSrc={lifestyleImage.fallback}
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="eager"
             decoding="async"
