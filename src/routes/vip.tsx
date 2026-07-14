@@ -8,6 +8,7 @@ import {
   loginVipMember,
   logoutVipMember,
   confirmInstagramFollow,
+  logInviteShare,
 } from "@/lib/vip-agent.functions";
 import { VipCard } from "@/components/gea/VipCard";
 
@@ -451,6 +452,7 @@ function MemberPanel({
                       "Share Invite WhatsApp"
                     );
                   } catch { /* ignore */ }
+                  logInviteShare({ data: { channel: "whatsapp" } }).catch(() => { /* ignore */ });
                 }}
                 className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-emerald-400/40 bg-emerald-400/[0.08] text-emerald-300 rounded hover:bg-emerald-400/[0.14]"
               >
@@ -529,6 +531,7 @@ function CopyInviteButton({ url }: { url: string }) {
               "Copy Invite Link"
             );
           } catch { /* ignore */ }
+          logInviteShare({ data: { channel: "copy_link" } }).catch(() => { /* ignore */ });
         } catch { /* ignore */ }
       }}
       className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-white/20 rounded hover:border-white/40"
@@ -561,6 +564,7 @@ function InviteQrButton({ url, memberNumber }: { url: string; memberNumber: numb
           "Generate Invite QR"
         );
       } catch { /* ignore */ }
+      logInviteShare({ data: { channel: "qr_generate" } }).catch(() => { /* ignore */ });
     } finally {
       setLoading(false);
     }
@@ -579,6 +583,7 @@ function InviteQrButton({ url, memberNumber }: { url: string; memberNumber: numb
         "Download Invite QR"
       );
     } catch { /* ignore */ }
+    logInviteShare({ data: { channel: "qr_download" } }).catch(() => { /* ignore */ });
   }
 
   return (

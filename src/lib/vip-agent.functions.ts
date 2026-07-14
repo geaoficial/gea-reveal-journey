@@ -285,3 +285,29 @@ export const confirmInstagramFollow = createServerFn({ method: "POST" }).handler
 
   return { ok: true as const, confirmedAt: inserted?.created_at ?? new Date().toISOString(), already: false };
 });
+
+// ------------------------------------------------------------------
+// logInviteShare — registra clique nos botões de compartilhamento do convite
+// (whatsapp, copy_link, qr_code_generate, qr_code_download)
+// ------------------------------------------------------------------
+const inviteShareChannels = ["whatsapp", "copy_link", "qr_generate", "qr_download"] as const;
+
+export const logInviteShare = createServerFn({ method: "POST" })
+  .inputValidator((data: { channel: (typeof inviteShareChannels)[number] }) =>
+    z.object({ channel: z.enum(inviteShareChannels) }).parse(data),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { readSessionCookie } = await import("./vip-session.server");
+
+    const memberId = readSessionCookie();
+    if (!memberId) return { ok: false as const };
+
+    await supabaseAdmin.from("vip_events").insert({
+      member_id: memberId,
+      type: "invite_share",
+      payload: { channel: data.channel },
+    });
+
+    return { ok: true as const };
+  });
