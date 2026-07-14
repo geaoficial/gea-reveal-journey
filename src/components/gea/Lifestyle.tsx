@@ -110,15 +110,43 @@ export function Lifestyle() {
             }}
           />
 
-          {/* Vinheta acentuada só nessa cena */}
+          {/* Máscara de revelação — só o spot em torno do cursor/toque mostra o mostrador */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0"
+            className="pointer-events-none absolute inset-0 transition-[background,opacity] duration-500 ease-out"
             style={{
-              background:
-                "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%)",
+              background: `radial-gradient(circle at ${reveal.x}% ${reveal.y}%, transparent 0%, rgba(0,0,0,0.15) ${reveal.active ? "8%" : "0%"}, rgba(0,0,0,0.85) ${reveal.active ? "22%" : "12%"}, rgba(0,0,0,0.98) 55%)`,
             }}
           />
+
+          {/* Anel de foco cinematográfico seguindo o cursor */}
+          <motion.div
+            aria-hidden
+            animate={{
+              opacity: reveal.active ? 1 : 0,
+              scale: reveal.active ? 1 : 0.85,
+            }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none absolute h-[26vmin] w-[26vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              left: `${reveal.x}%`,
+              top: `${reveal.y}%`,
+              border: "1px solid rgba(232,138,58,0.35)",
+              boxShadow:
+                "0 0 40px 4px rgba(232,138,58,0.15), inset 0 0 30px rgba(232,138,58,0.08)",
+            }}
+          />
+
+          {/* Dica de interação */}
+          <motion.span
+            aria-hidden
+            animate={{ opacity: reveal.active ? 0 : 0.6 }}
+            transition={{ duration: 0.5 }}
+            className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2 text-[0.55rem] uppercase tracking-[0.5em] text-gea-cream/60"
+          >
+            Mova para revelar
+          </motion.span>
+
 
           {/* Badge canto superior — Novo drop */}
           <motion.div
