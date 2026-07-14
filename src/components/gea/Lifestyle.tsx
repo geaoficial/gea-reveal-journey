@@ -3,10 +3,14 @@ import { useRef, useState } from "react";
 import { lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { BlurImage } from "./BlurImage";
 import { useDeviceCapability } from "@/lib/device-capability";
+import { usePerfTier, blurFor } from "@/lib/perf-monitor";
 
 export function Lifestyle() {
   const { allowHeavyFx, reducedMotion } = useDeviceCapability();
-  const lite = !allowHeavyFx; // mobile / low-end / save-data / reduced motion
+  const perfTier = usePerfTier();
+  // Fallback dinâmico: dispositivo fraco OU FPS medido caindo → reduz camadas
+  const lite = !allowHeavyFx || perfTier !== "cinema";
+  const minimal = perfTier === "lite"; // corte agressivo quando FPS desaba
   const revealRef = useRef<HTMLDivElement>(null);
   const [reveal, setReveal] = useState<{ x: number; y: number; active: boolean }>({
     x: 50,
