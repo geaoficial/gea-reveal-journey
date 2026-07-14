@@ -45,7 +45,8 @@ export function InstagramSection() {
             href={IG_URL}
             target="_blank"
             rel="noopener noreferrer"
-            initial={{ opacity: 0, y: 20 }}
+            onClick={() => vip.markPending()}
+
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
