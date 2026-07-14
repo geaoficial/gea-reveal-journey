@@ -1,15 +1,38 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { heroImage } from "@/lib/responsive-image";
 
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const barHeight = useTransform(scrollYProgress, [0, 1], ["8vh", "14vh"]);
+
+  // Reveal quando a imagem estiver decodificada — cobre também o caso
+  // em que a imagem já veio pronta do cache/SSR (onLoad não dispara).
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+    const reveal = () =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setLoaded(true)));
+    if (img.complete && img.naturalWidth > 0) {
+      (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(reveal);
+      return;
+    }
+    const onLoad = () => reveal();
+    const onError = () => reveal();
+    img.addEventListener("load", onLoad, { once: true });
+    img.addEventListener("error", onError, { once: true });
+    return () => {
+      img.removeEventListener("load", onLoad);
+      img.removeEventListener("error", onError);
+    };
+  }, []);
+
 
   return (
     <section ref={ref} className="relative h-[100dvh] w-full overflow-hidden bg-gea-black">
@@ -28,20 +51,24 @@ export function Hero() {
           <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
           <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
           <img
+            ref={imgRef}
             src={heroImage.fallback}
             srcSet={heroImage.srcSet}
             sizes={heroImage.sizes}
             width={1920}
             height={1280}
             alt="GEA — pôr do sol na estrada"
-            className="h-full w-full object-cover object-center transition-opacity duration-700"
-            style={{ opacity: loaded ? 1 : 0 }}
+            className="h-full w-full object-cover object-center"
+            style={{
+              opacity: loaded ? 1 : 0,
+              transition: "opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
             loading="eager"
             decoding="async"
             fetchPriority="high"
             draggable={false}
-            onLoad={() => setLoaded(true)}
           />
+
         </picture>
 
 
