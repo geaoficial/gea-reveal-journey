@@ -110,14 +110,18 @@ export function InstagramSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.8, delay: i * 0.05 }}
-                  className="group relative block overflow-hidden"
+                  className="group relative block aspect-square overflow-hidden bg-gea-black/60"
                 >
-                  <div className="transition-transform duration-[1200ms] ease-out group-hover:scale-105">
-                    <Placeholder label={t.label} tint={t.tint} aspect="1 / 1" className="w-full" />
-                  </div>
+                  <img
+                    src={t.url}
+                    alt={t.label}
+                    loading="lazy"
+                    className="h-full w-full object-cover grayscale-[0.15] transition-all duration-[1200ms] ease-out group-hover:scale-105 group-hover:grayscale-0"
+                  />
                   <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/30" />
                 </motion.a>
               ))}
+
         </div>
 
 
