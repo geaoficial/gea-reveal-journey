@@ -59,6 +59,8 @@ export function Lifestyle() {
           <BlurImage
             src={lifestyleImage.fallback}
             srcSet={lifestyleImage.srcSet}
+            webpSrcSet={lifestyleImage.webp}
+            avifSrcSet={lifestyleImage.avif}
             sizes={lifestyleImage.sizes}
             alt="Silhueta ao pôr do sol — a espera antes do drop"
             loading="lazy"
