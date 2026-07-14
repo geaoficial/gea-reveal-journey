@@ -282,16 +282,45 @@ function MemberPanel({
       : "";
 
   const pendingRef = useRef(false);
+  const clickedAtRef = useRef<number | null>(null);
   const [justConfirmed, setJustConfirmed] = useState(false);
+
+  function track(name: string, props?: Record<string, string | number | boolean>) {
+    try {
+      (window as unknown as {
+        plausible?: (n: string, o?: { props?: Record<string, unknown> }) => void;
+      }).plausible?.(name, props ? { props } : undefined);
+    } catch { /* ignore */ }
+  }
+
+  const followed = Boolean(instagramFollowedAt);
+
+  // Impressão do CTA (uma vez por sessão de painel, quando ainda não seguiu)
+  useEffect(() => {
+    if (!followed) track("Vip Follow CTA View", { memberId: member.id });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     function onVisible() {
       if (document.visibilityState !== "visible" || !pendingRef.current) return;
       pendingRef.current = false;
+      const startedAt = clickedAtRef.current;
+      const elapsedMs = startedAt ? Date.now() - startedAt : 0;
       confirmFollow().then((r) => {
         if (r.ok) {
-          setJustConfirmed(!r.already);
+          if (!r.already) {
+            track("Vip Follow Confirmed", {
+              memberId: member.id,
+              elapsedMs,
+            });
+            setJustConfirmed(true);
+          } else {
+            track("Vip Follow Reconfirmed", { memberId: member.id });
+          }
           qc.invalidateQueries({ queryKey: ["vip", "me"] });
+        } else {
+          track("Vip Follow Confirm Failed", { memberId: member.id });
         }
       });
     }
@@ -301,17 +330,20 @@ function MemberPanel({
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("focus", onVisible);
     };
-  }, [confirmFollow, qc]);
+  }, [confirmFollow, qc, member.id]);
 
   function openInstagram() {
     pendingRef.current = true;
+    clickedAtRef.current = Date.now();
+    track("Vip Follow CTA Click", {
+      memberId: member.id,
+      alreadyFollowed: followed,
+    });
+    // Mantém evento genérico para compatibilidade com dashboards antigos
+    track("Follow Instagram");
     window.open("https://instagram.com/geastoree", "_blank", "noopener,noreferrer");
-    try {
-      (window as unknown as { plausible?: (n: string) => void }).plausible?.("Follow Instagram");
-    } catch { /* ignore */ }
   }
 
-  const followed = Boolean(instagramFollowedAt);
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12 space-y-10">
