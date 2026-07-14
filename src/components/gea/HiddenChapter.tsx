@@ -143,17 +143,11 @@ export function HiddenChapter() {
                 }}
               />
             </div>
-            <div className="flex items-center justify-between text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/55 tabular-nums">
-              <span>
-                {ready
-                  ? launched
-                    ? "Ao vivo"
-                    : `${pad(days)}d · ${pad(hours)}h · ${pad(minutes)}m · ${pad(seconds)}s`
-                  : "--"}
-              </span>
+            <div className="flex items-center justify-end text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/55 tabular-nums">
               <span className="text-gea-sunset">{ready ? `${percent}%` : "--%"}</span>
             </div>
           </div>
+
 
         </motion.div>
 
