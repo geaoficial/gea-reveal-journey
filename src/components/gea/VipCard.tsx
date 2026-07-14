@@ -7,6 +7,7 @@ import {
   useTransform,
 } from "motion/react";
 import { formatUnlockDate } from "@/lib/vip";
+import { useDeviceCapability } from "@/lib/device-capability";
 
 type Props = {
   name: string | null;
@@ -36,11 +37,14 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
 ) {
   const [flipped, setFlipped] = useState(false);
   const prefersReduced = useReducedMotion();
+  const { allowHeavyFx } = useDeviceCapability();
   const animateOn = !exportMode && !prefersReduced;
+  // FX pesados (shine com blur, rotateX/scale wobble, sombra dinâmica) só em alto tier
+  const heavyFx = animateOn && allowHeavyFx;
   const displayName = (name || "MEMBRO EXCLUSIVO").toUpperCase();
   const couponCode = memberId ? `GEA10-${memberId}` : "GEA10-----";
 
-  // Angulo mestre da rotação — dirige rotateY, brilho e sombra
+  // Angulo mestre da rotação — dirige rotateY (+ FX pesados quando ligados)
   const angle = useMotionValue(0);
 
   useEffect(() => {
@@ -48,30 +52,33 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
       angle.set(flipped ? 360 : 0);
       return;
     }
+    // Dispositivos low-tier: giro mais curto para reduzir tempo de render
     const controls = animate(angle, flipped ? 360 : 0, {
-      duration: 2.6,
+      duration: heavyFx ? 2.6 : 1.4,
       ease: [0.16, 0.84, 0.24, 1],
     });
     return () => controls.stop();
-  }, [flipped, animateOn, angle]);
+  }, [flipped, animateOn, heavyFx, angle]);
 
-  // Derivações cinematográficas do ângulo
+  // Derivações — sempre GPU-friendly (transform/opacity)
   const rotateY = useTransform(angle, (a) => `${a}deg`);
-  // Leve inclinação em X: sobe no meio do giro (efeito de "levantar" o cartão)
-  const rotateX = useTransform(angle, (a) => `${-Math.sin((a * Math.PI) / 180) * 6}deg`);
-  // Dip de escala no meio do flip (perspectiva cinematográfica)
-  const scale = useTransform(angle, (a) => 1 - Math.abs(Math.sin((a * Math.PI) / 180)) * 0.04);
-  // Sombra projetada — mais forte e deslocada quando o cartão está de perfil
-  const boxShadow = useTransform(angle, (a) => {
+  const rotateX = useTransform(angle, (a) =>
+    heavyFx ? `${-Math.sin((a * Math.PI) / 180) * 6}deg` : "0deg"
+  );
+  const scale = useTransform(angle, (a) =>
+    heavyFx ? 1 - Math.abs(Math.sin((a * Math.PI) / 180)) * 0.04 : 1
+  );
+  // Sombra: opacidade em camada dedicada (compositor), não box-shadow animado (paint)
+  const shadowOpacity = useTransform(angle, (a) => {
     const s = Math.abs(Math.sin((a * Math.PI) / 180));
-    const yOff = 40 + s * 60;
-    const blur = 100 + s * 80;
-    const spread = -40 + s * 10;
-    const alpha = 0.55 + s * 0.35;
-    return `0 ${yOff}px ${blur}px ${spread}px rgba(0,0,0,${alpha.toFixed(2)}), 0 0 0 1px rgba(200,200,200,0.06)`;
+    return 0.55 + s * 0.4;
   });
-  // Varredura de brilho especular acompanhando o giro (0% → 100%)
-  const shineX = useTransform(angle, [0, 360], ["-30%", "130%"]);
+  const shadowScale = useTransform(angle, (a) => {
+    const s = Math.abs(Math.sin((a * Math.PI) / 180));
+    return 1 + s * 0.12;
+  });
+  // Brilho especular: transform X (compositor) em vez de left (layout)
+  const shineX = useTransform(angle, [0, 360], ["-60%", "220%"]);
   const shineOpacity = useTransform(angle, (a) => {
     const s = Math.abs(Math.sin((a * Math.PI) / 180));
     return 0.05 + s * 0.35;
@@ -103,31 +110,50 @@ export const VipCard = forwardRef<HTMLDivElement, Props>(function VipCard(
         className="relative aspect-[1.75/1] w-full cursor-pointer select-none [perspective:2000px] focus:outline-none"
         style={{ perspectiveOrigin: "50% 40%" }}
       >
+        {/* Camada de sombra dedicada — GPU (transform/opacity), evita repaint da box-shadow */}
+        {!exportMode && (
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 h-8 w-[85%] rounded-[50%]"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 70%)",
+              opacity: shadowOpacity,
+              scale: heavyFx ? shadowScale : 1,
+              filter: "blur(18px)",
+              transform: "translateZ(0)",
+            }}
+          />
+        )}
+
         <motion.div
           className="relative h-full w-full [transform-style:preserve-3d]"
           style={{
             rotateY,
             rotateX,
             scale,
-            boxShadow: exportMode ? undefined : boxShadow,
             borderRadius: 14,
+            willChange: animateOn ? "transform" : undefined,
+            boxShadow: exportMode
+              ? undefined
+              : "0 0 0 1px rgba(200,200,200,0.06)",
           }}
         >
-          {/* Varredura especular global — acompanha o ângulo */}
-          {!exportMode && (
+          {/* Varredura especular — só em alto tier (usa filter: blur, custo alto) */}
+          {heavyFx && (
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden rounded-[14px]"
-              style={{ opacity: shineOpacity }}
+              style={{ opacity: shineOpacity, willChange: "opacity" }}
             >
               <motion.div
-                className="absolute inset-y-[-20%] w-[45%]"
+                className="absolute inset-y-[-20%] left-0 w-[45%]"
                 style={{
-                  left: shineX,
+                  x: shineX,
                   background:
                     "linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%)",
                   filter: "blur(10px)",
-                  transform: "translateZ(1px)",
+                  willChange: "transform",
                 }}
               />
             </motion.div>
