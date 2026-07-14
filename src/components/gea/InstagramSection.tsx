@@ -64,6 +64,8 @@ export function InstagramSection() {
           </motion.p>
         </div>
 
+        <FounderBadge />
+
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
