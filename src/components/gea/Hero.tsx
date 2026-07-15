@@ -84,9 +84,10 @@ export function Hero() {
           <div
             role="img"
             aria-label="GEA — pôr do sol na estrada"
-            className="relative z-[1] block h-full w-full bg-cover bg-no-repeat bg-[62%_55%] md:bg-center"
+            className="relative z-[1] block h-full w-full bg-no-repeat bg-center bg-contain md:bg-cover md:bg-[62%_55%] lg:bg-center"
             style={{
               backgroundImage: `url("${heroImage.fallback}")`,
+              backgroundColor: "#000",
             }}
           />
         ) : (
@@ -102,10 +103,11 @@ export function Hero() {
               width={1920}
               height={1280}
               alt="GEA — pôr do sol na estrada"
-              className="h-full w-full object-cover object-[62%_55%] md:object-center"
+              className="h-full w-full object-contain object-center md:object-cover md:object-[62%_55%] lg:object-center"
               style={{
                 opacity: 1,
                 imageRendering: "auto",
+                backgroundColor: "#000",
               }}
               loading="eager"
               decoding="async"
@@ -126,6 +128,7 @@ export function Hero() {
             />
           </picture>
         )}
+
 
 
 
