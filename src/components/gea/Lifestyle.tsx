@@ -151,10 +151,10 @@ export function Lifestyle() {
             />
           </motion.div>
 
-          {/* Névoa âmbar — dissolve e reaparece com o scroll */}
-          <motion.div
+          {/* Névoa âmbar — presença constante (nunca dissolve) */}
+          <div
             aria-hidden
-            style={{ opacity: fogOpacity }}
+            style={{ opacity: 0.9 }}
             className="pointer-events-none absolute inset-0 mix-blend-screen"
           >
             <div
@@ -165,7 +165,8 @@ export function Lifestyle() {
                 filter: `blur(${blurFor(perfTier, lite ? 24 : 40)}px)`,
               }}
             />
-          </motion.div>
+          </div>
+
 
           {/* Cortina de fumaça — base densa e permanente (mais baixa no mobile p/ não cobrir o mostrador) */}
           <div
