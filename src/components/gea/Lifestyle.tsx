@@ -18,56 +18,15 @@ export function Lifestyle() {
     active: false,
   });
 
-  // Névoa âmbar dirigida por scroll — dissolve e reaparece conforme o teaser cruza a viewport
+  // Névoa âmbar — presença permanente; opacidade fixa (sem timers, sem variação de scroll).
   const { scrollYProgress } = useScroll({
     target: revealRef,
     offset: ["start end", "end start"],
   });
-  const fogOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [0.88, 0.92, 0.88],
-  );
-
-
-  const fogY = useTransform(scrollYProgress, [0, 1], ["12%", "-14%"]);
-  const fogScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1.25, 1.05]);
   const shadowOpacity = useTransform(
     scrollYProgress,
     [0, 0.25, 0.5, 0.75, 1],
     [0.95, 0.55, 0.8, 0.5, 0.95],
-  );
-
-  // Velocidade do scroll — impulsiona a fumaça (direção + intensidade)
-  const scrollVelocity = useVelocity(scrollYProgress);
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 40,
-    stiffness: 180,
-    mass: 0.6,
-  });
-  // Intensidade extra da fumaça a partir da velocidade absoluta
-  const velocityBoost = useTransform(smoothVelocity, (v) => {
-    const abs = Math.min(Math.abs(v) * 0.9, 0.55);
-    return abs;
-  });
-  // Direção vertical: scroll rápido pra baixo empurra a fumaça pra cima (negativo)
-  const velocityShiftY = useTransform(smoothVelocity, (v) =>
-    `${Math.max(-14, Math.min(14, -v * 22))}%`,
-  );
-  // Leve deriva lateral seguindo o sentido do scroll
-  const velocityShiftX = useTransform(smoothVelocity, (v) =>
-    `${Math.max(-6, Math.min(6, v * 8))}%`,
-  );
-  // Blur reativo: quanto mais rápido o scroll, mais borrada a fumaça (efeito motion blur)
-  const velocityBlur = useTransform(smoothVelocity, (v) => {
-    const base = blurFor(perfTier, lite ? 28 : 50);
-    const extra = Math.min(Math.abs(v) * 30, lite ? 12 : 24);
-    return `blur(${base + extra}px)`;
-  });
-  // Opacidade combinada: baseline (fogOpacity) + boost por velocidade
-  const frontOpacity = useTransform(
-    [fogOpacity, velocityBoost] as never,
-    ([o, b]: number[]) => Math.min(1, 0.55 + o * 0.35 + b),
   );
 
   const updateFromEvent = (clientX: number, clientY: number) => {
