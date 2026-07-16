@@ -89,6 +89,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      // Preload da logo/favicon — alta prioridade, decodifica antes do primeiro paint
+      { rel: "preload", as: "image", href: "/favicon.png", type: "image/png", fetchPriority: "high" },
       { rel: "icon", type: "image/png", sizes: "512x512", href: "/favicon.png" },
       { rel: "apple-touch-icon", sizes: "512x512", href: "/favicon.png" },
       { rel: "dns-prefetch", href: "https://plausible.io" },
