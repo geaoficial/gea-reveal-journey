@@ -26,7 +26,8 @@ export const Route = createFileRoute("/")({
     // Fallback absoluto garante preview no WhatsApp/Instagram mesmo antes do SSR resolver o host.
     const PUBLISHED_ORIGIN = "https://gea-reveal-journey.lovable.app";
     const origin = loaderData?.origin || PUBLISHED_ORIGIN;
-    const ogImage = `${origin}${ogAsset.url}`;
+    // ogAsset.url pode ser absoluta (CDN) ou relativa — prefixar apenas se relativa
+    const ogImage = ogAsset.url.startsWith("http") ? ogAsset.url : `${origin}${ogAsset.url}`;
     const pageUrl = `${origin}/`;
     const title = "GEA — Mais do que um relógio. Uma identidade.";
     const description =
