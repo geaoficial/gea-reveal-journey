@@ -26,12 +26,30 @@ const registerSchema = z.object({
   acceptedTerms: z.literal(true),
 });
 
+// Cadastro simplificado (novo fluxo minimalista do Clube VIP): nome + e-mail + WhatsApp.
+const registerSimpleSchema = z.object({
+  fullName: z.string().trim().min(2).max(80),
+  email: z.string().trim().toLowerCase().email().max(160),
+  whatsapp: z
+    .string()
+    .trim()
+    .min(8)
+    .max(24)
+    .transform((v) => v.replace(/\s+/g, " ")),
+  acceptedTerms: z.literal(true),
+});
+
 const loginSchema = z.object({
   instagram: z
     .string()
     .trim()
     .transform((v) => v.replace(/^@+/, "").toLowerCase())
     .refine((v) => instagramRegex.test(v)),
+  accessCode: z.string().trim().min(6).max(16),
+});
+
+const loginSimpleSchema = z.object({
+  email: z.string().trim().toLowerCase().email().max(160),
   accessCode: z.string().trim().min(6).max(16),
 });
 
@@ -149,6 +167,92 @@ export const loginVipMember = createServerFn({ method: "POST" })
       .from("vip_members")
       .select("id, access_code, status")
       .eq("instagram_handle", data.instagram)
+      .maybeSingle();
+
+    if (!member || member.access_code !== data.accessCode || member.status !== "active") {
+      return { ok: false as const, message: "Dados inválidos." };
+    }
+
+    issueSessionCookie(member.id);
+    return { ok: true as const };
+  });
+
+// ------------------------------------------------------------------
+// registerVipMemberSimple — fluxo minimalista Nome + E-mail + WhatsApp
+// ------------------------------------------------------------------
+export const registerVipMemberSimple = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => registerSimpleSchema.parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { issueSessionCookie } = await import("./vip-session.server");
+
+    // Duplicidade por e-mail (case-insensitive)
+    const { data: existing } = await supabaseAdmin
+      .from("vip_members")
+      .select("id, member_number")
+      .ilike("email", data.email)
+      .maybeSingle();
+    if (existing) {
+      return {
+        ok: false as const,
+        reason: "already_member" as const,
+        message: "Este e-mail já faz parte da GEA VIP.",
+        memberNumber: existing.member_number,
+      };
+    }
+
+    const accessCode = generateAccessCode();
+
+    const { data: inserted, error } = await supabaseAdmin
+      .from("vip_members")
+      .insert({
+        full_name: data.fullName,
+        email: data.email,
+        whatsapp: data.whatsapp,
+        access_code: accessCode,
+      })
+      .select("id, member_number, full_name, email, whatsapp, unlocked_at, access_code")
+      .single();
+
+    if (error || !inserted) {
+      return { ok: false as const, reason: "server_error" as const, message: "Falha ao cadastrar. Tente novamente." };
+    }
+
+    await supabaseAdmin.from("vip_events").insert({
+      member_id: inserted.id,
+      type: "signup",
+      payload: { via: "simple" },
+    });
+
+    issueSessionCookie(inserted.id);
+
+    return {
+      ok: true as const,
+      member: {
+        id: inserted.id,
+        memberNumber: inserted.member_number,
+        fullName: inserted.full_name,
+        email: inserted.email,
+        whatsapp: inserted.whatsapp,
+        unlockedAt: inserted.unlocked_at,
+        accessCode: inserted.access_code,
+      },
+    };
+  });
+
+// ------------------------------------------------------------------
+// loginVipMemberSimple — por e-mail + código
+// ------------------------------------------------------------------
+export const loginVipMemberSimple = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => loginSimpleSchema.parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { issueSessionCookie } = await import("./vip-session.server");
+
+    const { data: member } = await supabaseAdmin
+      .from("vip_members")
+      .select("id, access_code, status")
+      .ilike("email", data.email)
       .maybeSingle();
 
     if (!member || member.access_code !== data.accessCode || member.status !== "active") {

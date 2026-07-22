@@ -157,42 +157,48 @@ export type Database = {
           access_code: string
           benefits_history: Json
           city: string | null
+          email: string | null
           full_name: string
           id: string
-          instagram_handle: string
+          instagram_handle: string | null
           invited_by: string | null
           member_number: number
           status: string
           unlocked_at: string
           updated_at: string
+          whatsapp: string | null
         }
         Insert: {
           accepted_terms_at?: string
           access_code: string
           benefits_history?: Json
           city?: string | null
+          email?: string | null
           full_name: string
           id?: string
-          instagram_handle: string
+          instagram_handle?: string | null
           invited_by?: string | null
           member_number?: number
           status?: string
           unlocked_at?: string
           updated_at?: string
+          whatsapp?: string | null
         }
         Update: {
           accepted_terms_at?: string
           access_code?: string
           benefits_history?: Json
           city?: string | null
+          email?: string | null
           full_name?: string
           id?: string
-          instagram_handle?: string
+          instagram_handle?: string | null
           invited_by?: string | null
           member_number?: number
           status?: string
           unlocked_at?: string
           updated_at?: string
+          whatsapp?: string | null
         }
         Relationships: [
           {
