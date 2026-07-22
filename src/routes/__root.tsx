@@ -140,6 +140,7 @@ function RootComponent() {
       <VipMenuButton />
       <CookieConsent />
       <ConsentScripts />
+      <Toaster position="bottom-center" theme="dark" richColors />
     </QueryClientProvider>
   );
 }
