@@ -116,13 +116,16 @@ function VipPage() {
           url: inviteLink,
         });
         shared = true;
-        setToast("Convite compartilhado com sucesso.");
+        toast.success("Convite compartilhado com sucesso.", {
+          description: "Obrigado por levar a GEA adiante.",
+        });
       } catch (err) {
         // O usuário pode ter cancelado o compartilhamento nativo;
         // não tratamos como erro, tentamos copiar em seguida.
         if (err instanceof Error && err.name === "AbortError") {
-          setToast("Compartilhamento cancelado.");
-          setTimeout(() => setToast(null), 2200);
+          toast("Compartilhamento cancelado.", {
+            description: "Você pode tentar novamente quando quiser.",
+          });
           return;
         }
       }
@@ -131,15 +134,19 @@ function VipPage() {
     if (!shared) {
       try {
         await navigator.clipboard.writeText(inviteLink);
-        setToast("Link de convite copiado para a área de transferência.");
+        toast.success("Link de convite copiado.", {
+          description: "Agora é só enviar para quem você quiser.",
+        });
       } catch {
-        setToast("Não foi possível copiar automaticamente. Selecione e copie o link abaixo.");
+        toast.error("Não foi possível copiar automaticamente.", {
+          description: "Selecione e copie o link manualmente.",
+        });
       }
     }
 
     mark("share");
-    setTimeout(() => setToast(null), 3000);
   }
+
 
 
   async function copyCoupon(code: string, which: "main" | "extra") {
