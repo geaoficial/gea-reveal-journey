@@ -89,8 +89,18 @@ export function VipRegisterForm() {
     },
     onError: (err) => {
       console.error("[vip] register error", err);
-      setServerErrors({ form: "Erro de conexão. Verifique sua internet e tente novamente." });
+      const online = typeof navigator === "undefined" ? true : navigator.onLine;
+      const name = (err as { name?: string })?.name ?? "";
+      const msg = String((err as { message?: string })?.message ?? "");
+      // Erro real de rede/offline: TypeError "Failed to fetch" ou navigator.onLine=false
+      const isNetwork = !online || name === "TypeError" || /fetch|network/i.test(msg);
+      setServerErrors({
+        form: isNetwork
+          ? "Sem conexão com a internet. Verifique sua rede e tente novamente."
+          : "Erro ao conectar com o servidor. Tente novamente em instantes.",
+      });
     },
+
   });
 
   const showErr = (field: "fullName" | "email" | "whatsapp") =>
