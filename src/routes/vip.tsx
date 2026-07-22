@@ -160,10 +160,16 @@ function VipPage() {
   async function copyInvite() {
     try {
       await navigator.clipboard.writeText(inviteLink);
-      setToast("Link copiado.");
-      setTimeout(() => setToast(null), 2800);
-    } catch {}
+      toast.success("Link de convite copiado.", {
+        description: "Agora é só enviar para quem você quiser.",
+      });
+    } catch {
+      toast.error("Não foi possível copiar automaticamente.", {
+        description: "Selecione e copie o link manualmente.",
+      });
+    }
   }
+
 
   const friendsPct = Math.min(100, friends * 100);
   const extraUnlocked = friends >= 1;
