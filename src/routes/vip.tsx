@@ -4,15 +4,35 @@ import { toast } from "sonner";
 
 // Links oficiais — edite aqui se mudarem.
 const INSTAGRAM_URL = "https://instagram.com/geastoree";
-const BASE_URL = "https://geastore.lovable.app";
+const BASE_URL = "https://geastore.online";
 const STORAGE_KEY = "gea_vip_progress_v3";
 const REF_KEY = "gea_vip_ref_id";
 const FRIENDS_KEY = "gea_vip_friends_confirmed";
+const INVITED_BY_KEY = "gea_vip_invited_by";
+const INVITE_NOTIFIED_KEY = "gea_vip_invite_notified";
 const COUPON_MAIN = "GEA10";
 const COUPON_EXTRA = "GEA26";
 
 type Progress = { instagram: boolean; share: boolean };
 const EMPTY: Progress = { instagram: false, share: false };
+
+/**
+ * Notifica que um convite foi concluído.
+ * Estrutura pronta para conexão futura com o Supabase (endpoint /api/public/invite/complete).
+ * Enquanto não houver backend, apenas registra localmente e credita 1 amigo no mesmo dispositivo
+ * quando o código do convidador for igual ao refId salvo (fluxo de demonstração/teste).
+ */
+async function notifyInviteCompleted(inviterCode: string, guestCode: string) {
+  try {
+    localStorage.setItem(
+      `gea_vip_invite_done_${inviterCode}`,
+      JSON.stringify({ guest: guestCode, at: Date.now() }),
+    );
+  } catch {
+    // noop
+  }
+  // TODO(backend): substituir por fetch('/api/public/invite/complete', { method: 'POST', body: JSON.stringify({ inviter: inviterCode, guest: guestCode }) })
+}
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
