@@ -345,6 +345,18 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
 
   const eligibleBenefits = allBenefits.filter((b) => b.unlocked);
 
+  const memberIdPad = String(member.member_number).padStart(4, "0");
+  const firstNameSlug = (member.full_name || "MEMBRO")
+    .trim()
+    .split(/\s+/)[0]
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z]/g, "")
+    .toUpperCase()
+    .slice(0, 12) || "MEMBRO";
+  const couponCode = `GEA-${firstNameSlug}-${memberIdPad}`;
+  const referralCode = `GEA${memberIdPad}`;
+
   return {
     ok: true as const,
     member: {
@@ -355,6 +367,8 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
       city: member.city,
       unlockedAt: member.unlocked_at,
       status: member.status,
+      couponCode,
+      referralCode,
     },
     invites: {
       confirmed,
@@ -365,6 +379,7 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
     benefits: eligibleBenefits,
     allBenefits,
     instagramFollowedAt: followEvent?.created_at ?? null,
+    instagramConfirmed: Boolean(followEvent),
     inviteSharedAt: shareEvent?.created_at ?? null,
     cardUnlocked: Boolean(followEvent && shareEvent),
   };
