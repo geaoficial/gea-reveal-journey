@@ -102,28 +102,15 @@ function VipPage() {
     mark("instagram");
   }
 
-  async function handleShare() {
-    const data = {
-      title: "GEA",
-      text: "Conheça a GEA — uma nova experiência premium.",
-      url: inviteLink,
-    };
+  async function handleCopyInvite() {
     try {
-      const nav = navigator as Navigator & {
-        share?: (d: ShareData) => Promise<void>;
-        clipboard?: { writeText: (t: string) => Promise<void> };
-      };
-      if (typeof nav.share === "function") {
-        await nav.share(data);
-      } else if (nav.clipboard?.writeText) {
-        await nav.clipboard.writeText(inviteLink);
-        setToast("Link copiado. Compartilhe com um amigo.");
-      }
-      mark("share");
-      setTimeout(() => setToast(null), 3600);
+      await navigator.clipboard.writeText(inviteLink);
+      setToast("Link de convite copiado.");
     } catch {
-      // usuário cancelou — não marca
+      setToast("Não foi possível copiar automaticamente. Selecione e copie o link abaixo.");
     }
+    mark("share");
+    setTimeout(() => setToast(null), 2800);
   }
 
   async function copyCoupon(code: string, which: "main" | "extra") {
@@ -188,7 +175,7 @@ function VipPage() {
               />
               <ProgressItem
                 done={progress.share}
-                label="Compartilhar a GEA com um amigo"
+                label="Copiar meu link de convite"
               />
             </ul>
           </div>
@@ -203,9 +190,9 @@ function VipPage() {
             />
             <ActionButton
               done={progress.share}
-              onClick={handleShare}
-              label="Compartilhar a GEA"
-              doneLabel="GEA compartilhada"
+              onClick={handleCopyInvite}
+              label="Copiar meu link de convite"
+              doneLabel="Link de convite copiado"
             />
           </div>
 
