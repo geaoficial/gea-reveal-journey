@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMyVipMember, logoutVipMember } from "@/lib/vip-agent.functions";
 import { VipRegisterForm } from "@/components/gea/vip/VipRegisterForm";
 import { VipMemberArea } from "@/components/gea/vip/VipMemberArea";
+import { VipInstagramStep } from "@/components/gea/vip/VipInstagramStep";
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
@@ -12,13 +13,13 @@ export const Route = createFileRoute("/vip")({
       {
         name: "description",
         content:
-          "Cadastre-se gratuitamente no GEA VIP e receba benefícios exclusivos, novidades e promoções da GEA.",
+          "Entre para a comunidade GEA e desbloqueie benefícios exclusivos, cupom de boas-vindas e programa de indicação.",
       },
       { property: "og:title", content: "GEA VIP" },
       {
         property: "og:description",
         content:
-          "Programa de membros GEA — benefícios exclusivos, cupons e indicação de amigos.",
+          "Entre para a comunidade GEA e desbloqueie benefícios exclusivos.",
       },
     ],
   }),
@@ -33,12 +34,17 @@ function VipPage() {
     staleTime: 30_000,
   });
 
+  const isMember = me.data?.ok === true;
+  const firstName = isMember
+    ? (me.data.member.fullName || "").trim().split(/\s+/)[0] || "Membro"
+    : "";
+
   return (
     <div className="min-h-screen bg-black text-white antialiased">
       <header className="flex items-center justify-between border-b border-white/[0.06] px-6 py-5">
         <Link to="/" className="text-xs uppercase tracking-[0.5em]">GEA</Link>
         <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">VIP</span>
-        {me.data?.ok ? <LogoutButton /> : <span className="w-8" />}
+        {isMember ? <LogoutButton /> : <span className="w-8" />}
       </header>
 
       {me.isLoading ? (
@@ -47,14 +53,19 @@ function VipPage() {
             Carregando…
           </div>
         </div>
-      ) : me.data?.ok ? (
-        <VipMemberArea member={me.data.member} />
+      ) : isMember ? (
+        me.data.instagramConfirmed ? (
+          <VipMemberArea member={me.data.member} />
+        ) : (
+          <VipInstagramStep firstName={firstName} />
+        )
       ) : (
         <VisitorPanel />
       )}
     </div>
   );
 }
+
 
 function VisitorPanel() {
   return (
