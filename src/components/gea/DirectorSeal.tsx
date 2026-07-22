@@ -18,66 +18,26 @@ export function DirectorSeal() {
 
   return (
     <>
-      <footer className="relative z-10 flex flex-col items-center gap-8 px-6 pb-10 pt-16 bg-gea-black">
+      <footer className="relative z-10 flex flex-col items-center gap-6 px-6 pb-6 pt-14 bg-gea-black">
         <LegalLinks />
-        <motion.button
+        <button
           type="button"
           onClick={() => setOpen(true)}
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          whileHover={{ y: -2 }}
-          className="group relative overflow-hidden rounded-[2px] border border-white/10 bg-[#0a0a0a] px-3 py-1.5 text-left transition-all duration-500 hover:border-[#c9c9c9]/40 hover:shadow-[0_6px_24px_-14px_rgba(201,201,201,0.35)]"
-          style={{
-            backgroundImage:
-              "linear-gradient(135deg, #0a0a0a 0%, #101010 50%, #070707 100%)",
-          }}
           aria-label="Sobre o diretor criativo"
+          className="group inline-flex items-center gap-[6px] text-[9px] tracking-[0.28em] text-[#3a3a3a] transition-colors duration-300 hover:text-[#7a7a7a] focus:outline-none focus-visible:text-[#8a8a8a]"
+          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
         >
-          {/* Silver sweep on hover */}
+          <span aria-hidden className="h-px w-3 bg-current opacity-60" />
+          <span className="uppercase">Direção</span>
           <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-[1400ms] ease-out group-hover:translate-x-full"
-          />
-
-          <span className="relative flex items-center gap-2.5">
-            {/* Signature mark icon */}
-            <span
-              aria-hidden
-              className="flex h-4 w-4 items-center justify-center rounded-full border border-[#c9c9c9]/25 bg-black/60"
-            >
-              <svg
-                width="9"
-                height="9"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-[#d9d9d9]"
-              >
-                <path d="M3 18c3-6 6-10 9-10s2 6 5 6 4-4 4-4" />
-              </svg>
-            </span>
-
-            <span
-              className="text-[0.5rem] uppercase tracking-[0.36em] text-[#7a7a7a] transition-colors duration-500 group-hover:text-[#c9c9c9]"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            >
-              Direção criativa
-            </span>
-            <span aria-hidden className="h-2.5 w-px bg-white/10" />
-            <span
-              className="text-[0.65rem] font-light tracking-[0.02em] text-[#d0d0d0]"
-              style={{ fontFamily: "'Instrument Serif', serif" }}
-            >
-              Breno Elias
-            </span>
+            className="normal-case tracking-[0.05em]"
+            style={{ fontFamily: "'Instrument Serif', serif", fontSize: "10px" }}
+          >
+            Breno Elias
           </span>
-        </motion.button>
+        </button>
       </footer>
+
 
       <AnimatePresence>
         {open && (
