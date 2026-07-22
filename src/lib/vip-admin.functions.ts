@@ -64,7 +64,7 @@ export const getAdminMetrics = createServerFn({ method: "GET" })
 // ------------------------------------------------------------------
 export const listAdminMembers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ q: z.string().trim().max(60).optional() }).parse(data))
+  .validator((data: unknown) => z.object({ q: z.string().trim().max(60).optional() }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -90,7 +90,7 @@ export const listAdminMembers = createServerFn({ method: "POST" })
 // ------------------------------------------------------------------
 export const setMemberStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
+  .validator((data: unknown) =>
     z.object({ memberId: z.string().uuid(), status: z.enum(["active", "blocked"]) }).parse(data),
   )
   .handler(async ({ data, context }) => {
@@ -165,7 +165,7 @@ const benefitSchema = z.object({
 
 export const upsertBenefit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => benefitSchema.parse(data))
+  .validator((data: unknown) => benefitSchema.parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -202,7 +202,7 @@ export const upsertBenefit = createServerFn({ method: "POST" })
 
 export const deleteBenefit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .validator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -231,7 +231,7 @@ export const listAdminInvites = createServerFn({ method: "GET" })
 
 export const setInviteStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
+  .validator((data: unknown) =>
     z
       .object({ inviteId: z.string().uuid(), status: z.enum(["confirmed", "rejected"]) })
       .parse(data),
@@ -256,7 +256,7 @@ export const setInviteStatus = createServerFn({ method: "POST" })
 // ------------------------------------------------------------------
 export const getInviteShareStats = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
+  .validator((data: unknown) =>
     z
       .object({
         days: z.number().int().min(1).max(365).default(30),

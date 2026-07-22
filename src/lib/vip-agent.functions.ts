@@ -101,7 +101,7 @@ function generateAccessCode(): string {
 // registerVipMember
 // ------------------------------------------------------------------
 export const registerVipMember = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => registerSchema.parse(data))
+  .validator((data: unknown) => registerSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { readInviteSponsorCookie, clearInviteSponsorCookie, issueSessionCookie } =
@@ -189,7 +189,7 @@ export const registerVipMember = createServerFn({ method: "POST" })
 // loginVipMember (por @ + código)
 // ------------------------------------------------------------------
 export const loginVipMember = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => loginSchema.parse(data))
+  .validator((data: unknown) => loginSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { issueSessionCookie } = await import("./vip-session.server");
@@ -212,7 +212,7 @@ export const loginVipMember = createServerFn({ method: "POST" })
 // registerVipMemberSimple — fluxo minimalista Nome + E-mail + WhatsApp
 // ------------------------------------------------------------------
 export const registerVipMemberSimple = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => {
+  .validator((data: unknown) => {
     const parsed = registerSimpleSchema.safeParse(data);
     if (parsed.success) return { kind: "ok" as const, data: parsed.data };
     const fieldErrors: Record<string, string> = {};
@@ -299,7 +299,7 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
 // loginVipMemberSimple — por e-mail + código
 // ------------------------------------------------------------------
 export const loginVipMemberSimple = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => loginSimpleSchema.parse(data))
+  .validator((data: unknown) => loginSimpleSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { issueSessionCookie } = await import("./vip-session.server");
@@ -477,7 +477,7 @@ export const confirmInstagramFollow = createServerFn({ method: "POST" }).handler
 const inviteShareChannels = ["whatsapp", "copy_link", "qr_generate", "qr_download"] as const;
 
 export const logInviteShare = createServerFn({ method: "POST" })
-  .inputValidator((data: { channel: (typeof inviteShareChannels)[number] }) =>
+  .validator((data: { channel: (typeof inviteShareChannels)[number] }) =>
     z.object({ channel: z.enum(inviteShareChannels) }).parse(data),
   )
   .handler(async ({ data }) => {
