@@ -34,10 +34,12 @@ function VipPage() {
     staleTime: 30_000,
   });
 
-  const isMember = me.data?.ok === true;
-  const firstName = isMember
-    ? (me.data.member.fullName || "").trim().split(/\s+/)[0] || "Membro"
-    : "";
+  const data = me.data;
+  const isMember = data?.ok === true;
+  const firstName =
+    data?.ok === true
+      ? (data.member.fullName || "").trim().split(/\s+/)[0] || "Membro"
+      : "";
 
   return (
     <div className="min-h-screen bg-black text-white antialiased">
@@ -53,9 +55,9 @@ function VipPage() {
             Carregando…
           </div>
         </div>
-      ) : isMember ? (
-        me.data.instagramConfirmed ? (
-          <VipMemberArea member={me.data.member} />
+      ) : data?.ok === true ? (
+        data.instagramConfirmed ? (
+          <VipMemberArea member={data.member} />
         ) : (
           <VipInstagramStep firstName={firstName} />
         )
