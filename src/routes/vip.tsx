@@ -104,6 +104,8 @@ function drainPendingCreditsFor(refId: string): number {
     return 0;
   }
 }
+
+export const Route = createFileRoute("/vip")({
   head: () => ({
     meta: [
       { title: "GEA VIP — Comunidade exclusiva" },
