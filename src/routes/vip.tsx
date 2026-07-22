@@ -83,7 +83,9 @@ function VipPage() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-    } catch {}
+    } catch {
+      // noop: localStorage pode estar indisponível no modo privado.
+    }
   }, [progress]);
 
   const mark = (key: keyof Progress) => setProgress((p) => (p[key] ? p : { ...p, [key]: true }));
