@@ -68,7 +68,7 @@ export function Hero() {
 
 
   return (
-    <section ref={ref} className="relative h-[100dvh] w-full overflow-hidden bg-gea-black">
+    <section ref={ref} className="relative h-[100svh] w-full overflow-hidden bg-gea-black">
       <motion.div style={{ y }} className="absolute inset-x-0 top-[-10%] h-[120%]">
         <div
           aria-hidden
