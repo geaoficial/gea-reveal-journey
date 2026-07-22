@@ -233,6 +233,14 @@ function VipPage() {
       </header>
 
       <main className="mx-auto max-w-lg px-6 pb-24 pt-16 sm:pt-24">
+        {invitedBy && (
+          <div className="mb-8 flex items-center gap-3 border-l border-white/30 bg-white/[0.02] px-4 py-3 animate-fade-in">
+            <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">Convite</span>
+            <p className="text-[12px] leading-relaxed text-white/70">
+              Você foi convidado para fazer parte da comunidade GEA.
+            </p>
+          </div>
+        )}
         <div className="animate-fade-in">
           <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Bem-vindo</p>
           <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
