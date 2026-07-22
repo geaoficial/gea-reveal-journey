@@ -295,21 +295,37 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
 
       if (error || !inserted) {
         console.error("[vip] insert failed", error);
-        // 23505 = unique_violation (corrida de duplicidade)
+        // 23505 = unique_violation (corrida de duplicidade): tenta login automático.
         if (error && (error as { code?: string }).code === "23505") {
-          return {
-            ok: false as const,
-            reason: "already_member" as const,
-            fieldErrors: { email: "Este e-mail já está cadastrado." },
-            message: "Este e-mail já está cadastrado.",
-          };
+          const { data: raced } = await supabaseAdmin
+            .from("vip_members")
+            .select("id, member_number, status")
+            .ilike("email", input.email)
+            .maybeSingle();
+          if (raced && raced.status === "active") {
+            try { issueSessionCookie(raced.id); } catch (e) { console.error("[vip] issueSessionCookie (race) failed", e); }
+            return {
+              ok: true as const,
+              alreadyMember: true as const,
+              member: {
+                id: raced.id,
+                memberNumber: raced.member_number,
+                fullName: input.fullName,
+                email: input.email,
+                whatsapp: input.whatsapp,
+                unlockedAt: null,
+                accessCode: null,
+              },
+            };
+          }
         }
         return {
           ok: false as const,
           reason: "server_error" as const,
-          message: "Erro interno ao concluir o cadastro. Tente novamente em instantes.",
+          message: "Não foi possível concluir o cadastro agora. Tente novamente em instantes.",
         };
       }
+
 
       // Sessão emitida antes de eventos: se a persistência de evento falhar,
       // o cadastro segue válido e o usuário entra na área VIP normalmente.
