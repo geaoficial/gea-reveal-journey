@@ -102,16 +102,45 @@ function VipPage() {
     mark("instagram");
   }
 
-  async function handleCopyInvite() {
-    try {
-      await navigator.clipboard.writeText(inviteLink);
-      setToast("Link de convite copiado.");
-    } catch {
-      setToast("Não foi possível copiar automaticamente. Selecione e copie o link abaixo.");
+  async function handleShareInvite() {
+    const sharedTitle = "GEA — Comunidade exclusiva";
+    const sharedText = "Entre para a comunidade GEA. Experiência, estilo e benefícios exclusivos te esperam.";
+
+    let shared = false;
+
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      try {
+        await navigator.share({
+          title: sharedTitle,
+          text: sharedText,
+          url: inviteLink,
+        });
+        shared = true;
+        setToast("Convite compartilhado com sucesso.");
+      } catch (err) {
+        // O usuário pode ter cancelado o compartilhamento nativo;
+        // não tratamos como erro, tentamos copiar em seguida.
+        if (err instanceof Error && err.name === "AbortError") {
+          setToast("Compartilhamento cancelado.");
+          setTimeout(() => setToast(null), 2200);
+          return;
+        }
+      }
     }
+
+    if (!shared) {
+      try {
+        await navigator.clipboard.writeText(inviteLink);
+        setToast("Link de convite copiado para a área de transferência.");
+      } catch {
+        setToast("Não foi possível copiar automaticamente. Selecione e copie o link abaixo.");
+      }
+    }
+
     mark("share");
-    setTimeout(() => setToast(null), 2800);
+    setTimeout(() => setToast(null), 3000);
   }
+
 
   async function copyCoupon(code: string, which: "main" | "extra") {
     try {
