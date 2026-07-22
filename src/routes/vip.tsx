@@ -176,7 +176,7 @@ function VipPage() {
               />
               <ProgressItem
                 done={progress.share}
-                label="Compartilhar a GEA com um amigo"
+                label="Copiar meu link de convite"
               />
             </ul>
           </div>
@@ -191,9 +191,9 @@ function VipPage() {
             />
             <ActionButton
               done={progress.share}
-              onClick={handleShare}
-              label="Compartilhar a GEA"
-              doneLabel="GEA compartilhada"
+              onClick={handleCopyInvite}
+              label="Copiar meu link de convite"
+              doneLabel="Link de convite copiado"
             />
           </div>
 
