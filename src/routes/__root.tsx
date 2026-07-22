@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CookieConsent } from "@/components/gea/CookieConsent";
 import { ConsentScripts } from "@/components/gea/ConsentScripts";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
