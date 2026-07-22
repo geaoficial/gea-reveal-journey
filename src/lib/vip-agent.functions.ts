@@ -309,21 +309,9 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
         console.error("[vip] signup event insert failed (non-fatal)", evtErr);
       }
 
-      // Notificação n8n — isolada, com timeout, jamais cancela o cadastro.
-      try {
-        const { notifyN8nVipSignup } = await import("./vip-n8n.server");
-        await notifyN8nVipSignup({
-          name: inserted.full_name,
-          email: inserted.email ?? input.email,
-          whatsapp: inserted.whatsapp ?? input.whatsapp,
-          memberId: inserted.id,
-          memberNumber: inserted.member_number ?? null,
-          registeredAt: inserted.unlocked_at ?? new Date().toISOString(),
-          source: "GEA VIP",
-        });
-      } catch (n8nErr) {
-        console.error("[vip] n8n webhook dispatch failed (non-fatal)", n8nErr);
-      }
+      // Integração com n8n temporariamente desativada para o lançamento.
+      // O cadastro é gravado exclusivamente no Supabase.
+
 
       return {
         ok: true as const,
