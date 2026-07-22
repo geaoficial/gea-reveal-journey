@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 // Links oficiais — edite aqui se mudarem.
 const INSTAGRAM_URL = "https://instagram.com/geastoree";
