@@ -101,7 +101,7 @@ function generateAccessCode(): string {
 // registerVipMember
 // ------------------------------------------------------------------
 export const registerVipMember = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => registerSchema.parse(data))
+  .validator((data: unknown) => registerSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { readInviteSponsorCookie, clearInviteSponsorCookie, issueSessionCookie } =
@@ -189,7 +189,7 @@ export const registerVipMember = createServerFn({ method: "POST" })
 // loginVipMember (por @ + código)
 // ------------------------------------------------------------------
 export const loginVipMember = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => loginSchema.parse(data))
+  .validator((data: unknown) => loginSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { issueSessionCookie } = await import("./vip-session.server");
@@ -212,7 +212,7 @@ export const loginVipMember = createServerFn({ method: "POST" })
 // registerVipMemberSimple — fluxo minimalista Nome + E-mail + WhatsApp
 // ------------------------------------------------------------------
 export const registerVipMemberSimple = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => {
+  .validator((data: unknown) => {
     const parsed = registerSimpleSchema.safeParse(data);
     if (parsed.success) return { kind: "ok" as const, data: parsed.data };
     const fieldErrors: Record<string, string> = {};
@@ -232,74 +232,111 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
       };
     }
     const input = data.data;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { issueSessionCookie } = await import("./vip-session.server");
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { issueSessionCookie } = await import("./vip-session.server");
 
-    // Duplicidade por e-mail (case-insensitive)
-    const { data: existing } = await supabaseAdmin
-      .from("vip_members")
-      .select("id, member_number")
-      .ilike("email", input.email)
-      .maybeSingle();
-    if (existing) {
+      // Duplicidade por e-mail (case-insensitive)
+      const { data: existing, error: lookupErr } = await supabaseAdmin
+        .from("vip_members")
+        .select("id, member_number")
+        .ilike("email", input.email)
+        .maybeSingle();
+      if (lookupErr) {
+        console.error("[vip] lookup failed", lookupErr);
+        return {
+          ok: false as const,
+          reason: "db_error" as const,
+          message: "Serviço temporariamente indisponível. Tente novamente em instantes.",
+        };
+      }
+      if (existing) {
+        return {
+          ok: false as const,
+          reason: "already_member" as const,
+          fieldErrors: { email: "Este e-mail já está cadastrado." },
+          message: "Este e-mail já está cadastrado.",
+          memberNumber: existing.member_number,
+        };
+      }
+
+      const accessCode = generateAccessCode();
+
+      const { data: inserted, error } = await supabaseAdmin
+        .from("vip_members")
+        .insert({
+          full_name: input.fullName,
+          email: input.email,
+          whatsapp: input.whatsapp,
+          access_code: accessCode,
+        })
+        .select("id, member_number, full_name, email, whatsapp, unlocked_at, access_code")
+        .single();
+
+      if (error || !inserted) {
+        console.error("[vip] insert failed", error);
+        // 23505 = unique_violation (corrida de duplicidade)
+        if (error && (error as { code?: string }).code === "23505") {
+          return {
+            ok: false as const,
+            reason: "already_member" as const,
+            fieldErrors: { email: "Este e-mail já está cadastrado." },
+            message: "Este e-mail já está cadastrado.",
+          };
+        }
+        return {
+          ok: false as const,
+          reason: "server_error" as const,
+          message: "Erro interno ao concluir o cadastro. Tente novamente em instantes.",
+        };
+      }
+
+      // Sessão emitida antes de eventos: se a persistência de evento falhar,
+      // o cadastro segue válido e o usuário entra na área VIP normalmente.
+      try {
+        issueSessionCookie(inserted.id);
+      } catch (sessionErr) {
+        console.error("[vip] issueSessionCookie failed (non-fatal)", sessionErr);
+      }
+
+      try {
+        await supabaseAdmin.from("vip_events").insert({
+          member_id: inserted.id,
+          type: "signup",
+          payload: { via: "simple" },
+        });
+      } catch (evtErr) {
+        console.error("[vip] signup event insert failed (non-fatal)", evtErr);
+      }
+
       return {
-        ok: false as const,
-        reason: "already_member" as const,
-        fieldErrors: { email: "Este e-mail já está cadastrado." },
-        message: "Este e-mail já está cadastrado.",
-        memberNumber: existing.member_number,
+        ok: true as const,
+        member: {
+          id: inserted.id,
+          memberNumber: inserted.member_number,
+          fullName: inserted.full_name,
+          email: inserted.email,
+          whatsapp: inserted.whatsapp,
+          unlockedAt: inserted.unlocked_at,
+          accessCode: inserted.access_code,
+        },
       };
-    }
-
-    const accessCode = generateAccessCode();
-
-    const { data: inserted, error } = await supabaseAdmin
-      .from("vip_members")
-      .insert({
-        full_name: input.fullName,
-        email: input.email,
-        whatsapp: input.whatsapp,
-        access_code: accessCode,
-      })
-      .select("id, member_number, full_name, email, whatsapp, unlocked_at, access_code")
-      .single();
-
-    if (error || !inserted) {
-      console.error("[vip] insert failed", error);
+    } catch (err) {
+      console.error("[vip] register unexpected error", err);
       return {
         ok: false as const,
         reason: "server_error" as const,
-        message: "Não foi possível concluir o cadastro. Tente novamente em instantes.",
+        message: "Erro interno. Tente novamente em instantes.",
       };
     }
-
-    await supabaseAdmin.from("vip_events").insert({
-      member_id: inserted.id,
-      type: "signup",
-      payload: { via: "simple" },
-    });
-
-    issueSessionCookie(inserted.id);
-
-    return {
-      ok: true as const,
-      member: {
-        id: inserted.id,
-        memberNumber: inserted.member_number,
-        fullName: inserted.full_name,
-        email: inserted.email,
-        whatsapp: inserted.whatsapp,
-        unlockedAt: inserted.unlocked_at,
-        accessCode: inserted.access_code,
-      },
-    };
   });
+
 
 // ------------------------------------------------------------------
 // loginVipMemberSimple — por e-mail + código
 // ------------------------------------------------------------------
 export const loginVipMemberSimple = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => loginSimpleSchema.parse(data))
+  .validator((data: unknown) => loginSimpleSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { issueSessionCookie } = await import("./vip-session.server");
@@ -477,7 +514,7 @@ export const confirmInstagramFollow = createServerFn({ method: "POST" }).handler
 const inviteShareChannels = ["whatsapp", "copy_link", "qr_generate", "qr_download"] as const;
 
 export const logInviteShare = createServerFn({ method: "POST" })
-  .inputValidator((data: { channel: (typeof inviteShareChannels)[number] }) =>
+  .validator((data: { channel: (typeof inviteShareChannels)[number] }) =>
     z.object({ channel: z.enum(inviteShareChannels) }).parse(data),
   )
   .handler(async ({ data }) => {
