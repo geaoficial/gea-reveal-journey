@@ -236,10 +236,10 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { issueSessionCookie } = await import("./vip-session.server");
 
-      // Duplicidade por e-mail (case-insensitive)
+      // Duplicidade por e-mail (case-insensitive) → login automático na área VIP.
       const { data: existing, error: lookupErr } = await supabaseAdmin
         .from("vip_members")
-        .select("id, member_number")
+        .select("id, member_number, status")
         .ilike("email", input.email)
         .maybeSingle();
       if (lookupErr) {
@@ -250,15 +250,35 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
           message: "Serviço temporariamente indisponível. Tente novamente em instantes.",
         };
       }
+      if (existing && existing.status === "active") {
+        try {
+          issueSessionCookie(existing.id);
+        } catch (sessionErr) {
+          console.error("[vip] issueSessionCookie failed for existing member", sessionErr);
+        }
+        console.log(`[vip] existing member logged in: #${existing.member_number}`);
+        return {
+          ok: true as const,
+          alreadyMember: true as const,
+          member: {
+            id: existing.id,
+            memberNumber: existing.member_number,
+            fullName: input.fullName,
+            email: input.email,
+            whatsapp: input.whatsapp,
+            unlockedAt: null,
+            accessCode: null,
+          },
+        };
+      }
       if (existing) {
         return {
           ok: false as const,
-          reason: "already_member" as const,
-          fieldErrors: { email: "Este e-mail já está cadastrado." },
-          message: "Este e-mail já está cadastrado.",
-          memberNumber: existing.member_number,
+          reason: "blocked" as const,
+          message: "Conta indisponível. Entre em contato com o suporte.",
         };
       }
+
 
       const accessCode = generateAccessCode();
 
