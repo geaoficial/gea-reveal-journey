@@ -72,10 +72,14 @@ function VipPage() {
       url: SHARE_URL,
     };
     try {
-      if (typeof navigator !== "undefined" && "share" in navigator) {
-        await navigator.share(data);
-      } else {
-        await navigator.clipboard.writeText(SHARE_URL);
+      const nav = navigator as Navigator & {
+        share?: (d: ShareData) => Promise<void>;
+        clipboard?: { writeText: (t: string) => Promise<void> };
+      };
+      if (typeof nav.share === "function") {
+        await nav.share(data);
+      } else if (nav.clipboard?.writeText) {
+        await nav.clipboard.writeText(SHARE_URL);
         setShareToast("Link copiado para a área de transferência.");
       }
       mark("share");
