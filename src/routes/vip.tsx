@@ -12,9 +12,40 @@ const INVITED_BY_KEY = "gea_vip_invited_by";
 const INVITE_NOTIFIED_KEY = "gea_vip_invite_notified";
 const COUPON_MAIN = "GEA10";
 const COUPON_EXTRA = "GEA26";
+const MEMBER_KEY = "gea_vip_member_v1";
 
 type Progress = { instagram: boolean; share: boolean };
 const EMPTY: Progress = { instagram: false, share: false };
+
+type Member = { name: string; whatsapp: string; registeredAt: string };
+
+// Aceita apenas letras (com acentos), espaços, hífen e apóstrofo.
+const NAME_RE = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/;
+
+function sanitizeName(v: string) {
+  return v.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ' -]/g, "").replace(/\s{2,}/g, " ").slice(0, 60);
+}
+
+/** Formata número brasileiro conforme digita: (11) 91234-5678 ou (11) 1234-5678. */
+function formatWhatsapp(v: string) {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length === 0) return "";
+  if (d.length <= 2) return `(${d}`;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+/** Valida DDD BR (11–99) e comprimento 10 (fixo) ou 11 (celular, começando por 9). */
+function isValidWhatsapp(v: string) {
+  const d = v.replace(/\D/g, "");
+  if (d.length !== 10 && d.length !== 11) return false;
+  const ddd = Number(d.slice(0, 2));
+  if (ddd < 11 || ddd > 99) return false;
+  if (d.length === 11 && d[2] !== "9") return false;
+  return true;
+}
+
 
 /**
  * Notifica que um convite foi concluído.
