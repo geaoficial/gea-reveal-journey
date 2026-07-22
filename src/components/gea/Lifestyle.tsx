@@ -1,43 +1,122 @@
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef, useState } from "react";
+import { motion } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { lifestyleImage, mysteryImage } from "@/lib/responsive-image";
 import { BlurImage } from "./BlurImage";
 import { useDeviceCapability } from "@/lib/device-capability";
 import { usePerfTier, blurFor } from "@/lib/perf-monitor";
 
+/**
+ * Reveal state:
+ *  - x/y in %: last interaction position
+ *  - strength: 0 (fully covered by fog) → 1 (fully revealed at spot)
+ *
+ * The fog is permanent. Interaction opens a soft spotlight that
+ * regenerates (fades back to 0) after ~3.5s of inactivity, using
+ * a single rAF loop — no per-frame React state, no touch blocking.
+ */
 export function Lifestyle() {
   const { allowHeavyFx, reducedMotion } = useDeviceCapability();
   const perfTier = usePerfTier();
-  // Fallback dinâmico: dispositivo fraco OU FPS medido caindo → reduz camadas
   const lite = !allowHeavyFx || perfTier !== "cinema";
-  const minimal = perfTier === "lite"; // corte agressivo quando FPS desaba
+  const minimal = perfTier === "lite";
+
   const revealRef = useRef<HTMLDivElement>(null);
-  const [reveal, setReveal] = useState<{ x: number; y: number; active: boolean }>({
+  const maskRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const hintRef = useRef<HTMLSpanElement>(null);
+
+  // Mutable interaction state kept out of React to avoid re-renders on move.
+  const stateRef = useRef({
     x: 50,
     y: 55,
-    active: false,
+    strength: 0,
+    lastInteract: 0,
+    rafId: 0,
+    running: false,
   });
 
-  // Névoa âmbar — presença permanente; opacidade fixa (sem timers, sem variação de scroll).
-  const { scrollYProgress } = useScroll({
-    target: revealRef,
-    offset: ["start end", "end start"],
-  });
-  const shadowOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.25, 0.5, 0.75, 1],
-    [0.95, 0.55, 0.8, 0.5, 0.95],
+  const HOLD_MS = 600; // full-strength hold after last move
+  const FADE_MS = 2800; // gentle regeneration back to fog
+
+  const applyDom = useCallback(() => {
+    const s = stateRef.current;
+    const mask = maskRef.current;
+    if (mask) {
+      // Spotlight radius grows with strength; fog color stays constant.
+      const inner = 8 * s.strength;
+      const mid = 10 + 12 * s.strength;
+      mask.style.background = `radial-gradient(circle at ${s.x}% ${s.y}%, rgba(0,0,0,0) 0%, rgba(0,0,0,${0.15 * s.strength}) ${inner}%, rgba(0,0,0,${0.6 + 0.25 * (1 - s.strength)}) ${mid}%, rgba(0,0,0,0.98) 55%)`;
+    }
+    const ring = ringRef.current;
+    if (ring) {
+      ring.style.opacity = String(s.strength);
+      ring.style.left = `${s.x}%`;
+      ring.style.top = `${s.y}%`;
+      ring.style.transform = `translate(-50%, -50%) scale(${0.85 + 0.15 * s.strength})`;
+    }
+    const hint = hintRef.current;
+    if (hint) hint.style.opacity = String(0.6 * (1 - s.strength));
+  }, []);
+
+  const ensureLoop = useCallback(() => {
+    const s = stateRef.current;
+    if (s.running) return;
+    s.running = true;
+    const tick = () => {
+      const st = stateRef.current;
+      const now = performance.now();
+      const elapsed = now - st.lastInteract;
+      let target = 1;
+      if (elapsed > HOLD_MS) {
+        const t = Math.min(1, (elapsed - HOLD_MS) / FADE_MS);
+        // easeOutCubic
+        target = 1 - (1 - (1 - t) * (1 - t) * (1 - t));
+      }
+      // Smooth toward target.
+      st.strength += (target - st.strength) * 0.15;
+      applyDom();
+      if (st.strength > 0.005 || target > 0.005) {
+        st.rafId = requestAnimationFrame(tick);
+      } else {
+        st.strength = 0;
+        applyDom();
+        st.running = false;
+      }
+    };
+    s.rafId = requestAnimationFrame(tick);
+  }, [applyDom]);
+
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const el = revealRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const s = stateRef.current;
+      s.x = ((e.clientX - rect.left) / rect.width) * 100;
+      s.y = ((e.clientY - rect.top) / rect.height) * 100;
+      s.lastInteract = performance.now();
+      ensureLoop();
+    },
+    [ensureLoop],
   );
 
-  const updateFromEvent = (clientX: number, clientY: number) => {
-    const el = revealRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = ((clientX - rect.left) / rect.width) * 100;
-    const y = ((clientY - rect.top) / rect.height) * 100;
-    setReveal({ x, y, active: true });
-  };
+  // Cleanup rAF on unmount.
+  useEffect(() => {
+    return () => {
+      const s = stateRef.current;
+      if (s.rafId) cancelAnimationFrame(s.rafId);
+      s.running = false;
+    };
+  }, []);
 
+  // Initialize mask once (fully covered).
+  useEffect(() => {
+    applyDom();
+  }, [applyDom]);
+
+  // Static breathing opacity (no scroll-linked transforms → no jank).
+  const [, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <section className="relative bg-gea-black">
@@ -49,13 +128,7 @@ export function Lifestyle() {
         transition={{ duration: 1.4 }}
         className="relative h-[90dvh] w-full overflow-hidden"
       >
-        <motion.div
-          initial={{ y: 24 }}
-          whileInView={{ y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
-          className="relative h-full w-full"
-        >
+        <div className="relative h-full w-full">
           <BlurImage
             src={lifestyleImage.fallback}
             srcSet={lifestyleImage.srcSet}
@@ -72,7 +145,7 @@ export function Lifestyle() {
             className="h-full w-full object-cover"
             placeholder={lifestyleImage.placeholder}
           />
-        </motion.div>
+        </div>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
       </motion.div>
 
@@ -90,33 +163,14 @@ export function Lifestyle() {
 
       {/* Cena 2 — teaser misterioso do próximo drop */}
       <div className="relative">
-        <motion.div
+        <div
           ref={revealRef}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 1.6 }}
-          onMouseMove={(e) => updateFromEvent(e.clientX, e.clientY)}
-          onMouseEnter={(e) => updateFromEvent(e.clientX, e.clientY)}
-          onMouseLeave={() => setReveal((r) => ({ ...r, active: false }))}
-          onTouchStart={(e) => {
-            const t = e.touches[0];
-            if (t) updateFromEvent(t.clientX, t.clientY);
-          }}
-          onTouchMove={(e) => {
-            const t = e.touches[0];
-            if (t) updateFromEvent(t.clientX, t.clientY);
-          }}
-          onTouchEnd={() => setReveal((r) => ({ ...r, active: false }))}
-          className="relative h-[100dvh] w-full overflow-hidden bg-black cursor-none touch-none"
+          onPointerMove={onPointerMove}
+          onPointerDown={onPointerMove}
+          className="relative h-[100dvh] w-full overflow-hidden bg-black"
+          style={{ touchAction: "pan-y" }}
         >
-          <motion.div
-            initial={{ y: 24, opacity: 0.6 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative h-full w-full"
-          >
+          <div className="relative h-full w-full">
             <BlurImage
               src={mysteryImage.fallback}
               srcSet={mysteryImage.srcSet}
@@ -126,32 +180,27 @@ export function Lifestyle() {
               fallbackSrc={mysteryImage.fallback}
               telemetrySection="lifestyle-mystery"
               alt="Próximo drop GEA — em breve"
-              loading="eager"
+              loading="lazy"
               decoding="async"
-              fetchPriority="high"
               draggable={false}
               className="h-full w-full object-cover"
               style={{ objectPosition: "center 45%" }}
               placeholder={mysteryImage.placeholder}
             />
-          </motion.div>
+          </div>
 
-          {/* Sombras progressivas — respiram conforme o scroll */}
-          <motion.div
+          {/* Sombras permanentes — sem animação de scroll */}
+          <div
             aria-hidden
-            style={{ opacity: shadowOpacity }}
             className="pointer-events-none absolute inset-0"
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.75) 78%, rgba(0,0,0,0.98) 100%)",
-              }}
-            />
-          </motion.div>
+            style={{
+              background:
+                "radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.75) 78%, rgba(0,0,0,0.98) 100%)",
+              opacity: 0.85,
+            }}
+          />
 
-          {/* Névoa âmbar — presença constante (nunca dissolve) */}
+          {/* Névoa âmbar — presença constante */}
           <div
             aria-hidden
             style={{ opacity: 0.9 }}
@@ -167,8 +216,7 @@ export function Lifestyle() {
             />
           </div>
 
-
-          {/* Cortina de fumaça — base densa e permanente (mais baixa no mobile p/ não cobrir o mostrador) */}
+          {/* Cortina de fumaça — base densa e permanente */}
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] sm:h-[52%] md:h-[70%] mix-blend-screen"
@@ -187,7 +235,7 @@ export function Lifestyle() {
             }}
           />
 
-          {/* Fumaça densa subindo — ancorada na base, altura responsiva */}
+          {/* Fumaça densa subindo — ancorada na base */}
           <div
             aria-hidden
             className="pointer-events-none absolute left-0 right-0 bottom-0 h-[42%] sm:h-[56%] md:h-[70%] mix-blend-screen origin-bottom"
@@ -196,15 +244,11 @@ export function Lifestyle() {
                 "radial-gradient(ellipse 45% 55% at 30% 100%, rgba(255,170,90,0.55) 0%, rgba(200,110,50,0.25) 35%, transparent 70%), radial-gradient(ellipse 40% 50% at 70% 100%, rgba(255,150,70,0.45) 0%, transparent 68%), radial-gradient(ellipse 60% 40% at 50% 100%, rgba(120,55,20,0.6) 0%, transparent 72%)",
               filter: `blur(${blurFor(perfTier, lite ? 28 : 50)}px)`,
               opacity: 0.9,
-              transform: "translateZ(0)",
             }}
           />
 
-
-
-
-          {/* Fumaça lenta ascendente — meio da cena (desktop only) */}
-          {!lite && (
+          {/* Camada ambiente extra — desktop only */}
+          {!lite && !reducedMotion && (
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-x-[-20%] bottom-[10%] h-[75%] mix-blend-screen opacity-75"
@@ -213,34 +257,18 @@ export function Lifestyle() {
               style={{
                 background:
                   "radial-gradient(ellipse 50% 45% at 45% 70%, rgba(255,180,100,0.4) 0%, transparent 72%), radial-gradient(ellipse 55% 40% at 20% 55%, rgba(180,90,40,0.32) 0%, transparent 74%)",
-                filter: "blur(75px)",
+                filter: "blur(60px)",
                 willChange: "transform",
               }}
             />
           )}
 
-          {/* Névoa superior — dispersão fria (desktop only) */}
-          {!lite && (
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-[-25%] top-[-10%] h-[55%] mix-blend-screen opacity-45"
-              animate={{ x: ["4%", "-4%", "4%"], y: ["-4%", "3%", "-4%"] }}
-              transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
-              style={{
-                background:
-                  "radial-gradient(ellipse 55% 45% at 55% 40%, rgba(220,150,90,0.22) 0%, transparent 72%), radial-gradient(ellipse 50% 40% at 25% 30%, rgba(150,75,35,0.18) 0%, transparent 74%)",
-                filter: "blur(90px)",
-                willChange: "transform",
-              }}
-            />
-          )}
-
-          {/* Pulso âmbar central — respiração do dial (desliga quando FPS baixo) */}
-          {!minimal && (
+          {/* Pulso âmbar central */}
+          {!minimal && !reducedMotion && (
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-0 mix-blend-overlay"
-              animate={reducedMotion ? undefined : { opacity: [0.3, 0.65, 0.3] }}
+              animate={{ opacity: [0.3, 0.6, 0.3] }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               style={{
                 background:
@@ -250,59 +278,45 @@ export function Lifestyle() {
             />
           )}
 
-
-          {/* Brilho pulsante sobre o dial */}
-          <motion.div
+          {/* Máscara de revelação — controlada por rAF via ref, sem re-render */}
+          <div
+            ref={maskRef}
             aria-hidden
-            animate={{ opacity: [0.15, 0.45, 0.15] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[38vmin] w-[38vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "radial-gradient(circle, rgba(232,138,58,0.35) 0%, transparent 65%)",
-              filter: "blur(20px)",
+                "radial-gradient(circle at 50% 55%, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.98) 55%)",
             }}
           />
 
-          {/* Máscara de revelação — só o spot em torno do cursor/toque mostra o mostrador */}
+          {/* Anel de foco seguindo o cursor */}
           <div
+            ref={ringRef}
             aria-hidden
-            className="pointer-events-none absolute inset-0 transition-[background,opacity] duration-500 ease-out"
+            className="pointer-events-none absolute h-[26vmin] w-[26vmin] rounded-full"
             style={{
-              background: `radial-gradient(circle at ${reveal.x}% ${reveal.y}%, transparent 0%, rgba(0,0,0,0.15) ${reveal.active ? "8%" : "0%"}, rgba(0,0,0,0.85) ${reveal.active ? "22%" : "12%"}, rgba(0,0,0,0.98) 55%)`,
-            }}
-          />
-
-          {/* Anel de foco cinematográfico seguindo o cursor */}
-          <motion.div
-            aria-hidden
-            animate={{
-              opacity: reveal.active ? 1 : 0,
-              scale: reveal.active ? 1 : 0.85,
-            }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none absolute h-[26vmin] w-[26vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              left: `${reveal.x}%`,
-              top: `${reveal.y}%`,
+              left: "50%",
+              top: "55%",
+              opacity: 0,
+              transform: "translate(-50%, -50%) scale(0.85)",
               border: "1px solid rgba(232,138,58,0.35)",
               boxShadow:
                 "0 0 40px 4px rgba(232,138,58,0.15), inset 0 0 30px rgba(232,138,58,0.08)",
+              transition: "opacity 300ms ease",
             }}
           />
 
           {/* Dica de interação */}
-          <motion.span
+          <span
+            ref={hintRef}
             aria-hidden
-            animate={{ opacity: reveal.active ? 0 : 0.6 }}
-            transition={{ duration: 0.5 }}
             className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2 text-[0.55rem] uppercase tracking-[0.5em] text-gea-cream/60"
+            style={{ opacity: 0.6, transition: "opacity 500ms ease" }}
           >
             Mova para revelar
-          </motion.span>
+          </span>
 
-
-          {/* Badge canto superior — Novo drop */}
+          {/* Badge canto superior */}
           <motion.div
             initial={{ opacity: 0, y: -12 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -319,8 +333,8 @@ export function Lifestyle() {
             </span>
           </motion.div>
 
-          {/* Copy central misteriosa */}
-          <div className="absolute inset-0 flex flex-col items-center justify-end px-6 pb-[14vh] text-center">
+          {/* Copy central */}
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end px-6 pb-[14vh] text-center">
             <motion.span
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -332,8 +346,8 @@ export function Lifestyle() {
             </motion.span>
 
             <motion.h2
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1], delay: 1.1 }}
               className="mt-6 max-w-2xl text-[clamp(2rem,5.5vw,4.4rem)] leading-[1.05] text-gea-cream font-display"
@@ -355,7 +369,7 @@ export function Lifestyle() {
               Os primeiros verão primeiro.
             </motion.p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
