@@ -235,9 +235,11 @@ function ActionButton({
     <button
       type="button"
       onClick={onClick}
+      disabled={done}
+      aria-disabled={done}
       className={`flex w-full items-center justify-between border px-5 py-4 text-left text-sm transition ${
         done
-          ? "border-white/20 bg-white/[0.04] text-white/80"
+          ? "border-white/20 bg-white/[0.04] text-white/60 cursor-default"
           : "border-white/25 text-white hover:bg-white hover:text-black"
       }`}
     >
