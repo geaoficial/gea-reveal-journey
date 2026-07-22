@@ -212,8 +212,26 @@ export const loginVipMember = createServerFn({ method: "POST" })
 // registerVipMemberSimple — fluxo minimalista Nome + E-mail + WhatsApp
 // ------------------------------------------------------------------
 export const registerVipMemberSimple = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => registerSimpleSchema.parse(data))
+  .inputValidator((data: unknown) => {
+    const parsed = registerSimpleSchema.safeParse(data);
+    if (parsed.success) return { kind: "ok" as const, data: parsed.data };
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = String(issue.path[0] ?? "form");
+      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+    }
+    return { kind: "invalid" as const, fieldErrors };
+  })
   .handler(async ({ data }) => {
+    if (data.kind === "invalid") {
+      return {
+        ok: false as const,
+        reason: "validation" as const,
+        fieldErrors: data.fieldErrors,
+        message: data.fieldErrors.fullName || data.fieldErrors.email || data.fieldErrors.whatsapp || "Verifique os dados informados.",
+      };
+    }
+    const input = data.data;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { issueSessionCookie } = await import("./vip-session.server");
 
