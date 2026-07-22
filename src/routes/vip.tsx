@@ -152,7 +152,9 @@ function VipPage() {
       await navigator.clipboard.writeText(code);
       setCopied(which);
       setTimeout(() => setCopied(null), 2000);
-    } catch {}
+    } catch {
+      // noop: clipboard pode ser negado pelo navegador.
+    }
   }
 
   async function copyInvite() {
