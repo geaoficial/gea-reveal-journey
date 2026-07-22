@@ -63,6 +63,7 @@ function VipPage() {
   const [friends, setFriends] = useState<number>(0);
   const [copied, setCopied] = useState<null | "main" | "extra">(null);
   const [celebrate, setCelebrate] = useState(false);
+  const [invitedBy, setInvitedBy] = useState<string>("");
 
   // Load persisted state.
   useEffect(() => {
@@ -80,7 +81,11 @@ function VipPage() {
       const f = Number(localStorage.getItem(FRIENDS_KEY) || "0");
       setFriends(Number.isFinite(f) ? f : 0);
 
-      // Confirmação via URL: /vip?confirm=REFID
+      const inviter = localStorage.getItem(INVITED_BY_KEY) || "";
+      // Ignora quando o próprio usuário abriu o próprio convite.
+      if (inviter && inviter !== id) setInvitedBy(inviter);
+
+      // Confirmação via URL: /vip?confirm=REFID (fluxo local de teste)
       const url = new URL(window.location.href);
       const confirm = url.searchParams.get("confirm");
       if (confirm && confirm === id) {
@@ -104,7 +109,7 @@ function VipPage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
     } catch {
-      // noop: localStorage pode estar indisponível no modo privado.
+      // noop
     }
   }, [progress]);
 
@@ -114,7 +119,31 @@ function VipPage() {
   const done = count === 2;
   const pct = (count / 2) * 100;
 
-  const inviteLink = useMemo(() => (refId ? `${BASE_URL}/vip?ref=${refId}` : BASE_URL), [refId]);
+  const inviteLink = useMemo(
+    () => (refId ? `${BASE_URL}/invite/${refId}` : BASE_URL),
+    [refId],
+  );
+
+  // Ao concluir as duas etapas, credita o convidador (uma única vez).
+  useEffect(() => {
+    if (!done || !invitedBy || !refId) return;
+    try {
+      if (localStorage.getItem(INVITE_NOTIFIED_KEY)) return;
+      localStorage.setItem(INVITE_NOTIFIED_KEY, invitedBy);
+      // Fluxo de demonstração no mesmo dispositivo: se o convidador for este mesmo browser,
+      // também incrementa o contador local. Em produção com backend, isso vem do servidor.
+      if (invitedBy === refId) {
+        const next = friends + 1;
+        localStorage.setItem(FRIENDS_KEY, String(next));
+        setFriends(next);
+        setCelebrate(true);
+      }
+      void notifyInviteCompleted(invitedBy, refId);
+    } catch {
+      // noop
+    }
+  }, [done, invitedBy, refId, friends]);
+
 
   function handleInstagram() {
     window.open(INSTAGRAM_URL, "_blank", "noopener,noreferrer");
