@@ -546,3 +546,122 @@ function ActionButton({
     </button>
   );
 }
+
+function RegisterForm({ onSubmit }: { onSubmit: (m: Member) => void }) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [nameErr, setNameErr] = useState<string | null>(null);
+  const [phoneErr, setPhoneErr] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  function validate() {
+    let ok = true;
+    const trimmed = name.trim();
+    if (!trimmed) {
+      setNameErr("Informe seu nome.");
+      ok = false;
+    } else if (trimmed.length < 2 || !NAME_RE.test(trimmed)) {
+      setNameErr("Use apenas letras.");
+      ok = false;
+    } else {
+      setNameErr(null);
+    }
+    if (!isValidWhatsapp(phone)) {
+      setPhoneErr("Informe um WhatsApp válido com DDD.");
+      ok = false;
+    } else {
+      setPhoneErr(null);
+    }
+    return ok;
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (submitting) return;
+    if (!validate()) return;
+    setSubmitting(true);
+    onSubmit({
+      name: name.trim().replace(/\s+/g, " "),
+      whatsapp: phone.replace(/\D/g, ""),
+      registeredAt: new Date().toISOString(),
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className="animate-fade-in">
+      <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Cadastro rápido</p>
+      <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
+        Entrar na GEA VIP.
+      </h1>
+      <p className="mt-4 text-sm leading-relaxed text-white/60">
+        Dois campos e você está dentro. Nada de login ou senha.
+      </p>
+
+      <div className="mt-10 space-y-6">
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">Nome</span>
+          <input
+            type="text"
+            inputMode="text"
+            autoComplete="name"
+            autoCapitalize="words"
+            spellCheck={false}
+            maxLength={60}
+            placeholder="Seu nome"
+            value={name}
+            onChange={(e) => {
+              setName(sanitizeName(e.target.value));
+              if (nameErr) setNameErr(null);
+            }}
+            className="mt-2 w-full border-b border-white/20 bg-transparent py-3 text-base text-white placeholder-white/25 outline-none transition focus:border-white"
+          />
+          {nameErr && <span className="mt-2 block text-[11px] text-red-300/90">{nameErr}</span>}
+        </label>
+
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">WhatsApp</span>
+          <input
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel-national"
+            maxLength={16}
+            placeholder="(11) 91234-5678"
+            value={phone}
+            onChange={(e) => {
+              setPhone(formatWhatsapp(e.target.value));
+              if (phoneErr) setPhoneErr(null);
+            }}
+            className="mt-2 w-full border-b border-white/20 bg-transparent py-3 text-base text-white placeholder-white/25 outline-none transition focus:border-white"
+          />
+          {phoneErr && <span className="mt-2 block text-[11px] text-red-300/90">{phoneErr}</span>}
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        disabled={submitting}
+        className="mt-10 w-full border border-white/25 py-4 text-[11px] uppercase tracking-[0.4em] text-white transition hover:bg-white hover:text-black disabled:opacity-60"
+      >
+        {submitting ? "Entrando…" : "Entrar na GEA VIP"}
+      </button>
+
+      <p className="mt-6 text-[11px] leading-relaxed text-white/40">
+        Ao entrar, você concorda em receber comunicações da GEA no WhatsApp.
+      </p>
+    </form>
+  );
+}
+
+function WelcomeSplash({ name }: { name: string }) {
+  const first = name.split(" ")[0];
+  return (
+    <div className="flex min-h-[50vh] flex-col items-center justify-center text-center animate-fade-in">
+      <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Comunidade GEA</p>
+      <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
+        Bem-vindo à Comunidade GEA.
+      </h1>
+      <p className="mt-4 text-sm text-white/60">{first}, seu acesso está liberado.</p>
+      <span className="mt-10 h-[2px] w-16 animate-pulse bg-white/40" />
+    </div>
+  );
+}
