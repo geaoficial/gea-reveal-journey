@@ -239,13 +239,14 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
     const { data: existing } = await supabaseAdmin
       .from("vip_members")
       .select("id, member_number")
-      .ilike("email", data.email)
+      .ilike("email", input.email)
       .maybeSingle();
     if (existing) {
       return {
         ok: false as const,
         reason: "already_member" as const,
-        message: "Este e-mail já faz parte da GEA VIP.",
+        fieldErrors: { email: "Este e-mail já está cadastrado." },
+        message: "Este e-mail já está cadastrado.",
         memberNumber: existing.member_number,
       };
     }
@@ -255,9 +256,9 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
     const { data: inserted, error } = await supabaseAdmin
       .from("vip_members")
       .insert({
-        full_name: data.fullName,
-        email: data.email,
-        whatsapp: data.whatsapp,
+        full_name: input.fullName,
+        email: input.email,
+        whatsapp: input.whatsapp,
         access_code: accessCode,
       })
       .select("id, member_number, full_name, email, whatsapp, unlocked_at, access_code")
