@@ -98,7 +98,12 @@ function TermsPage() {
 
       <h2>9. Contato</h2>
       <p>
-        <a href="mailto:contato@gea.com.br">contato@gea.com.br</a>
+        E-mail: <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        <br />
+        WhatsApp:{" "}
+        <a href={CONTACT_LINKS.whatsapp} target="_blank" rel="noopener noreferrer">
+          {CONTACT.whatsappDisplay}
+        </a>
       </p>
     </LegalShell>
   );
