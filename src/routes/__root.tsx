@@ -89,10 +89,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      // Preload da logo/favicon — alta prioridade, decodifica antes do primeiro paint
-      { rel: "preload", as: "image", href: "/favicon.png", type: "image/png", fetchPriority: "high" },
-      { rel: "icon", type: "image/png", sizes: "512x512", href: "/favicon.png" },
-      { rel: "apple-touch-icon", sizes: "512x512", href: "/favicon.png" },
+      // Preload do favicon principal — decodifica antes do primeiro paint
+      { rel: "preload", as: "image", href: "/favicon-32.png", type: "image/png", fetchPriority: "high" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16.png" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon-192.png" },
+      { rel: "icon", type: "image/png", sizes: "512x512", href: "/favicon-512.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "dns-prefetch", href: "https://plausible.io" },
       { rel: "preconnect", href: "https://plausible.io", crossOrigin: "anonymous" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
