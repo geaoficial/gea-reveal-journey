@@ -4,10 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
-    meta: [
-      { title: "Área restrita — GEA" },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
+    meta: [{ title: "Área restrita — GEA" }, { name: "robots", content: "noindex,nofollow" }],
   }),
   component: AuthPage,
 });

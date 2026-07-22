@@ -2,11 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import {
-  listAdminBenefits,
-  upsertBenefit,
-  deleteBenefit,
-} from "@/lib/vip-admin.functions";
+import { listAdminBenefits, upsertBenefit, deleteBenefit } from "@/lib/vip-admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/benefits")({
   component: BenefitsPage,

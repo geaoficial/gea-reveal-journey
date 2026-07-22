@@ -31,7 +31,6 @@
   --vignette-opacity: 0.55;
 }
 
-
 html {
   /* Removido scroll-behavior: smooth global — causava sensação de "scroll
      voltando" no wheel/trackpad e no momentum do iOS. Suavização de âncoras
@@ -49,7 +48,6 @@ html {
 body {
   overscroll-behavior-y: none;
 }
-
 
 @layer base {
   * {
@@ -109,10 +107,11 @@ body {
   }
 }
 
-
 /* Respeitar preferência do usuário por reduzir movimento */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -128,7 +127,7 @@ body {
 
 /* Legal pages typography (Instrument Serif headings, Inter body) */
 .legal-prose h2 {
-  font-family: 'Instrument Serif', serif;
+  font-family: "Instrument Serif", serif;
   font-size: 1.6rem;
   font-weight: 300;
   color: #efefef;
@@ -137,7 +136,7 @@ body {
   letter-spacing: 0.01em;
 }
 .legal-prose h3 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.32em;
@@ -145,8 +144,14 @@ body {
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
 }
-.legal-prose p { margin-bottom: 1rem; }
-.legal-prose ul { list-style: none; padding-left: 0; margin-bottom: 1rem; }
+.legal-prose p {
+  margin-bottom: 1rem;
+}
+.legal-prose ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1rem;
+}
 .legal-prose ul li {
   position: relative;
   padding-left: 1.25rem;
@@ -167,8 +172,13 @@ body {
   text-underline-offset: 4px;
   text-decoration-color: rgba(201, 201, 201, 0.35);
 }
-.legal-prose a:hover { color: #ffffff; }
-.legal-prose strong { color: #e8e8e8; font-weight: 500; }
+.legal-prose a:hover {
+  color: #ffffff;
+}
+.legal-prose strong {
+  color: #e8e8e8;
+  font-weight: 500;
+}
 
 /* NEXUS-PRO:WATERMARK-HIDE:START */
 /* Overlay do badge oficial ocultado por conflito com UI custom.

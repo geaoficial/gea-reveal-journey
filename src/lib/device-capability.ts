@@ -14,8 +14,7 @@ function detect(): Capability {
   if (typeof window === "undefined") {
     return { tier: "high", reducedMotion: false, saveData: false, allowHeavyFx: true };
   }
-  const reducedMotion =
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   // @ts-expect-error - Network Information API (non-standard)
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const saveData = !!conn?.saveData;

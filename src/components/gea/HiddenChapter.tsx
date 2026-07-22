@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { useVip } from "@/lib/vip";
 
-
 const IG_URL = "https://instagram.com/geastoree";
 
 // Data-alvo do próximo drop. Ajuste para a data real do lançamento.
@@ -22,7 +21,15 @@ function useCountdown(targetISO: string) {
   }, []);
 
   if (now === null) {
-    return { ready: false, days: 0, hours: 0, minutes: 0, seconds: 0, progress: 0, launched: false } as const;
+    return {
+      ready: false,
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      progress: 0,
+      launched: false,
+    } as const;
   }
 
   const diff = Math.max(0, target - now);
@@ -73,12 +80,18 @@ export function HiddenChapter() {
     try {
       const n = window.localStorage.getItem("gea.founder.number");
       if (n) setFounderNumber(String(n).padStart(4, "0"));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   useEffect(() => {
     if (!revealed || typeof window === "undefined") return;
-    const p = (window as unknown as { plausible?: (event: string, opts?: { props?: Record<string, string> }) => void }).plausible;
+    const p = (
+      window as unknown as {
+        plausible?: (event: string, opts?: { props?: Record<string, string> }) => void;
+      }
+    ).plausible;
     p?.("Hidden Chapter Reached", {
       props: { progress: `${Math.round(progress * 100)}%` },
     });
@@ -89,15 +102,21 @@ export function HiddenChapter() {
   const handleReturn = () => {
     if (typeof window === "undefined") return;
     vip.markPending();
-    const p = (window as unknown as { plausible?: (event: string, opts?: { props?: Record<string, string> }) => void }).plausible;
+    const p = (
+      window as unknown as {
+        plausible?: (event: string, opts?: { props?: Record<string, string> }) => void;
+      }
+    ).plausible;
     p?.("Follow Instagram", { props: { location: "hidden-chapter" } });
   };
-
 
   const percent = Math.round(progress * 100);
 
   return (
-    <section ref={ref} className="relative flex min-h-[100svh] items-center justify-center bg-gea-black px-6 py-40">
+    <section
+      ref={ref}
+      className="relative flex min-h-[100svh] items-center justify-center bg-gea-black px-6 py-40"
+    >
       <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
         <motion.span
           initial={{ opacity: 0 }}
@@ -139,8 +158,6 @@ export function HiddenChapter() {
               {ready ? `${percent}%` : "--%"}
             </span>
           </div>
-
-
         </motion.div>
 
         {/* Badge dinâmico de progresso */}
@@ -160,7 +177,6 @@ export function HiddenChapter() {
             </span>
             <span className="tabular-nums text-gea-sunset">{ready ? `${percent}%` : "--%"}</span>
           </div>
-
 
           <span className="text-[0.55rem] uppercase tracking-[0.4em] text-gea-cream/35">
             Antecipação global
@@ -187,7 +203,9 @@ export function HiddenChapter() {
           className="group mt-10 inline-flex items-center gap-3 border border-gea-cream/30 px-8 py-4 text-[0.68rem] uppercase tracking-[0.36em] text-gea-cream transition-all duration-500 hover:border-gea-sunset hover:bg-gea-sunset hover:text-gea-black"
         >
           Entrar no círculo
-          <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">→</span>
+          <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">
+            →
+          </span>
         </motion.a>
 
         <motion.div

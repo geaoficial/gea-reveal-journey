@@ -91,7 +91,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       // Preload do favicon principal — decodifica antes do primeiro paint
-      { rel: "preload", as: "image", href: "/favicon-32.png", type: "image/png", fetchPriority: "high" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/favicon-32.png",
+        type: "image/png",
+        fetchPriority: "high",
+      },
       { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16.png" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon-192.png" },
@@ -108,7 +114,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     // Plausible e demais analytics são carregados dinamicamente após consentimento
     // (ver ConsentScripts.tsx). LGPD: nada de terceiros antes do opt-in.
-
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -170,5 +175,3 @@ function VipMenuButton() {
     </Link>
   );
 }
-
-

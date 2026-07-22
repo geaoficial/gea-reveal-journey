@@ -57,11 +57,15 @@ function generateMemberId(): string {
   try {
     const existing = window.localStorage.getItem("gea.founder.number");
     if (existing) return String(existing).padStart(4, "0");
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   const n = Math.floor(Math.random() * 899) + 100; // 100–998
   try {
     window.localStorage.setItem("gea.founder.number", String(n));
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return String(n).padStart(4, "0");
 }
 
@@ -93,7 +97,9 @@ export function useVip() {
   const markPending = useCallback(() => {
     try {
       window.sessionStorage.setItem(PENDING_KEY, String(Date.now()));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const unlock = useCallback(() => {
@@ -109,18 +115,27 @@ export function useVip() {
     setJustUnlocked(true);
     try {
       window.sessionStorage.removeItem(PENDING_KEY);
-      const p = (window as unknown as { plausible?: (e: string, o?: { props?: Record<string,string> }) => void }).plausible;
+      const p = (
+        window as unknown as {
+          plausible?: (e: string, o?: { props?: Record<string, string> }) => void;
+        }
+      ).plausible;
       p?.("VIP Unlocked", { props: { memberId: next.memberId } });
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, [persist]);
 
   const dismissUnlock = useCallback(() => setJustUnlocked(false), []);
 
-  const setName = useCallback((name: string) => {
-    const clean = name.trim().slice(0, 32);
-    const next = { ...readState(), name: clean || null };
-    persist(next);
-  }, [persist]);
+  const setName = useCallback(
+    (name: string) => {
+      const clean = name.trim().slice(0, 32);
+      const next = { ...readState(), name: clean || null };
+      persist(next);
+    },
+    [persist],
+  );
 
   const bumpInvited = useCallback(() => {
     const cur = readState();
@@ -133,7 +148,11 @@ export function useVip() {
     const check = () => {
       if (document.visibilityState !== "visible") return;
       let pending: string | null = null;
-      try { pending = window.sessionStorage.getItem(PENDING_KEY); } catch { /* ignore */ }
+      try {
+        pending = window.sessionStorage.getItem(PENDING_KEY);
+      } catch {
+        /* ignore */
+      }
       if (!pending) return;
       // pelo menos 1.2s no Instagram para contar como intenção real
       const elapsed = Date.now() - Number(pending);
@@ -163,9 +182,13 @@ export function useVip() {
 export function formatUnlockDate(iso: string | null): string {
   if (!iso) return "—";
   try {
-    return new Date(iso).toLocaleDateString("pt-BR", {
-      day: "2-digit", month: "short", year: "numeric",
-    }).replace(/\./g, "");
+    return new Date(iso)
+      .toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+      .replace(/\./g, "");
   } catch {
     return "—";
   }

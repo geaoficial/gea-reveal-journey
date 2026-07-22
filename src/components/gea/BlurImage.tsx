@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ImgHTMLAttributes,
-} from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ImgHTMLAttributes } from "react";
 import { reportImageFailure } from "@/lib/image-telemetry";
 
 type BlurImageProps = ImgHTMLAttributes<HTMLImageElement> & {
@@ -63,7 +57,7 @@ export function BlurImage({
     typeof window !== "undefined" &&
     (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ||
       // @ts-expect-error Network Information API (non-standard)
-      !!(navigator.connection?.saveData) ||
+      !!navigator.connection?.saveData ||
       // @ts-expect-error idem
       /2g/.test(navigator.connection?.effectiveType ?? ""));
 
@@ -209,12 +203,8 @@ export function BlurImage({
         />
       ) : (
         <picture className="relative z-[1] block h-full w-full">
-          {avifSrcSet ? (
-            <source type="image/avif" srcSet={avifSrcSet} sizes={sizes} />
-          ) : null}
-          {webpSrcSet ? (
-            <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
-          ) : null}
+          {avifSrcSet ? <source type="image/avif" srcSet={avifSrcSet} sizes={sizes} /> : null}
+          {webpSrcSet ? <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} /> : null}
           <img
             decoding="async"
             {...imgProps}
@@ -232,9 +222,7 @@ export function BlurImage({
               const el = e.currentTarget;
               reportImageFailure({
                 asset:
-                  (typeof imgProps.src === "string" && imgProps.src) ||
-                  jpegFallback ||
-                  "unknown",
+                  (typeof imgProps.src === "string" && imgProps.src) || jpegFallback || "unknown",
                 reason: "error",
                 section: telemetrySection,
                 naturalWidth: el?.naturalWidth,

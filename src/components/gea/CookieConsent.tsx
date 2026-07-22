@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import {
-  readConsent,
-  writeConsent,
-  useHydrated,
-  type ConsentState,
-} from "@/lib/consent";
+import { readConsent, writeConsent, useHydrated, type ConsentState } from "@/lib/consent";
 
 type Cat = "performance" | "analytics" | "marketing";
 
@@ -76,10 +71,8 @@ export function CookieConsent() {
     setPrefsOpen(false);
   };
 
-  const acceptAll = () =>
-    save({ performance: true, analytics: true, marketing: true });
-  const essentialsOnly = () =>
-    save({ performance: false, analytics: false, marketing: false });
+  const acceptAll = () => save({ performance: true, analytics: true, marketing: true });
+  const essentialsOnly = () => save({ performance: false, analytics: false, marketing: false });
   const savePrefs = () => save(prefs);
 
   if (!hydrated) return null;
@@ -117,10 +110,9 @@ export function CookieConsent() {
                 className="mt-4 text-[0.9rem] leading-relaxed text-[#c4c4c4]"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                Utilizamos cookies para oferecer uma experiência personalizada,
-                melhorar o desempenho do site e entender como nossa comunidade
-                interage com a GEA. Você pode escolher quais categorias deseja
-                permitir.{" "}
+                Utilizamos cookies para oferecer uma experiência personalizada, melhorar o
+                desempenho do site e entender como nossa comunidade interage com a GEA. Você pode
+                escolher quais categorias deseja permitir.{" "}
                 <Link
                   to="/cookies"
                   className="underline underline-offset-4 decoration-[#c9c9c9]/40 hover:text-[#e8e8e8]"
@@ -186,8 +178,7 @@ export function CookieConsent() {
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="relative w-full max-w-lg overflow-hidden rounded-[3px] border border-[#c9c9c9]/20 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)]"
               style={{
-                backgroundImage:
-                  "linear-gradient(155deg, #0d0d0d 0%, #141414 45%, #080808 100%)",
+                backgroundImage: "linear-gradient(155deg, #0d0d0d 0%, #141414 45%, #080808 100%)",
               }}
             >
               <div className="max-h-[80vh] overflow-y-auto p-8">
@@ -222,9 +213,7 @@ export function CookieConsent() {
                       title={c.title}
                       description={c.description}
                       checked={prefs[c.key]}
-                      onChange={(v) =>
-                        setPrefs((p) => ({ ...p, [c.key]: v }))
-                      }
+                      onChange={(v) => setPrefs((p) => ({ ...p, [c.key]: v }))}
                     />
                   ))}
                 </div>
@@ -293,9 +282,7 @@ function CategoryRow({
         disabled={disabled}
         onClick={() => onChange?.(!checked)}
         className={`relative mt-1 h-5 w-9 shrink-0 rounded-full border transition-colors ${
-          checked
-            ? "border-[#c9c9c9]/60 bg-[#c9c9c9]/25"
-            : "border-white/15 bg-white/5"
+          checked ? "border-[#c9c9c9]/60 bg-[#c9c9c9]/25" : "border-white/15 bg-white/5"
         } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
       >
         <span

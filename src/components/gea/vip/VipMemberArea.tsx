@@ -46,8 +46,12 @@ export function VipMemberArea({ member }: Props) {
       setTimeout(() => setCopied(false), 2200);
       try {
         (window as unknown as { plausible?: (n: string) => void }).plausible?.("VIP Coupon Copy");
-      } catch { /* ignore */ }
-    } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
+    } catch {
+      /* ignore */
+    }
   };
 
   return (
@@ -99,22 +103,17 @@ export function VipMemberArea({ member }: Props) {
       </section>
 
       <section className="mt-14">
-        <h2 className="text-[10px] uppercase tracking-[0.4em] text-white/45">
-          Seus benefícios
-        </h2>
+        <h2 className="text-[10px] uppercase tracking-[0.4em] text-white/45">Seus benefícios</h2>
         <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {BENEFITS.map((b) => (
-            <li
-              key={b.title}
-              className="rounded-lg border border-white/10 bg-white/[0.02] p-4"
-            >
+            <li key={b.title} className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
               <div className="flex items-center gap-2">
-                <span aria-hidden className="text-white/70">✓</span>
+                <span aria-hidden className="text-white/70">
+                  ✓
+                </span>
                 <span className="text-sm text-white">{b.title}</span>
               </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-white/55">
-                {b.description}
-              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-white/55">{b.description}</p>
             </li>
           ))}
         </ul>

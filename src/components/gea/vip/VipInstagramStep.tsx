@@ -23,7 +23,9 @@ export function VipInstagramStep({ firstName }: { firstName: string }) {
           (window as unknown as { plausible?: (n: string) => void }).plausible?.(
             "VIP Instagram Confirmed",
           );
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
         qc.invalidateQueries({ queryKey: ["vip", "me"] });
       }
     },
@@ -32,18 +34,16 @@ export function VipInstagramStep({ firstName }: { firstName: string }) {
   const handleFollow = () => {
     setVisited(true);
     try {
-      (window as unknown as { plausible?: (n: string) => void }).plausible?.(
-        "VIP Instagram Click",
-      );
-    } catch { /* ignore */ }
+      (window as unknown as { plausible?: (n: string) => void }).plausible?.("VIP Instagram Click");
+    } catch {
+      /* ignore */
+    }
     window.open(INSTAGRAM_URL, "_blank", "noopener,noreferrer");
   };
 
   return (
     <main className="mx-auto max-w-lg px-6 pb-24 pt-12 sm:pt-16">
-      <p className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-        Etapa 2 de 2
-      </p>
+      <p className="text-[10px] uppercase tracking-[0.4em] text-white/40">Etapa 2 de 2</p>
       <h1 className="mt-3 text-3xl font-light tracking-tight sm:text-4xl">
         Falta apenas um passo, {firstName}.
       </h1>
@@ -74,7 +74,8 @@ export function VipInstagramStep({ firstName }: { firstName: string }) {
 
       {!visited && (
         <p className="mt-3 text-[11px] leading-relaxed text-white/40">
-          Clique primeiro em <span className="text-white/70">Seguir @geastoree</span> para habilitar a confirmação.
+          Clique primeiro em <span className="text-white/70">Seguir @geastoree</span> para habilitar
+          a confirmação.
         </p>
       )}
     </main>

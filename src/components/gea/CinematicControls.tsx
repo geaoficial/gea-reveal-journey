@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 type Level = "off" | "soft" | "default" | "strong";
 
 const LEVELS: Record<Level, { grain: number; vignette: number; label: string }> = {
-  off:     { grain: 0.00, vignette: 0.00, label: "Off" },
-  soft:    { grain: 0.04, vignette: 0.35, label: "Suave" },
+  off: { grain: 0.0, vignette: 0.0, label: "Off" },
+  soft: { grain: 0.04, vignette: 0.35, label: "Suave" },
   default: { grain: 0.07, vignette: 0.55, label: "Padrão" },
-  strong:  { grain: 0.12, vignette: 0.75, label: "Forte" },
+  strong: { grain: 0.12, vignette: 0.75, label: "Forte" },
 };
 
 const STORAGE_KEY = "gea.cinematic.level";
@@ -65,7 +65,14 @@ export function CinematicControls() {
         aria-label="Ajustar intensidade cinematográfica"
         className="h-10 w-10 rounded-full border border-white/10 bg-black/70 text-gea-cream/70 backdrop-blur-md transition-colors hover:text-gea-cream flex items-center justify-center"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        >
           <circle cx="12" cy="12" r="9" />
           <circle cx="12" cy="12" r="3" fill="currentColor" />
         </svg>

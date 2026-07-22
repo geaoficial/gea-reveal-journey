@@ -47,8 +47,7 @@ function start() {
   applyCssVars(currentTier);
 
   // Honor reduced motion / save-data preemptively.
-  const reduced =
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   if (reduced) {
     setTier("lite");
     return;

@@ -26,8 +26,7 @@ export const Route = createFileRoute("/vip")({
       { property: "og:title", content: "GEA VIP" },
       {
         property: "og:description",
-        content:
-          "Faça parte da comunidade que acredita em evolução, propósito e exclusividade.",
+        content: "Faça parte da comunidade que acredita em evolução, propósito e exclusividade.",
       },
     ],
   }),
@@ -85,17 +84,13 @@ function VipPage() {
     } catch {}
   }, [progress]);
 
-  const mark = (key: keyof Progress) =>
-    setProgress((p) => (p[key] ? p : { ...p, [key]: true }));
+  const mark = (key: keyof Progress) => setProgress((p) => (p[key] ? p : { ...p, [key]: true }));
 
   const count = Number(progress.instagram) + Number(progress.share);
   const done = count === 2;
   const pct = (count / 2) * 100;
 
-  const inviteLink = useMemo(
-    () => (refId ? `${BASE_URL}/vip?ref=${refId}` : BASE_URL),
-    [refId],
-  );
+  const inviteLink = useMemo(() => (refId ? `${BASE_URL}/vip?ref=${refId}` : BASE_URL), [refId]);
 
   function handleInstagram() {
     window.open(INSTAGRAM_URL, "_blank", "noopener,noreferrer");
@@ -104,7 +99,8 @@ function VipPage() {
 
   async function handleShareInvite() {
     const sharedTitle = "GEA — Comunidade exclusiva";
-    const sharedText = "Entre para a comunidade GEA. Experiência, estilo e benefícios exclusivos te esperam.";
+    const sharedText =
+      "Entre para a comunidade GEA. Experiência, estilo e benefícios exclusivos te esperam.";
 
     let shared = false;
 
@@ -147,8 +143,6 @@ function VipPage() {
     mark("share");
   }
 
-
-
   async function copyCoupon(code: string, which: "main" | "extra") {
     try {
       await navigator.clipboard.writeText(code);
@@ -170,7 +164,6 @@ function VipPage() {
     }
   }
 
-
   const friendsPct = Math.min(100, friends * 100);
   const extraUnlocked = friends >= 1;
 
@@ -180,17 +173,13 @@ function VipPage() {
         <Link to="/" className="text-xs uppercase tracking-[0.5em]">
           GEA
         </Link>
-        <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-          VIP
-        </span>
+        <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">VIP</span>
         <span className="w-8" />
       </header>
 
       <main className="mx-auto max-w-lg px-6 pb-24 pt-16 sm:pt-24">
         <div className="animate-fade-in">
-          <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">
-            Bem-vindo
-          </p>
+          <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Bem-vindo</p>
           <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
             Bem-vindo à GEA.
           </h1>
@@ -211,14 +200,8 @@ function VipPage() {
               />
             </div>
             <ul className="mt-5 space-y-2 text-xs text-white/60">
-              <ProgressItem
-                done={progress.instagram}
-                label="Seguir a GEA no Instagram"
-              />
-              <ProgressItem
-                done={progress.share}
-                label="Compartilhar meu convite GEA"
-              />
+              <ProgressItem done={progress.instagram} label="Seguir a GEA no Instagram" />
+              <ProgressItem done={progress.share} label="Compartilhar meu convite GEA" />
             </ul>
           </div>
 
@@ -237,7 +220,6 @@ function VipPage() {
               doneLabel="Convite compartilhado"
             />
           </div>
-
         </div>
 
         {/* Cupom desbloqueado */}
@@ -255,9 +237,7 @@ function VipPage() {
 
             <div className="mt-6 border border-white/20 bg-white/[0.03] p-6">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-                  Código
-                </span>
+                <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">Código</span>
                 <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
                   10% OFF
                 </span>
@@ -286,20 +266,18 @@ function VipPage() {
               Convide um amigo.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-white/60">
-              Convide um amigo para conhecer a GEA. Quando ele acessar através
-              do seu link e concluir as mesmas etapas, você desbloqueará
-              benefícios exclusivos.
+              Convide um amigo para conhecer a GEA. Quando ele acessar através do seu link e
+              concluir as mesmas etapas, você desbloqueará benefícios exclusivos.
             </p>
 
             <ul className="mt-6 space-y-2 text-xs text-white/70">
               <li className="flex items-start gap-3">
                 <span className="mt-1 h-1 w-1 rounded-full bg-white/60" />
-                Cupom especial <span className="text-white">GEA26</span> para a
-                primeira compra.
+                Cupom especial <span className="text-white">GEA26</span> para a primeira compra.
               </li>
               <li className="flex items-start gap-3">
-                <span className="mt-1 h-1 w-1 rounded-full bg-white/60" />1
-                participação no sorteio de um brinde misterioso da GEA.
+                <span className="mt-1 h-1 w-1 rounded-full bg-white/60" />1 participação no sorteio
+                de um brinde misterioso da GEA.
               </li>
             </ul>
 
@@ -316,9 +294,7 @@ function VipPage() {
                 />
               </div>
               <p className="mt-3 text-[11px] text-white/50">
-                {extraUnlocked
-                  ? "1 amigo confirmado."
-                  : "0 de 1 amigo confirmado."}
+                {extraUnlocked ? "1 amigo confirmado." : "0 de 1 amigo confirmado."}
               </p>
             </div>
 
@@ -343,14 +319,11 @@ function VipPage() {
                   celebrate ? "animate-scale-in" : ""
                 }`}
               >
-                <p className="text-[10px] uppercase tracking-[0.5em] text-white/50">
-                  Parabéns
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.5em] text-white/50">Parabéns</p>
                 <p className="mt-4 text-sm leading-relaxed text-white/80">
                   Seu amigo concluiu todas as etapas. Você desbloqueou o cupom{" "}
-                  <span className="text-white">GEA26</span> e garantiu sua
-                  participação no sorteio do{" "}
-                  <span className="text-white">Brinde Misterioso GEA</span>.
+                  <span className="text-white">GEA26</span> e garantiu sua participação no sorteio
+                  do <span className="text-white">Brinde Misterioso GEA</span>.
                 </p>
                 <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-6">
                   <span className="text-2xl font-light tracking-[0.35em] sm:text-3xl">

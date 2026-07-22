@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { heroImage } from "@/lib/responsive-image";
 import { reportImageFailure } from "@/lib/image-telemetry";
 
-
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -19,8 +18,7 @@ export function Hero() {
   useEffect(() => {
     const img = imgRef.current;
     if (!img) return;
-    const reveal = () =>
-      requestAnimationFrame(() => requestAnimationFrame(() => setLoaded(true)));
+    const reveal = () => requestAnimationFrame(() => requestAnimationFrame(() => setLoaded(true)));
     if (img.complete && img.naturalWidth > 0) {
       (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(reveal);
       return;
@@ -66,7 +64,6 @@ export function Hero() {
     };
   }, []);
 
-
   return (
     <section ref={ref} className="relative h-[100svh] w-full overflow-hidden bg-gea-black">
       <motion.div style={{ y }} className="absolute inset-x-0 top-[-10%] h-[120%]">
@@ -91,7 +88,6 @@ export function Hero() {
             }}
           />
         ) : (
-
           <picture className="relative z-[1] block h-full w-full">
             <source type="image/avif" srcSet={heroImage.avif} sizes={heroImage.sizes} />
             <source type="image/webp" srcSet={heroImage.webp} sizes={heroImage.sizes} />
@@ -128,12 +124,7 @@ export function Hero() {
             />
           </picture>
         )}
-
-
-
-
       </motion.div>
-
 
       {/* Cinematic overlays */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/10 to-black/90" />
@@ -202,9 +193,6 @@ export function Hero() {
           O tempo revela.
         </motion.p>
 
-
-
-
         <motion.a
           href="#instagram"
           initial={{ opacity: 0, y: 20 }}
@@ -213,7 +201,9 @@ export function Hero() {
           className="plausible-event-name=CTA+Click plausible-event-location=hero plausible-event-label=Entrar+para+a+GEA group mt-14 inline-flex items-center gap-3 border border-gea-cream/40 px-8 py-4 text-[0.7rem] uppercase tracking-[0.32em] text-gea-cream backdrop-blur-sm transition-all duration-500 hover:border-gea-cream hover:bg-gea-cream hover:text-gea-black"
         >
           Entrar para a GEA
-          <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">→</span>
+          <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">
+            →
+          </span>
         </motion.a>
       </motion.div>
 
