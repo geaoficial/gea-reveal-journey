@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VipCardMinimal } from "@/components/gea/VipCardMinimal";
 import { VipReferral } from "./VipReferral";
 
@@ -21,9 +21,23 @@ const BENEFITS = [
   { title: "Programa de indicação", description: "Ganhe mais descontos ao convidar amigos." },
 ];
 
+const VISIT_KEY_PREFIX = "gea:vip:visited:";
+
 export function VipMemberArea({ member }: Props) {
   const firstName = (member.fullName || "").trim().split(/\s+/)[0] || "Membro";
   const [copied, setCopied] = useState(false);
+  const [returning, setReturning] = useState(false);
+
+  useEffect(() => {
+    // Detecta visita recorrente sem afetar hidratação nem performance.
+    try {
+      const key = `${VISIT_KEY_PREFIX}${member.memberNumber}`;
+      if (localStorage.getItem(key)) setReturning(true);
+      else localStorage.setItem(key, String(Date.now()));
+    } catch {
+      /* storage indisponível — silencioso */
+    }
+  }, [member.memberNumber]);
 
   const handleCopyCoupon = async () => {
     try {
@@ -39,11 +53,16 @@ export function VipMemberArea({ member }: Props) {
   return (
     <main className="mx-auto max-w-xl px-6 pb-24 pt-12 sm:pt-16">
       <header className="mb-10">
-        <h1 className="text-3xl font-light tracking-tight text-white sm:text-4xl">
+        <p className="text-[10px] uppercase tracking-[0.4em] text-white/40">
+          {returning ? "Bem-vindo de volta" : "Bem-vindo"}
+        </p>
+        <h1 className="mt-2 text-3xl font-light tracking-tight text-white sm:text-4xl">
           Olá, {firstName}
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-white/60">
-          Bem-vindo à GEA VIP. Seu benefício inicial já está disponível.
+          {returning
+            ? "É um prazer ter você novamente. Sua experiência continua de onde parou."
+            : "Bem-vindo à GEA VIP. Seu benefício inicial já está disponível."}
         </p>
       </header>
 
