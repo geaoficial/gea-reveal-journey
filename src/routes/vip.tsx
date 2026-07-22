@@ -101,6 +101,15 @@ function VipPage() {
   // Load persisted state.
   useEffect(() => {
     try {
+      const rawMember = localStorage.getItem(MEMBER_KEY);
+      if (rawMember) {
+        const m = JSON.parse(rawMember) as Member;
+        if (m?.name && m?.whatsapp) {
+          setMember(m);
+          setWelcomeShown(true);
+        }
+      }
+
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setProgress({ ...EMPTY, ...JSON.parse(raw) });
 
