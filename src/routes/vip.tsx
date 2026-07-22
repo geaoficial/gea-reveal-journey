@@ -160,28 +160,21 @@ function VipPage() {
       }
       setRefId(id);
 
-      const f = Number(localStorage.getItem(FRIENDS_KEY) || "0");
-      setFriends(Number.isFinite(f) ? f : 0);
+      // O contador de amigos é derivado exclusivamente da fila local de créditos
+      // destinada a este refId. Nada de incremento por URL ou por ações do próprio dono.
+      const stored = Number(localStorage.getItem(FRIENDS_KEY) || "0");
+      const base = Number.isFinite(stored) ? stored : 0;
+      const fresh = drainPendingCreditsFor(id);
+      const total = base + fresh;
+      if (fresh > 0) {
+        localStorage.setItem(FRIENDS_KEY, String(total));
+        setCelebrate(true);
+      }
+      setFriends(total);
 
       const inviter = localStorage.getItem(INVITED_BY_KEY) || "";
-      // Ignora quando o próprio usuário abriu o próprio convite.
+      // Ignora auto-convite (mesmo dispositivo). Não credita, não mostra banner.
       if (inviter && inviter !== id) setInvitedBy(inviter);
-
-      // Confirmação via URL: /vip?confirm=REFID (fluxo local de teste)
-      const url = new URL(window.location.href);
-      const confirm = url.searchParams.get("confirm");
-      if (confirm && confirm === id) {
-        const already = localStorage.getItem("gea_vip_confirm_" + confirm);
-        if (!already) {
-          const next = (Number.isFinite(f) ? f : 0) + 1;
-          localStorage.setItem(FRIENDS_KEY, String(next));
-          localStorage.setItem("gea_vip_confirm_" + confirm, "1");
-          setFriends(next);
-          if (next >= 1) setCelebrate(true);
-        }
-        url.searchParams.delete("confirm");
-        window.history.replaceState({}, "", url.pathname + url.search);
-      }
     } catch {
       // noop: localStorage pode estar indisponível no modo privado.
     }
