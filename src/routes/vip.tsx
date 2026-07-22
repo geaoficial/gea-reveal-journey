@@ -50,24 +50,60 @@ function isValidWhatsapp(v: string) {
 
 
 /**
- * Notifica que um convite foi concluído.
- * Estrutura pronta para conexão futura com o Supabase (endpoint /api/public/invite/complete).
- * Enquanto não houver backend, apenas registra localmente e credita 1 amigo no mesmo dispositivo
- * quando o código do convidador for igual ao refId salvo (fluxo de demonstração/teste).
+ * Registra que ESTE dispositivo (convidado) concluiu todas as etapas da GEA VIP
+ * e credita 1 amigo confirmado ao convidador `inviterCode`.
+ *
+ * Regras:
+ * - Só é chamada uma única vez por dispositivo (INVITE_CREDITED_KEY).
+ * - Ignora auto-convite (convidador === próprio refId).
+ * - Enfileira o guestId em `gea_vip_credit_queue_{inviterCode}` de forma idempotente,
+ *   para que o convidador (mesmo dispositivo, em modo demo, ou o backend no futuro)
+ *   contabilize somente uma vez por convite.
+ *
+ * Preparado para Supabase: substituir a fila local por
+ *   fetch('/api/public/invite/complete', { method:'POST', body: JSON.stringify({ inviter, guest }) }).
  */
-async function notifyInviteCompleted(inviterCode: string, guestCode: string) {
+async function creditInviterOnCompletion(inviterCode: string, guestCode: string) {
+  if (!inviterCode || !guestCode) return;
+  if (inviterCode === guestCode) return; // auto-convite não vale
   try {
-    localStorage.setItem(
-      `gea_vip_invite_done_${inviterCode}`,
-      JSON.stringify({ guest: guestCode, at: Date.now() }),
-    );
+    if (localStorage.getItem(INVITE_CREDITED_KEY)) return; // este dispositivo já creditou
+    const key = CREDIT_QUEUE_PREFIX + inviterCode;
+    const raw = localStorage.getItem(key);
+    const list: string[] = raw ? JSON.parse(raw) : [];
+    if (!list.includes(guestCode)) {
+      list.push(guestCode);
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+    localStorage.setItem(INVITE_CREDITED_KEY, inviterCode);
   } catch {
     // noop
   }
-  // TODO(backend): substituir por fetch('/api/public/invite/complete', { method: 'POST', body: JSON.stringify({ inviter: inviterCode, guest: guestCode }) })
+  // TODO(backend): POST /api/public/invite/complete { inviter: inviterCode, guest: guestCode }
 }
 
-export const Route = createFileRoute("/vip")({
+/**
+ * Consome créditos pendentes destinados ao convidador (refId deste dispositivo).
+ * Retorna quantos NOVOS amigos foram creditados nesta chamada.
+ * Idempotente por guestId (CONSUMED_CREDITS_KEY).
+ */
+function drainPendingCreditsFor(refId: string): number {
+  if (!refId) return 0;
+  try {
+    const raw = localStorage.getItem(CREDIT_QUEUE_PREFIX + refId);
+    if (!raw) return 0;
+    const list: string[] = JSON.parse(raw);
+    const consumedRaw = localStorage.getItem(CONSUMED_CREDITS_KEY);
+    const consumed: string[] = consumedRaw ? JSON.parse(consumedRaw) : [];
+    const fresh = list.filter((g) => !consumed.includes(g));
+    if (fresh.length === 0) return 0;
+    const nextConsumed = [...consumed, ...fresh];
+    localStorage.setItem(CONSUMED_CREDITS_KEY, JSON.stringify(nextConsumed));
+    return fresh.length;
+  } catch {
+    return 0;
+  }
+}
   head: () => ({
     meta: [
       { title: "GEA VIP — Comunidade exclusiva" },
