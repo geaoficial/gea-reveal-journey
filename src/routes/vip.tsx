@@ -42,7 +42,6 @@ function VipPage() {
   const [progress, setProgress] = useState<Progress>(EMPTY);
   const [refId, setRefId] = useState<string>("");
   const [friends, setFriends] = useState<number>(0);
-  const [toast, setToast] = useState<string | null>(null);
   const [copied, setCopied] = useState<null | "main" | "extra">(null);
   const [celebrate, setCelebrate] = useState(false);
 
