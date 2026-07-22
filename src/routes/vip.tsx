@@ -304,6 +304,7 @@ function VipPage() {
         ) : !welcomeShown ? (
           <WelcomeSplash name={member.name} />
         ) : (
+        <>
         <div className="animate-fade-in">
           <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">
             Olá, {member.name.split(" ")[0]}
