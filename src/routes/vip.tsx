@@ -95,6 +95,8 @@ function VipPage() {
   const [copied, setCopied] = useState<null | "main" | "extra">(null);
   const [celebrate, setCelebrate] = useState(false);
   const [invitedBy, setInvitedBy] = useState<string>("");
+  const [member, setMember] = useState<Member | null>(null);
+  const [welcomeShown, setWelcomeShown] = useState(false);
 
   // Load persisted state.
   useEffect(() => {
