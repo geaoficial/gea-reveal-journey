@@ -265,7 +265,12 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
       .single();
 
     if (error || !inserted) {
-      return { ok: false as const, reason: "server_error" as const, message: "Falha ao cadastrar. Tente novamente." };
+      console.error("[vip] insert failed", error);
+      return {
+        ok: false as const,
+        reason: "server_error" as const,
+        message: "Não foi possível concluir o cadastro. Tente novamente em instantes.",
+      };
     }
 
     await supabaseAdmin.from("vip_events").insert({
