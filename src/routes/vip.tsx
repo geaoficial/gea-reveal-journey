@@ -4,15 +4,35 @@ import { toast } from "sonner";
 
 // Links oficiais — edite aqui se mudarem.
 const INSTAGRAM_URL = "https://instagram.com/geastoree";
-const BASE_URL = "https://geastore.lovable.app";
+const BASE_URL = "https://geastore.online";
 const STORAGE_KEY = "gea_vip_progress_v3";
 const REF_KEY = "gea_vip_ref_id";
 const FRIENDS_KEY = "gea_vip_friends_confirmed";
+const INVITED_BY_KEY = "gea_vip_invited_by";
+const INVITE_NOTIFIED_KEY = "gea_vip_invite_notified";
 const COUPON_MAIN = "GEA10";
 const COUPON_EXTRA = "GEA26";
 
 type Progress = { instagram: boolean; share: boolean };
 const EMPTY: Progress = { instagram: false, share: false };
+
+/**
+ * Notifica que um convite foi concluído.
+ * Estrutura pronta para conexão futura com o Supabase (endpoint /api/public/invite/complete).
+ * Enquanto não houver backend, apenas registra localmente e credita 1 amigo no mesmo dispositivo
+ * quando o código do convidador for igual ao refId salvo (fluxo de demonstração/teste).
+ */
+async function notifyInviteCompleted(inviterCode: string, guestCode: string) {
+  try {
+    localStorage.setItem(
+      `gea_vip_invite_done_${inviterCode}`,
+      JSON.stringify({ guest: guestCode, at: Date.now() }),
+    );
+  } catch {
+    // noop
+  }
+  // TODO(backend): substituir por fetch('/api/public/invite/complete', { method: 'POST', body: JSON.stringify({ inviter: inviterCode, guest: guestCode }) })
+}
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
@@ -34,7 +54,7 @@ export const Route = createFileRoute("/vip")({
 });
 
 function makeId() {
-  return Math.random().toString(36).slice(2, 8).toUpperCase();
+  return "GEA" + Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
 function VipPage() {
@@ -43,6 +63,7 @@ function VipPage() {
   const [friends, setFriends] = useState<number>(0);
   const [copied, setCopied] = useState<null | "main" | "extra">(null);
   const [celebrate, setCelebrate] = useState(false);
+  const [invitedBy, setInvitedBy] = useState<string>("");
 
   // Load persisted state.
   useEffect(() => {
@@ -60,7 +81,11 @@ function VipPage() {
       const f = Number(localStorage.getItem(FRIENDS_KEY) || "0");
       setFriends(Number.isFinite(f) ? f : 0);
 
-      // Confirmação via URL: /vip?confirm=REFID
+      const inviter = localStorage.getItem(INVITED_BY_KEY) || "";
+      // Ignora quando o próprio usuário abriu o próprio convite.
+      if (inviter && inviter !== id) setInvitedBy(inviter);
+
+      // Confirmação via URL: /vip?confirm=REFID (fluxo local de teste)
       const url = new URL(window.location.href);
       const confirm = url.searchParams.get("confirm");
       if (confirm && confirm === id) {
@@ -84,7 +109,7 @@ function VipPage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
     } catch {
-      // noop: localStorage pode estar indisponível no modo privado.
+      // noop
     }
   }, [progress]);
 
@@ -94,7 +119,31 @@ function VipPage() {
   const done = count === 2;
   const pct = (count / 2) * 100;
 
-  const inviteLink = useMemo(() => (refId ? `${BASE_URL}/vip?ref=${refId}` : BASE_URL), [refId]);
+  const inviteLink = useMemo(
+    () => (refId ? `${BASE_URL}/invite/${refId}` : BASE_URL),
+    [refId],
+  );
+
+  // Ao concluir as duas etapas, credita o convidador (uma única vez).
+  useEffect(() => {
+    if (!done || !invitedBy || !refId) return;
+    try {
+      if (localStorage.getItem(INVITE_NOTIFIED_KEY)) return;
+      localStorage.setItem(INVITE_NOTIFIED_KEY, invitedBy);
+      // Fluxo de demonstração no mesmo dispositivo: se o convidador for este mesmo browser,
+      // também incrementa o contador local. Em produção com backend, isso vem do servidor.
+      if (invitedBy === refId) {
+        const next = friends + 1;
+        localStorage.setItem(FRIENDS_KEY, String(next));
+        setFriends(next);
+        setCelebrate(true);
+      }
+      void notifyInviteCompleted(invitedBy, refId);
+    } catch {
+      // noop
+    }
+  }, [done, invitedBy, refId, friends]);
+
 
   function handleInstagram() {
     window.open(INSTAGRAM_URL, "_blank", "noopener,noreferrer");
@@ -184,6 +233,14 @@ function VipPage() {
       </header>
 
       <main className="mx-auto max-w-lg px-6 pb-24 pt-16 sm:pt-24">
+        {invitedBy && (
+          <div className="mb-8 flex items-center gap-3 border-l border-white/30 bg-white/[0.02] px-4 py-3 animate-fade-in">
+            <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">Convite</span>
+            <p className="text-[12px] leading-relaxed text-white/70">
+              Você foi convidado para fazer parte da comunidade GEA.
+            </p>
+          </div>
+        )}
         <div className="animate-fade-in">
           <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Bem-vindo</p>
           <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">

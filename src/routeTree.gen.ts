@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InviteMemberNumberRouteImport } from './routes/invite.$memberNumber'
+import { Route as InviteCodeRouteImport } from './routes/invite.$code'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin.members'
@@ -63,6 +64,11 @@ const InviteMemberNumberRoute = InviteMemberNumberRouteImport.update({
   path: '/invite/$memberNumber',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InviteCodeRoute = InviteCodeRouteImport.update({
+  id: '/invite/$code',
+  path: '/invite/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/vip': typeof VipRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/invite/$code': typeof InviteCodeRoute
   '/invite/$memberNumber': typeof InviteMemberNumberRoute
   '/admin/benefits': typeof AuthenticatedAdminBenefitsRoute
   '/admin/invite-shares': typeof AuthenticatedAdminInviteSharesRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/vip': typeof VipRoute
+  '/invite/$code': typeof InviteCodeRoute
   '/invite/$memberNumber': typeof InviteMemberNumberRoute
   '/admin/benefits': typeof AuthenticatedAdminBenefitsRoute
   '/admin/invite-shares': typeof AuthenticatedAdminInviteSharesRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/vip': typeof VipRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/invite/$code': typeof InviteCodeRoute
   '/invite/$memberNumber': typeof InviteMemberNumberRoute
   '/_authenticated/admin/benefits': typeof AuthenticatedAdminBenefitsRoute
   '/_authenticated/admin/invite-shares': typeof AuthenticatedAdminInviteSharesRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/vip'
     | '/admin'
+    | '/invite/$code'
     | '/invite/$memberNumber'
     | '/admin/benefits'
     | '/admin/invite-shares'
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/vip'
+    | '/invite/$code'
     | '/invite/$memberNumber'
     | '/admin/benefits'
     | '/admin/invite-shares'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/vip'
     | '/_authenticated/admin'
+    | '/invite/$code'
     | '/invite/$memberNumber'
     | '/_authenticated/admin/benefits'
     | '/_authenticated/admin/invite-shares'
@@ -200,6 +212,7 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
   VipRoute: typeof VipRoute
+  InviteCodeRoute: typeof InviteCodeRoute
   InviteMemberNumberRoute: typeof InviteMemberNumberRoute
 }
 
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/invite/$memberNumber'
       fullPath: '/invite/$memberNumber'
       preLoaderRoute: typeof InviteMemberNumberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/$code': {
+      id: '/invite/$code'
+      path: '/invite/$code'
+      fullPath: '/invite/$code'
+      preLoaderRoute: typeof InviteCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -344,6 +364,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
   VipRoute: VipRoute,
+  InviteCodeRoute: InviteCodeRoute,
   InviteMemberNumberRoute: InviteMemberNumberRoute,
 }
 export const routeTree = rootRouteImport
