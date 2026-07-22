@@ -3,14 +3,16 @@ import { useMemo, useState } from "react";
 type Props = {
   memberNumber: number;
   firstName: string;
+  referralCode: string;
 };
 
 /**
- * Programa de indicação — link único do membro.
- * Copiar link + compartilhar via WhatsApp / share nativo.
+ * Programa de indicação — link + código únicos do membro.
+ * Copiar link, copiar código e compartilhar via share nativo / WhatsApp.
  */
-export function VipReferral({ memberNumber, firstName }: Props) {
-  const [copied, setCopied] = useState(false);
+export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
 
   const link = useMemo(() => {
     if (typeof window === "undefined") return `/invite/${memberNumber}`;
@@ -23,30 +25,29 @@ export function VipReferral({ memberNumber, firstName }: Props) {
     [firstName, link],
   );
 
-  const handleInvite = async () => {
+  const track = (name: string) => {
     try {
-      (window as unknown as { plausible?: (n: string) => void }).plausible?.("VIP Invite Share");
+      (window as unknown as { plausible?: (n: string) => void }).plausible?.(name);
     } catch { /* ignore */ }
+  };
 
+  const copy = async (value: string, setter: (v: boolean) => void) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setter(true);
+      setTimeout(() => setter(false), 2200);
+    } catch { /* ignore */ }
+  };
+
+  const handleShare = async () => {
+    track("VIP Invite Share");
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({ title: "GEA VIP", text: message, url: link });
         return;
       } catch { /* fallthrough */ }
     }
-    try {
-      await navigator.clipboard.writeText(link);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2400);
-    } catch { /* ignore */ }
-  };
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(link);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2400);
-    } catch { /* ignore */ }
+    copy(link, setCopiedLink);
   };
 
   return (
@@ -55,25 +56,40 @@ export function VipReferral({ memberNumber, firstName }: Props) {
         Indique um amigo
       </h2>
       <p className="mt-4 text-sm leading-relaxed text-white/70">
-        Convide um amigo para entrar na GEA VIP. Quando ele se cadastrar,
-        seguir a GEA nas redes sociais e concluir a primeira compra,
-        <span className="text-white"> vocês dois recebem 10% de desconto</span>.
+        Convide um amigo para fazer parte da GEA VIP. Quando ele se cadastrar,
+        seguir a GEA no Instagram e concluir a primeira compra,
+        <span className="text-white"> vocês dois recebem 10% de desconto</span> em uma próxima compra.
       </p>
 
-      <div className="mt-6 flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5">
-        <span className="min-w-0 flex-1 truncate text-[12px] text-white/70">{link}</span>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="shrink-0 rounded border border-white/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-white/70 transition hover:border-white/40 hover:text-white"
-        >
-          {copied ? "Copiado" : "Copiar"}
-        </button>
+      <div className="mt-6 space-y-3">
+        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5">
+          <span className="min-w-0 flex-1 truncate text-[12px] text-white/70">{link}</span>
+          <button
+            type="button"
+            onClick={() => { track("VIP Invite Copy Link"); copy(link, setCopiedLink); }}
+            className="shrink-0 rounded border border-white/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-white/70 transition hover:border-white/40 hover:text-white"
+          >
+            {copiedLink ? "Copiado" : "Copiar link"}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5">
+          <span className="min-w-0 flex-1 truncate font-mono text-[13px] tracking-[0.3em] text-white">
+            {referralCode}
+          </span>
+          <button
+            type="button"
+            onClick={() => { track("VIP Invite Copy Code"); copy(referralCode, setCopiedCode); }}
+            className="shrink-0 rounded border border-white/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-white/70 transition hover:border-white/40 hover:text-white"
+          >
+            {copiedCode ? "Copiado" : "Copiar código"}
+          </button>
+        </div>
       </div>
 
       <button
         type="button"
-        onClick={handleInvite}
+        onClick={handleShare}
         className="mt-4 min-h-11 w-full rounded bg-white py-3 text-xs uppercase tracking-[0.35em] text-black transition hover:bg-white/90"
       >
         Convidar amigo

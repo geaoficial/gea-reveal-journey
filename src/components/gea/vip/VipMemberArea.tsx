@@ -6,13 +6,20 @@ type Member = {
   memberNumber: number;
   fullName: string;
   unlockedAt: string | null;
+  couponCode: string;
+  referralCode: string;
 };
 
 type Props = {
   member: Member;
 };
 
-const DEFAULT_COUPON = "GEA10";
+const BENEFITS = [
+  { title: "Cupom de boas-vindas", description: "Desconto exclusivo na sua primeira compra." },
+  { title: "Benefícios exclusivos", description: "Vantagens reservadas para membros GEA VIP." },
+  { title: "Promoções antecipadas", description: "Acesso primeiro a lançamentos e campanhas." },
+  { title: "Programa de indicação", description: "Ganhe mais descontos ao convidar amigos." },
+];
 
 export function VipMemberArea({ member }: Props) {
   const firstName = (member.fullName || "").trim().split(/\s+/)[0] || "Membro";
@@ -20,7 +27,7 @@ export function VipMemberArea({ member }: Props) {
 
   const handleCopyCoupon = async () => {
     try {
-      await navigator.clipboard.writeText(DEFAULT_COUPON);
+      await navigator.clipboard.writeText(member.couponCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2200);
       try {
@@ -50,14 +57,14 @@ export function VipMemberArea({ member }: Props) {
 
       <section className="mt-10 rounded-xl border border-white/10 bg-white/[0.03] p-6">
         <p className="text-[10px] uppercase tracking-[0.4em] text-white/45">
-          Cupom exclusivo
+          Cupom exclusivo — primeira compra
         </p>
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
           <span
-            className="flex-1 rounded-md border border-white/15 bg-black/40 px-4 py-3 text-center font-mono text-xl tracking-[0.4em] text-white"
+            className="flex-1 truncate rounded-md border border-white/15 bg-black/40 px-4 py-3 text-center font-mono text-base tracking-[0.25em] text-white sm:text-lg"
             aria-label="Cupom"
           >
-            {DEFAULT_COUPON}
+            {member.couponCode}
           </span>
           <button
             type="button"
@@ -68,11 +75,37 @@ export function VipMemberArea({ member }: Props) {
           </button>
         </div>
         <p className="mt-4 text-xs leading-relaxed text-white/55">
-          Utilize este cupom na sua primeira compra.
+          Utilize este cupom na sua primeira compra. Válido apenas para você.
         </p>
       </section>
 
-      <VipReferral memberNumber={member.memberNumber} firstName={firstName} />
+      <section className="mt-14">
+        <h2 className="text-[10px] uppercase tracking-[0.4em] text-white/45">
+          Seus benefícios
+        </h2>
+        <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {BENEFITS.map((b) => (
+            <li
+              key={b.title}
+              className="rounded-lg border border-white/10 bg-white/[0.02] p-4"
+            >
+              <div className="flex items-center gap-2">
+                <span aria-hidden className="text-white/70">✓</span>
+                <span className="text-sm text-white">{b.title}</span>
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-white/55">
+                {b.description}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <VipReferral
+        memberNumber={member.memberNumber}
+        firstName={firstName}
+        referralCode={member.referralCode}
+      />
     </main>
   );
 }
