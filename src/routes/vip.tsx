@@ -106,12 +106,11 @@ function VipPage() {
     try {
       await navigator.clipboard.writeText(inviteLink);
       setToast("Link de convite copiado.");
-      mark("share");
-      setTimeout(() => setToast(null), 2800);
     } catch {
-      setToast("Não foi possível copiar o link.");
-      setTimeout(() => setToast(null), 2800);
+      setToast("Não foi possível copiar automaticamente. Selecione e copie o link abaixo.");
     }
+    mark("share");
+    setTimeout(() => setToast(null), 2800);
   }
 
   async function copyCoupon(code: string, which: "main" | "extra") {
