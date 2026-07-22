@@ -97,7 +97,7 @@ export function HiddenChapter() {
   const percent = Math.round(progress * 100);
 
   return (
-    <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center bg-gea-black px-6 py-40">
+    <section ref={ref} className="relative flex min-h-[100svh] items-center justify-center bg-gea-black px-6 py-40">
       <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
         <motion.span
           initial={{ opacity: 0 }}
