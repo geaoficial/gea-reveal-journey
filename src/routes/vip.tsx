@@ -219,9 +219,9 @@ function VipPage() {
             />
             <ActionButton
               done={progress.share}
-              onClick={handleCopyInvite}
-              label="Copiar meu link de convite"
-              doneLabel="Link de convite copiado"
+              onClick={handleShareInvite}
+              label="Compartilhar meu convite GEA"
+              doneLabel="Convite compartilhado"
             />
           </div>
 
