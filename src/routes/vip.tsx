@@ -226,9 +226,22 @@ function VipPage() {
           </div>
 
           {toast && (
-            <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-white/60 animate-fade-in">
-              {toast}
-            </p>
+            <div className="mt-6 flex animate-fade-in items-center gap-3 border border-white/15 bg-white/[0.04] px-4 py-3">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border border-white/40">
+                <svg
+                  viewBox="0 0 12 12"
+                  className="h-3 w-3"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="M2 6.5 4.5 9 10 3" />
+                </svg>
+              </span>
+              <p className="text-[11px] uppercase tracking-[0.25em] text-white/70">
+                {toast}
+              </p>
+            </div>
           )}
         </div>
 
