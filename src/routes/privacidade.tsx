@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalShell } from "@/components/gea/LegalShell";
+import { CONTACT, CONTACT_LINKS } from "@/lib/contact";
 
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
@@ -79,7 +80,11 @@ function PrivacyPage() {
         Você pode a qualquer momento solicitar acesso, correção, portabilidade,
         anonimização ou exclusão dos seus dados, além de revogar o consentimento.
         Envie sua solicitação para{" "}
-        <a href="mailto:privacidade@gea.com.br">privacidade@gea.com.br</a>.
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> ou{" "}
+        <a href={CONTACT_LINKS.whatsapp} target="_blank" rel="noopener noreferrer">
+          WhatsApp {CONTACT.whatsappDisplay}
+        </a>
+        .
       </p>
 
       <h2>6. Segurança</h2>
@@ -98,7 +103,7 @@ function PrivacyPage() {
 
       <h2>8. Contato do Encarregado (DPO)</h2>
       <p>
-        <a href="mailto:dpo@gea.com.br">dpo@gea.com.br</a>
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
       </p>
     </LegalShell>
   );
