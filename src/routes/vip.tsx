@@ -346,12 +346,14 @@ function VipPage() {
               </div>
             )}
 
-            <Link
-              to="/"
+            <a
+              href="https://geastore.online/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-12 inline-flex items-center justify-center border border-white/25 px-7 py-3.5 text-[11px] uppercase tracking-[0.4em] text-white transition hover:bg-white hover:text-black"
             >
               Explorar Benefícios
-            </Link>
+            </a>
           </section>
         )}
       </main>
