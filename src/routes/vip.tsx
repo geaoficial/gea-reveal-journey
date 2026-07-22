@@ -1,57 +1,73 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   getMyVipMember,
-  registerVipMember,
-  loginVipMember,
+  registerVipMemberSimple,
+  loginVipMemberSimple,
   logoutVipMember,
-  confirmInstagramFollow,
-  logInviteShare,
 } from "@/lib/vip-agent.functions";
-import { VipCard } from "@/components/gea/VipCard";
-import { CouponRedeemPanel, CouponUnlockOverlay } from "@/components/gea/CouponReveal";
+import { VipCardMinimal } from "@/components/gea/VipCardMinimal";
 
 export const Route = createFileRoute("/vip")({
   head: () => ({
     meta: [
-      { title: "Clube VIP — GEA" },
+      { title: "GEA VIP — Comunidade exclusiva" },
       {
         name: "description",
-        content: "Área exclusiva dos primeiros membros da GEA. Cartão digital, benefícios e convites.",
+        content:
+          "Faça parte da GEA VIP: descontos exclusivos, acesso antecipado e benefícios reservados aos membros.",
       },
-      { property: "og:title", content: "Clube VIP — GEA" },
-      { property: "og:description", content: "Torne-se um dos Primeiros da GEA." },
+      { property: "og:title", content: "GEA VIP" },
+      {
+        property: "og:description",
+        content: "Comunidade exclusiva com benefícios reservados aos membros GEA.",
+      },
     ],
   }),
   component: VipPage,
 });
 
+const BENEFITS = [
+  "Descontos exclusivos para membros",
+  "Acesso antecipado a novidades",
+  "Campanhas especiais",
+  "Benefícios reservados para clientes GEA",
+];
+
+// ------------------------------------------------------------------
 function VipPage() {
   const getMe = useServerFn(getMyVipMember);
-  const me = useQuery({ queryKey: ["vip", "me"], queryFn: () => getMe() });
-
-  if (me.isLoading) {
-    return (
-      <div className="min-h-screen bg-black text-white/60 flex items-center justify-center">
-        <div className="animate-pulse text-xs uppercase tracking-[0.4em]">Carregando…</div>
-      </div>
-    );
-  }
+  const me = useQuery({
+    queryKey: ["vip", "me"],
+    queryFn: () => getMe(),
+    staleTime: 30_000,
+  });
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <header className="px-6 py-6 flex items-center justify-between border-b border-white/[0.06]">
+    <div className="min-h-screen bg-black text-white antialiased">
+      <header className="flex items-center justify-between border-b border-white/[0.06] px-6 py-5">
         <Link to="/" className="text-xs uppercase tracking-[0.5em]">
           GEA
         </Link>
         <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-          Clube VIP
+          VIP
         </span>
       </header>
 
-      {me.data?.ok ? <MemberPanel data={me.data} /> : <VisitorPanel />}
+      {me.isLoading ? (
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <div className="animate-pulse text-[10px] uppercase tracking-[0.5em] text-white/40">
+            Carregando…
+          </div>
+        </div>
+      ) : me.data?.ok ? (
+        <MemberPanel data={me.data} />
+      ) : (
+        <VisitorPanel />
+      )}
     </div>
   );
 }
@@ -60,130 +76,153 @@ function VipPage() {
 function VisitorPanel() {
   const [mode, setMode] = useState<"register" | "login">("register");
   return (
-    <div className="mx-auto max-w-xl px-6 py-16">
-      <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Ato final</p>
-      <h1 className="mt-3 text-3xl md:text-4xl font-light leading-tight">
-        Torne-se um dos <em className="not-italic font-normal">Primeiros da GEA</em>.
-      </h1>
-      <p className="mt-4 text-sm text-white/60 leading-relaxed">
-        Cartão digital vitalício, acesso antecipado ao drop e benefícios exclusivos entregues
-        conforme você constrói o círculo. Cadastro único.
-      </p>
+    <main className="mx-auto max-w-lg px-6 pb-24 pt-16 sm:pt-24">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <h1 className="text-4xl font-light tracking-tight sm:text-5xl">GEA VIP</h1>
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-white/60">
+          Faça parte de uma comunidade exclusiva e tenha acesso a benefícios
+          especiais.
+        </p>
+      </motion.div>
 
-      <div className="mt-10 flex gap-6 text-[11px] uppercase tracking-[0.35em]">
+      <ul className="mt-10 grid gap-2 sm:grid-cols-2">
+        {BENEFITS.map((b, i) => (
+          <motion.li
+            key={b}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 + i * 0.06 }}
+            className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.02] px-4 py-3 text-[13px] text-white/80"
+          >
+            <span
+              aria-hidden
+              className="h-1 w-1 shrink-0 rounded-full bg-white/70"
+            />
+            {b}
+          </motion.li>
+        ))}
+      </ul>
+
+      <div className="mt-10 flex gap-8 text-[11px] uppercase tracking-[0.35em]">
         <button
+          type="button"
           onClick={() => setMode("register")}
-          className={mode === "register" ? "text-white" : "text-white/40"}
+          className={
+            mode === "register"
+              ? "text-white"
+              : "text-white/40 hover:text-white/70"
+          }
         >
           Novo membro
         </button>
         <button
+          type="button"
           onClick={() => setMode("login")}
-          className={mode === "login" ? "text-white" : "text-white/40"}
+          className={
+            mode === "login" ? "text-white" : "text-white/40 hover:text-white/70"
+          }
         >
           Já sou membro
         </button>
       </div>
 
-      <div className="mt-8">{mode === "register" ? <RegistrationForm /> : <LoginForm />}</div>
-    </div>
+      <div className="mt-6">
+        {mode === "register" ? <RegisterForm /> : <LoginForm />}
+      </div>
+    </main>
   );
 }
 
-function RegistrationForm() {
-  const register = useServerFn(registerVipMember);
+// ------------------------------------------------------------------
+function RegisterForm() {
+  const register = useServerFn(registerVipMemberSimple);
   const qc = useQueryClient();
   const [fullName, setFullName] = useState("");
-  const [instagram, setInstagram] = useState("");
-  const [city, setCity] = useState("");
-  const [accepted, setAccepted] = useState(false);
-  const [issued, setIssued] = useState<{ memberNumber: number; accessCode: string } | null>(null);
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [accepted, setAccepted] = useState(true);
 
   const mutation = useMutation({
     mutationFn: (data: {
       fullName: string;
-      instagram: string;
-      city: string | undefined;
+      email: string;
+      whatsapp: string;
       acceptedTerms: true;
     }) => register({ data }),
     onSuccess: (res) => {
       if (res.ok) {
-        setIssued({ memberNumber: res.member.memberNumber, accessCode: res.member.accessCode });
+        try {
+          (
+            window as unknown as { plausible?: (n: string) => void }
+          ).plausible?.("VIP Signup Simple");
+        } catch {
+          /* ignore */
+        }
         qc.invalidateQueries({ queryKey: ["vip", "me"] });
       }
     },
   });
 
-  if (issued) {
-    return (
-      <div className="rounded border border-amber-400/30 bg-amber-400/[0.04] p-6">
-        <p className="text-[10px] uppercase tracking-[0.4em] text-amber-300/80">
-          Cadastro confirmado
-        </p>
-        <h2 className="mt-3 text-2xl font-light">
-          Membro Nº {String(issued.memberNumber).padStart(4, "0")}
-        </h2>
-        <p className="mt-3 text-sm text-white/60">
-          Anote seu <strong className="text-white">código de acesso</strong> — ele permite entrar
-          em qualquer aparelho:
-        </p>
-        <div className="mt-3 font-mono text-2xl tracking-[0.4em] text-white">{issued.accessCode}</div>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-6 w-full rounded bg-white text-black py-2.5 text-xs uppercase tracking-[0.3em]"
-        >
-          Ver meu cartão
-        </button>
-      </div>
-    );
-  }
-
   const res = mutation.data;
-  const errMsg = res && !res.ok ? res.message : mutation.error ? "Erro inesperado." : null;
+  const errMsg =
+    res && !res.ok ? res.message : mutation.error ? "Erro inesperado." : null;
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (!accepted) return;
+        if (!accepted || mutation.isPending) return;
         mutation.mutate({
-          fullName,
-          instagram,
-          city: city || undefined,
+          fullName: fullName.trim(),
+          email: email.trim(),
+          whatsapp: whatsapp.trim(),
           acceptedTerms: true,
         });
       }}
       className="space-y-4"
+      noValidate
     >
-      <Field label="Nome completo">
+      <Field label="Nome">
         <input
           required
           minLength={2}
           maxLength={80}
+          autoComplete="name"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          className="input"
+          className="vip-input"
         />
       </Field>
-      <Field label="Instagram (@)">
+      <Field label="E-mail">
         <input
           required
-          value={instagram}
-          onChange={(e) => setInstagram(e.target.value.replace(/^@+/, ""))}
-          placeholder="seuuser"
-          className="input"
+          type="email"
+          autoComplete="email"
+          maxLength={160}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="vip-input"
         />
       </Field>
-      <Field label="Cidade (opcional)">
+      <Field label="WhatsApp">
         <input
-          maxLength={80}
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="input"
+          required
+          inputMode="tel"
+          autoComplete="tel"
+          minLength={8}
+          maxLength={24}
+          placeholder="(11) 99999-9999"
+          value={whatsapp}
+          onChange={(e) => setWhatsapp(e.target.value)}
+          className="vip-input"
         />
       </Field>
 
-      <label className="flex items-start gap-3 text-xs text-white/60 pt-2">
+      <label className="flex items-start gap-3 pt-1 text-xs text-white/55">
         <input
           type="checkbox"
           checked={accepted}
@@ -191,32 +230,36 @@ function RegistrationForm() {
           className="mt-0.5 accent-white"
         />
         <span>
-          Aceito receber comunicações da GEA e concordo com o regulamento do clube.
+          Aceito receber comunicações da GEA e concordo com o regulamento do
+          clube.
         </span>
       </label>
 
       {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
 
       <button
+        type="submit"
         disabled={!accepted || mutation.isPending}
-        className="w-full rounded bg-white text-black py-3 text-xs uppercase tracking-[0.35em] disabled:opacity-30"
+        className="mt-2 min-h-11 w-full rounded bg-white py-3 text-xs uppercase tracking-[0.35em] text-black transition disabled:opacity-30"
       >
-        {mutation.isPending ? "Emitindo cartão…" : "Emitir meu cartão"}
+        {mutation.isPending ? "Entrando…" : "Entrar para a GEA VIP"}
       </button>
 
-      <style>{`.input{margin-top:.5rem;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:.25rem;padding:.55rem .75rem;color:white;outline:none;transition:border-color .2s}.input:focus{border-color:rgba(255,255,255,.4)}`}</style>
+      <style>{`.vip-input{margin-top:.5rem;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:.375rem;padding:.75rem .875rem;color:white;font-size:15px;outline:none;transition:border-color .2s}.vip-input:focus{border-color:rgba(255,255,255,.45)}`}</style>
     </form>
   );
 }
 
+// ------------------------------------------------------------------
 function LoginForm() {
-  const login = useServerFn(loginVipMember);
+  const login = useServerFn(loginVipMemberSimple);
   const qc = useQueryClient();
-  const [instagram, setInstagram] = useState("");
+  const [email, setEmail] = useState("");
   const [accessCode, setAccessCode] = useState("");
 
   const mutation = useMutation({
-    mutationFn: (data: { instagram: string; accessCode: string }) => login({ data }),
+    mutationFn: (data: { email: string; accessCode: string }) =>
+      login({ data }),
     onSuccess: (res) => {
       if (res.ok) qc.invalidateQueries({ queryKey: ["vip", "me"] });
     },
@@ -227,16 +270,20 @@ function LoginForm() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        mutation.mutate({ instagram, accessCode });
+        if (mutation.isPending) return;
+        mutation.mutate({ email: email.trim(), accessCode: accessCode.trim() });
       }}
       className="space-y-4"
+      noValidate
     >
-      <Field label="Instagram (@)">
+      <Field label="E-mail">
         <input
           required
-          value={instagram}
-          onChange={(e) => setInstagram(e.target.value.replace(/^@+/, ""))}
-          className="input"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="vip-input"
         />
       </Field>
       <Field label="Código de acesso">
@@ -244,24 +291,34 @@ function LoginForm() {
           required
           value={accessCode}
           onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-          className="input font-mono tracking-[0.3em]"
+          className="vip-input font-mono tracking-[0.3em]"
         />
       </Field>
       {res && !res.ok && <p className="text-sm text-red-400">{res.message}</p>}
       <button
+        type="submit"
         disabled={mutation.isPending}
-        className="w-full rounded bg-white text-black py-3 text-xs uppercase tracking-[0.35em] disabled:opacity-30"
+        className="min-h-11 w-full rounded bg-white py-3 text-xs uppercase tracking-[0.35em] text-black transition disabled:opacity-30"
       >
         {mutation.isPending ? "…" : "Entrar"}
       </button>
+      <style>{`.vip-input{margin-top:.5rem;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:.375rem;padding:.75rem .875rem;color:white;font-size:15px;outline:none;transition:border-color .2s}.vip-input:focus{border-color:rgba(255,255,255,.45)}`}</style>
     </form>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
-      <span className="text-[10px] uppercase tracking-[0.35em] text-white/40">{label}</span>
+      <span className="text-[10px] uppercase tracking-[0.35em] text-white/45">
+        {label}
+      </span>
       {children}
     </label>
   );
@@ -275,459 +332,100 @@ function MemberPanel({
 }) {
   const navigate = useNavigate();
   const logout = useServerFn(logoutVipMember);
-  const confirmFollow = useServerFn(confirmInstagramFollow);
   const qc = useQueryClient();
-  const { member, invites, benefits, allBenefits, instagramFollowedAt, inviteSharedAt, cardUnlocked } = data;
-  // Cartão só desbloqueia com AMBAS as ações: seguir + compartilhar.
-  const highlightedBenefit = cardUnlocked
-    ? (allBenefits.find((b) => b.unlocked && b.type === "welcome") ??
-       allBenefits.find((b) => b.unlocked) ??
-       null)
-    : null;
-  const inviteUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/invite/${member.memberNumber}`
-      : "";
+  const { member } = data;
+  const [welcoming, setWelcoming] = useState(true);
 
-  const pendingRef = useRef(false);
-  const clickedAtRef = useRef<number | null>(null);
-  const prevUnlockedRef = useRef(cardUnlocked);
-  const [justUnlocked, setJustUnlocked] = useState(false);
-  const [couponOverlayOpen, setCouponOverlayOpen] = useState(false);
-
-  // Dispara flip do cartão + overlay de cupom no instante em que ambas as condições ficam verdadeiras.
   useEffect(() => {
-    if (cardUnlocked && !prevUnlockedRef.current) {
-      setJustUnlocked(true);
-      // Aguarda o giro do cartão antes de revelar o overlay do cupom.
-      const t = setTimeout(() => setCouponOverlayOpen(true), 900);
-      try {
-        (window as unknown as { plausible?: (n: string, o?: { props?: Record<string, unknown> }) => void })
-          .plausible?.("Vip Card Unlocked", { props: { memberId: member.id } });
-      } catch { /* ignore */ }
-      prevUnlockedRef.current = cardUnlocked;
-      return () => clearTimeout(t);
-    }
-    prevUnlockedRef.current = cardUnlocked;
-  }, [cardUnlocked, member.id]);
-
-  function track(name: string, props?: Record<string, string | number | boolean>) {
-    try {
-      (window as unknown as {
-        plausible?: (n: string, o?: { props?: Record<string, unknown> }) => void;
-      }).plausible?.(name, props ? { props } : undefined);
-    } catch { /* ignore */ }
-  }
-
-  const followed = Boolean(instagramFollowedAt);
-  const shared = Boolean(inviteSharedAt);
-
-  // Impressão do CTA (uma vez por sessão de painel, quando ainda não seguiu)
-  useEffect(() => {
-    if (!followed) track("Vip Follow CTA View", { memberId: member.id });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const t = setTimeout(() => setWelcoming(false), 900);
+    return () => clearTimeout(t);
   }, []);
 
-  useEffect(() => {
-    function onVisible() {
-      if (document.visibilityState !== "visible" || !pendingRef.current) return;
-      pendingRef.current = false;
-      const startedAt = clickedAtRef.current;
-      const elapsedMs = startedAt ? Date.now() - startedAt : 0;
-      confirmFollow().then((r) => {
-        if (r.ok) {
-          if (!r.already) {
-            track("Vip Follow Confirmed", { memberId: member.id, elapsedMs });
-          } else {
-            track("Vip Follow Reconfirmed", { memberId: member.id });
-          }
-          qc.invalidateQueries({ queryKey: ["vip", "me"] });
-        } else {
-          track("Vip Follow Confirm Failed", { memberId: member.id });
-        }
-      });
-    }
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-    };
-  }, [confirmFollow, qc, member.id]);
-
-  function openInstagram() {
-    pendingRef.current = true;
-    clickedAtRef.current = Date.now();
-    track("Vip Follow CTA Click", {
-      memberId: member.id,
-      alreadyFollowed: followed,
-    });
-    // Mantém evento genérico para compatibilidade com dashboards antigos
-    track("Follow Instagram");
-    window.open("https://instagram.com/geastoree", "_blank", "noopener,noreferrer");
-  }
-
-
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12 space-y-10">
-      <section className="relative">
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-[10px] uppercase tracking-[0.5em] text-amber-300/70">
-            Cartão do Membro
-          </p>
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] uppercase tracking-[0.3em] ${
-              member.status === "active"
-                ? "border-emerald-400/40 bg-emerald-400/[0.08] text-emerald-300"
-                : "border-white/20 bg-white/5 text-white/50"
-            }`}
+    <main className="mx-auto max-w-xl px-6 pb-24 pt-12 sm:pt-16">
+      <AnimatePresence>
+        {welcoming && (
+          <motion.div
+            key="welcome-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-black"
+            aria-hidden
           >
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                member.status === "active" ? "bg-emerald-400" : "bg-white/40"
-              }`}
-            />
-            {member.status === "active" ? "Ativo" : member.status}
-          </span>
-        </div>
-
-        <div className="flex justify-center">
-          <VipCard
-            name={member.fullName}
-            memberId={String(member.memberNumber).padStart(4, "0")}
-            unlockedAt={member.unlockedAt}
-            benefit={highlightedBenefit}
-            revealBack={justUnlocked || cardUnlocked}
-          />
-        </div>
-
-        {cardUnlocked && highlightedBenefit && (
-          <CouponRedeemPanel benefit={highlightedBenefit} memberId={member.id} />
+            <motion.span
+              initial={{ opacity: 0, letterSpacing: "0.6em" }}
+              animate={{ opacity: 1, letterSpacing: "0.35em" }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="text-3xl font-light"
+              style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif" }}
+            >
+              GEA VIP
+            </motion.span>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-          {cardUnlocked ? (
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-300/80">
-                  {justUnlocked ? "Cartão desbloqueado" : "Círculo completo"}
-                </div>
-                <p className="mt-2 text-xs text-white/50">
-                  Você seguiu @geastoree e compartilhou seu convite.
-                </p>
-              </div>
-              {highlightedBenefit && (
-                <button
-                  type="button"
-                  onClick={() => setCouponOverlayOpen(true)}
-                  className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/[0.08] px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-amber-200 transition hover:bg-amber-400/20"
-                >
-                  Ver cupom
-                </button>
-              )}
-            </div>
-          ) : (
-            <>
-              <p className="text-[10px] uppercase tracking-[0.35em] text-amber-300/70">
-                Desbloqueio do cartão · 2 passos
-              </p>
-              <ol className="mt-4 space-y-3">
-                <li className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span
-                        className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${
-                          followed
-                            ? "border-emerald-400/50 bg-emerald-400/20 text-emerald-300"
-                            : "border-white/25 text-white/50"
-                        }`}
-                      >
-                        {followed ? "✓" : "1"}
-                      </span>
-                      <span className={followed ? "text-white/60 line-through" : "text-white"}>
-                        Siga @geastoree no Instagram
-                      </span>
-                    </div>
-                    {followed && instagramFollowedAt && (
-                      <div className="mt-1 pl-7 text-[10px] uppercase tracking-[0.3em] text-white/40">
-                        Confirmado em {new Date(instagramFollowedAt).toLocaleDateString("pt-BR")}
-                      </div>
-                    )}
-                  </div>
-                  {!followed && (
-                    <button
-                      onClick={openInstagram}
-                      className="shrink-0 rounded bg-white px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-black hover:bg-white/90"
-                    >
-                      Seguir
-                    </button>
-                  )}
-                </li>
-                <li className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span
-                        className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${
-                          shared
-                            ? "border-emerald-400/50 bg-emerald-400/20 text-emerald-300"
-                            : "border-white/25 text-white/50"
-                        }`}
-                      >
-                        {shared ? "✓" : "2"}
-                      </span>
-                      <span className={shared ? "text-white/60 line-through" : "text-white"}>
-                        Compartilhe seu convite pessoal
-                      </span>
-                    </div>
-                    <div className="mt-1 pl-7 text-[10px] uppercase tracking-[0.3em] text-white/40">
-                      {shared
-                        ? `Compartilhado em ${new Date(inviteSharedAt!).toLocaleDateString("pt-BR")}`
-                        : "Use um dos botões de compartilhamento abaixo"}
-                    </div>
-                  </div>
-                </li>
-              </ol>
-              <p className="mt-4 text-[11px] text-white/40">
-                Ao concluir as duas ações seu cartão vira automaticamente e revela o cupom exclusivo.
-              </p>
-            </>
-          )}
-        </div>
-      </section>
-
-
-
-
-
-      <section>
-        <h3 className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-          Seu círculo
-        </h3>
-        <div className="mt-3 grid grid-cols-3 gap-3">
-          <Stat n={invites.confirmed} label="Confirmados" />
-          <Stat n={invites.pending} label="Aguardando" />
-          <Stat n={invites.total} label="Total" />
-        </div>
-        {inviteUrl && (
-          <div className="mt-4 rounded border border-white/10 bg-white/[0.03] p-4">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-white/40">
-              Seu link de convite
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <input readOnly value={inviteUrl} className="flex-1 min-w-0 bg-transparent text-sm" />
-              <CopyInviteButton url={inviteUrl} onShared={() => qc.invalidateQueries({ queryKey: ["vip", "me"] })} />
-              <a
-                href={`https://wa.me/?text=${encodeURIComponent(
-                  `Você foi convidado para o Clube GEA. Acesse: ${inviteUrl}`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  try {
-                    (window as unknown as { plausible?: (n: string) => void }).plausible?.(
-                      "Share Invite WhatsApp"
-                    );
-                  } catch { /* ignore */ }
-                  logInviteShare({ data: { channel: "whatsapp" } })
-                    .then(() => qc.invalidateQueries({ queryKey: ["vip", "me"] }))
-                    .catch(() => { /* ignore */ });
-                }}
-                className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-emerald-400/40 bg-emerald-400/[0.08] text-emerald-300 rounded hover:bg-emerald-400/[0.14]"
-              >
-                WhatsApp
-              </a>
-              <InviteQrButton url={inviteUrl} memberNumber={member.memberNumber} onShared={() => qc.invalidateQueries({ queryKey: ["vip", "me"] })} />
-            </div>
-          </div>
-        )}
-      </section>
-
-      <section>
-        <h3 className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-          Benefícios disponíveis
-        </h3>
-        {benefits.length === 0 ? (
-          <p className="mt-3 text-sm text-white/50">
-            Continue convidando para desbloquear vantagens.
-          </p>
-        ) : (
-          <ul className="mt-3 space-y-3">
-            {benefits.map((b) => (
-              <li
-                key={b.id}
-                className="rounded border border-amber-400/20 bg-amber-400/[0.03] p-4"
-              >
-                <div className="text-sm">{b.title}</div>
-                {b.description && (
-                  <p className="mt-1 text-xs text-white/50">{b.description}</p>
-                )}
-                {b.code && (
-                  <div className="mt-2 font-mono text-amber-300 tracking-[0.3em] text-sm">
-                    {b.code}
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <button
-        onClick={async () => {
-          await logout();
-          qc.invalidateQueries({ queryKey: ["vip", "me"] });
-          navigate({ to: "/vip" });
-        }}
-        className="text-[10px] uppercase tracking-[0.4em] text-white/30 hover:text-white/70"
+      <motion.header
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.9 }}
+        className="mb-8 text-center"
       >
-        Sair
-      </button>
+        <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">
+          Bem-vindo à GEA VIP
+        </p>
+        <p className="mt-3 text-sm text-white/60">
+          Seu acesso exclusivo foi liberado.
+        </p>
+      </motion.header>
 
-      {highlightedBenefit && (
-        <CouponUnlockOverlay
-          open={couponOverlayOpen}
-          onClose={() => setCouponOverlayOpen(false)}
-          benefit={highlightedBenefit}
-          memberId={member.id}
+      <div className="flex justify-center">
+        <VipCardMinimal
+          name={member.fullName}
+          memberId={String(member.memberNumber).padStart(4, "0")}
+          unlockedAt={member.unlockedAt}
         />
-      )}
-    </div>
-  );
-}
+      </div>
 
-function Stat({ n, label }: { n: number; label: string }) {
-  return (
-    <div className="rounded border border-white/10 bg-white/[0.02] p-4 text-center">
-      <div className="text-2xl font-light">{n}</div>
-      <div className="mt-1 text-[9px] uppercase tracking-[0.35em] text-white/40">{label}</div>
-    </div>
-  );
-}
-
-function CopyInviteButton({ url, onShared }: { url: string; onShared?: () => void }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <button
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(url);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1600);
-          try {
-            (window as unknown as { plausible?: (n: string) => void }).plausible?.(
-              "Copy Invite Link"
-            );
-          } catch { /* ignore */ }
-          logInviteShare({ data: { channel: "copy_link" } })
-            .then(() => onShared?.())
-            .catch(() => { /* ignore */ });
-        } catch { /* ignore */ }
-      }}
-      className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-white/20 rounded hover:border-white/40"
-    >
-      {copied ? "Copiado ✓" : "Copiar"}
-    </button>
-  );
-}
-
-function InviteQrButton({ url, memberNumber, onShared }: { url: string; memberNumber: number; onShared?: () => void }) {
-  const [open, setOpen] = useState(false);
-  const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function generate() {
-    setLoading(true);
-    try {
-      const QR = await import("qrcode");
-      // Cinematográfico: fundo preto absoluto, módulos em prata clara.
-      const png = await QR.toDataURL(url, {
-        errorCorrectionLevel: "H",
-        margin: 2,
-        width: 720,
-        color: { dark: "#f0f0f0ff", light: "#000000ff" },
-      });
-      setDataUrl(png);
-      setOpen(true);
-      try {
-        (window as unknown as { plausible?: (n: string) => void }).plausible?.(
-          "Generate Invite QR"
-        );
-      } catch { /* ignore */ }
-      logInviteShare({ data: { channel: "qr_generate" } })
-        .then(() => onShared?.())
-        .catch(() => { /* ignore */ });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function download() {
-    if (!dataUrl) return;
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = `gea-convite-${String(memberNumber).padStart(4, "0")}.png`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    try {
-      (window as unknown as { plausible?: (n: string) => void }).plausible?.(
-        "Download Invite QR"
-      );
-    } catch { /* ignore */ }
-    logInviteShare({ data: { channel: "qr_download" } })
-      .then(() => onShared?.())
-      .catch(() => { /* ignore */ });
-  }
-
-  return (
-    <>
-      <button
-        onClick={generate}
-        disabled={loading}
-        className="text-[10px] uppercase tracking-[0.3em] px-3 py-1 border border-amber-400/40 bg-amber-400/[0.06] text-amber-300 rounded hover:bg-amber-400/[0.12] disabled:opacity-40"
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 1.1 }}
+        className="mt-12"
       >
-        {loading ? "Gerando…" : "QR Code"}
-      </button>
+        <h2 className="text-[10px] uppercase tracking-[0.4em] text-white/40">
+          Seus benefícios
+        </h2>
+        <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+          {BENEFITS.map((b) => (
+            <li
+              key={b}
+              className="rounded-lg border border-white/10 bg-white/[0.02] px-4 py-3 text-[13px] text-white/80"
+            >
+              {b}
+            </li>
+          ))}
+        </ul>
+      </motion.section>
 
-      {open && dataUrl && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-6"
+      <div className="mt-14 flex items-center justify-between text-[10px] uppercase tracking-[0.4em]">
+        <Link to="/" className="text-white/40 hover:text-white/80">
+          ← Voltar
+        </Link>
+        <button
+          type="button"
+          onClick={async () => {
+            await logout();
+            qc.invalidateQueries({ queryKey: ["vip", "me"] });
+            navigate({ to: "/vip" });
+          }}
+          className="text-white/30 hover:text-white/70"
         >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm rounded-2xl border border-white/10 bg-black p-6 text-center"
-          >
-            <p className="text-[10px] uppercase tracking-[0.4em] text-amber-300/80">
-              Convite Nº {String(memberNumber).padStart(4, "0")}
-            </p>
-            <div className="mt-4 rounded-lg bg-black p-3">
-              <img
-                src={dataUrl}
-                alt="QR code do link de convite"
-                className="mx-auto h-64 w-64"
-              />
-            </div>
-            <p className="mt-4 break-all text-[10px] text-white/40">{url}</p>
-            <div className="mt-5 flex gap-2">
-              <button
-                onClick={download}
-                className="flex-1 rounded bg-white text-black py-2.5 text-[10px] uppercase tracking-[0.3em]"
-              >
-                Baixar PNG
-              </button>
-              <button
-                onClick={() => setOpen(false)}
-                className="rounded border border-white/20 px-4 py-2.5 text-[10px] uppercase tracking-[0.3em] text-white/70 hover:text-white"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+          Sair
+        </button>
+      </div>
+    </main>
   );
 }
