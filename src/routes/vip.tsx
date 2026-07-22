@@ -54,7 +54,7 @@ export const Route = createFileRoute("/vip")({
 });
 
 function makeId() {
-  return Math.random().toString(36).slice(2, 8).toUpperCase();
+  return "GEA" + Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
 function VipPage() {
