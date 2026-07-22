@@ -102,27 +102,15 @@ function VipPage() {
     mark("instagram");
   }
 
-  async function handleShare() {
-    const data = {
-      title: "GEA",
-      text: "Conheça a GEA — uma nova experiência premium.",
-      url: inviteLink,
-    };
+  async function handleCopyInvite() {
     try {
-      const nav = navigator as Navigator & {
-        share?: (d: ShareData) => Promise<void>;
-        clipboard?: { writeText: (t: string) => Promise<void> };
-      };
-      if (typeof nav.share === "function") {
-        await nav.share(data);
-      } else if (nav.clipboard?.writeText) {
-        await nav.clipboard.writeText(inviteLink);
-        setToast("Link copiado. Compartilhe com um amigo.");
-      }
+      await navigator.clipboard.writeText(inviteLink);
+      setToast("Link de convite copiado.");
       mark("share");
-      setTimeout(() => setToast(null), 3600);
+      setTimeout(() => setToast(null), 2800);
     } catch {
-      // usuário cancelou — não marca
+      setToast("Não foi possível copiar o link.");
+      setTimeout(() => setToast(null), 2800);
     }
   }
 
