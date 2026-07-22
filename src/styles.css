@@ -33,9 +33,23 @@
 
 
 html {
-  scroll-behavior: smooth;
+  /* Removido scroll-behavior: smooth global — causava sensação de "scroll
+     voltando" no wheel/trackpad e no momentum do iOS. Suavização de âncoras
+     é reativada apenas quando o usuário não pediu reduced-motion. */
   background: var(--gea-black);
+  overflow-x: hidden;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
 
 @layer base {
   * {
