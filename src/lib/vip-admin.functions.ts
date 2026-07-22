@@ -313,7 +313,7 @@ export const getInviteShareStats = createServerFn({ method: "POST" })
 
     // Hidrata nomes dos membros
     const memberIds = [...byMember.keys()];
-    let membersMap = new Map<string, { member_number: number; full_name: string; instagram_handle: string }>();
+    let membersMap = new Map<string, { member_number: number; full_name: string; instagram_handle: string | null }>();
     if (memberIds.length > 0) {
       const { data: members } = await supabaseAdmin
         .from("vip_members")
