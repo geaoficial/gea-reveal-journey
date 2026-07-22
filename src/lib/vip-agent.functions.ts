@@ -26,12 +26,30 @@ const registerSchema = z.object({
   acceptedTerms: z.literal(true),
 });
 
+// Cadastro simplificado (novo fluxo minimalista do Clube VIP): nome + e-mail + WhatsApp.
+const registerSimpleSchema = z.object({
+  fullName: z.string().trim().min(2).max(80),
+  email: z.string().trim().toLowerCase().email().max(160),
+  whatsapp: z
+    .string()
+    .trim()
+    .min(8)
+    .max(24)
+    .transform((v) => v.replace(/\s+/g, " ")),
+  acceptedTerms: z.literal(true),
+});
+
 const loginSchema = z.object({
   instagram: z
     .string()
     .trim()
     .transform((v) => v.replace(/^@+/, "").toLowerCase())
     .refine((v) => instagramRegex.test(v)),
+  accessCode: z.string().trim().min(6).max(16),
+});
+
+const loginSimpleSchema = z.object({
+  email: z.string().trim().toLowerCase().email().max(160),
   accessCode: z.string().trim().min(6).max(16),
 });
 
