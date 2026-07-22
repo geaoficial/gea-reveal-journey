@@ -75,7 +75,9 @@ function VipPage() {
         url.searchParams.delete("confirm");
         window.history.replaceState({}, "", url.pathname + url.search);
       }
-    } catch {}
+    } catch {
+      // noop: localStorage pode estar indisponível no modo privado.
+    }
   }, []);
 
   useEffect(() => {
