@@ -199,25 +199,13 @@ function VipPage() {
     [refId],
   );
 
-  // Ao concluir as duas etapas, credita o convidador (uma única vez).
+  // Quando ESTE usuário (convidado por alguém) conclui as duas etapas,
+  // credita o convidador — uma única vez por dispositivo, nunca em auto-convite.
   useEffect(() => {
     if (!done || !invitedBy || !refId) return;
-    try {
-      if (localStorage.getItem(INVITE_NOTIFIED_KEY)) return;
-      localStorage.setItem(INVITE_NOTIFIED_KEY, invitedBy);
-      // Fluxo de demonstração no mesmo dispositivo: se o convidador for este mesmo browser,
-      // também incrementa o contador local. Em produção com backend, isso vem do servidor.
-      if (invitedBy === refId) {
-        const next = friends + 1;
-        localStorage.setItem(FRIENDS_KEY, String(next));
-        setFriends(next);
-        setCelebrate(true);
-      }
-      void notifyInviteCompleted(invitedBy, refId);
-    } catch {
-      // noop
-    }
-  }, [done, invitedBy, refId, friends]);
+    if (invitedBy === refId) return;
+    void creditInviterOnCompletion(invitedBy, refId);
+  }, [done, invitedBy, refId]);
 
 
   function handleInstagram() {
