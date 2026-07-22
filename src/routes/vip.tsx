@@ -9,7 +9,9 @@ const STORAGE_KEY = "gea_vip_progress_v3";
 const REF_KEY = "gea_vip_ref_id";
 const FRIENDS_KEY = "gea_vip_friends_confirmed";
 const INVITED_BY_KEY = "gea_vip_invited_by";
-const INVITE_NOTIFIED_KEY = "gea_vip_invite_notified";
+const INVITE_CREDITED_KEY = "gea_vip_invite_credited"; // marca que este dispositivo já creditou seu convidador
+const CREDIT_QUEUE_PREFIX = "gea_vip_credit_queue_";   // fila local de convidados concluídos, por código do convidador
+const CONSUMED_CREDITS_KEY = "gea_vip_consumed_credits"; // guestIds já contabilizados pelo convidador neste dispositivo
 const COUPON_MAIN = "GEA10";
 const COUPON_EXTRA = "GEA26";
 const MEMBER_KEY = "gea_vip_member_v1";
@@ -48,21 +50,59 @@ function isValidWhatsapp(v: string) {
 
 
 /**
- * Notifica que um convite foi concluído.
- * Estrutura pronta para conexão futura com o Supabase (endpoint /api/public/invite/complete).
- * Enquanto não houver backend, apenas registra localmente e credita 1 amigo no mesmo dispositivo
- * quando o código do convidador for igual ao refId salvo (fluxo de demonstração/teste).
+ * Registra que ESTE dispositivo (convidado) concluiu todas as etapas da GEA VIP
+ * e credita 1 amigo confirmado ao convidador `inviterCode`.
+ *
+ * Regras:
+ * - Só é chamada uma única vez por dispositivo (INVITE_CREDITED_KEY).
+ * - Ignora auto-convite (convidador === próprio refId).
+ * - Enfileira o guestId em `gea_vip_credit_queue_{inviterCode}` de forma idempotente,
+ *   para que o convidador (mesmo dispositivo, em modo demo, ou o backend no futuro)
+ *   contabilize somente uma vez por convite.
+ *
+ * Preparado para Supabase: substituir a fila local por
+ *   fetch('/api/public/invite/complete', { method:'POST', body: JSON.stringify({ inviter, guest }) }).
  */
-async function notifyInviteCompleted(inviterCode: string, guestCode: string) {
+async function creditInviterOnCompletion(inviterCode: string, guestCode: string) {
+  if (!inviterCode || !guestCode) return;
+  if (inviterCode === guestCode) return; // auto-convite não vale
   try {
-    localStorage.setItem(
-      `gea_vip_invite_done_${inviterCode}`,
-      JSON.stringify({ guest: guestCode, at: Date.now() }),
-    );
+    if (localStorage.getItem(INVITE_CREDITED_KEY)) return; // este dispositivo já creditou
+    const key = CREDIT_QUEUE_PREFIX + inviterCode;
+    const raw = localStorage.getItem(key);
+    const list: string[] = raw ? JSON.parse(raw) : [];
+    if (!list.includes(guestCode)) {
+      list.push(guestCode);
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+    localStorage.setItem(INVITE_CREDITED_KEY, inviterCode);
   } catch {
     // noop
   }
-  // TODO(backend): substituir por fetch('/api/public/invite/complete', { method: 'POST', body: JSON.stringify({ inviter: inviterCode, guest: guestCode }) })
+  // TODO(backend): POST /api/public/invite/complete { inviter: inviterCode, guest: guestCode }
+}
+
+/**
+ * Consome créditos pendentes destinados ao convidador (refId deste dispositivo).
+ * Retorna quantos NOVOS amigos foram creditados nesta chamada.
+ * Idempotente por guestId (CONSUMED_CREDITS_KEY).
+ */
+function drainPendingCreditsFor(refId: string): number {
+  if (!refId) return 0;
+  try {
+    const raw = localStorage.getItem(CREDIT_QUEUE_PREFIX + refId);
+    if (!raw) return 0;
+    const list: string[] = JSON.parse(raw);
+    const consumedRaw = localStorage.getItem(CONSUMED_CREDITS_KEY);
+    const consumed: string[] = consumedRaw ? JSON.parse(consumedRaw) : [];
+    const fresh = list.filter((g) => !consumed.includes(g));
+    if (fresh.length === 0) return 0;
+    const nextConsumed = [...consumed, ...fresh];
+    localStorage.setItem(CONSUMED_CREDITS_KEY, JSON.stringify(nextConsumed));
+    return fresh.length;
+  } catch {
+    return 0;
+  }
 }
 
 export const Route = createFileRoute("/vip")({
@@ -120,28 +160,21 @@ function VipPage() {
       }
       setRefId(id);
 
-      const f = Number(localStorage.getItem(FRIENDS_KEY) || "0");
-      setFriends(Number.isFinite(f) ? f : 0);
+      // O contador de amigos é derivado exclusivamente da fila local de créditos
+      // destinada a este refId. Nada de incremento por URL ou por ações do próprio dono.
+      const stored = Number(localStorage.getItem(FRIENDS_KEY) || "0");
+      const base = Number.isFinite(stored) ? stored : 0;
+      const fresh = drainPendingCreditsFor(id);
+      const total = base + fresh;
+      if (fresh > 0) {
+        localStorage.setItem(FRIENDS_KEY, String(total));
+        setCelebrate(true);
+      }
+      setFriends(total);
 
       const inviter = localStorage.getItem(INVITED_BY_KEY) || "";
-      // Ignora quando o próprio usuário abriu o próprio convite.
+      // Ignora auto-convite (mesmo dispositivo). Não credita, não mostra banner.
       if (inviter && inviter !== id) setInvitedBy(inviter);
-
-      // Confirmação via URL: /vip?confirm=REFID (fluxo local de teste)
-      const url = new URL(window.location.href);
-      const confirm = url.searchParams.get("confirm");
-      if (confirm && confirm === id) {
-        const already = localStorage.getItem("gea_vip_confirm_" + confirm);
-        if (!already) {
-          const next = (Number.isFinite(f) ? f : 0) + 1;
-          localStorage.setItem(FRIENDS_KEY, String(next));
-          localStorage.setItem("gea_vip_confirm_" + confirm, "1");
-          setFriends(next);
-          if (next >= 1) setCelebrate(true);
-        }
-        url.searchParams.delete("confirm");
-        window.history.replaceState({}, "", url.pathname + url.search);
-      }
     } catch {
       // noop: localStorage pode estar indisponível no modo privado.
     }
@@ -166,25 +199,13 @@ function VipPage() {
     [refId],
   );
 
-  // Ao concluir as duas etapas, credita o convidador (uma única vez).
+  // Quando ESTE usuário (convidado por alguém) conclui as duas etapas,
+  // credita o convidador — uma única vez por dispositivo, nunca em auto-convite.
   useEffect(() => {
     if (!done || !invitedBy || !refId) return;
-    try {
-      if (localStorage.getItem(INVITE_NOTIFIED_KEY)) return;
-      localStorage.setItem(INVITE_NOTIFIED_KEY, invitedBy);
-      // Fluxo de demonstração no mesmo dispositivo: se o convidador for este mesmo browser,
-      // também incrementa o contador local. Em produção com backend, isso vem do servidor.
-      if (invitedBy === refId) {
-        const next = friends + 1;
-        localStorage.setItem(FRIENDS_KEY, String(next));
-        setFriends(next);
-        setCelebrate(true);
-      }
-      void notifyInviteCompleted(invitedBy, refId);
-    } catch {
-      // noop
-    }
-  }, [done, invitedBy, refId, friends]);
+    if (invitedBy === refId) return;
+    void creditInviterOnCompletion(invitedBy, refId);
+  }, [done, invitedBy, refId]);
 
 
   function handleInstagram() {
