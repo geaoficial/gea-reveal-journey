@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalShell } from "@/components/gea/LegalShell";
+import { CONTACT, CONTACT_LINKS } from "@/lib/contact";
 
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
