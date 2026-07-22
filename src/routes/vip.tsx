@@ -483,6 +483,8 @@ function VipPage() {
             </a>
           </section>
         )}
+        </>
+        )}
       </main>
     </div>
   );
