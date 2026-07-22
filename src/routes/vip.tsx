@@ -264,6 +264,21 @@ function VipPage() {
   const friendsPct = Math.min(100, friends * 100);
   const extraUnlocked = friends >= 1;
 
+  function handleRegister(m: Member) {
+    try {
+      localStorage.setItem(MEMBER_KEY, JSON.stringify(m));
+    } catch {
+      // noop
+    }
+    setMember(m);
+    setWelcomeShown(false);
+    toast.success("Bem-vindo à Comunidade GEA.", {
+      description: `${m.name.split(" ")[0]}, seu acesso está liberado.`,
+    });
+    // Pequena transição para a mensagem de boas-vindas.
+    setTimeout(() => setWelcomeShown(true), 900);
+  }
+
   return (
     <div className="min-h-screen bg-black text-white antialiased">
       <header className="flex items-center justify-between border-b border-white/[0.06] px-6 py-5">
@@ -283,7 +298,16 @@ function VipPage() {
             </p>
           </div>
         )}
+
+        {!member ? (
+          <RegisterForm onSubmit={handleRegister} />
+        ) : !welcomeShown ? (
+          <WelcomeSplash name={member.name} />
+        ) : (
         <div className="animate-fade-in">
+          <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">
+            Olá, {member.name.split(" ")[0]}
+          </p>
           <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Bem-vindo</p>
           <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
             Bem-vindo à GEA.
