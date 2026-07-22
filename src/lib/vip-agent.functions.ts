@@ -27,15 +27,46 @@ const registerSchema = z.object({
 });
 
 // Cadastro simplificado (novo fluxo minimalista do Clube VIP): nome + e-mail + WhatsApp.
+const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ'’\-]{2,}(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ'’\-]{2,})+$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function normalizeName(v: string): string {
+  return v.replace(/\s+/g, " ").trim();
+}
+
+function normalizeWhatsapp(v: string): string {
+  // Mantém apenas dígitos
+  return v.replace(/\D+/g, "");
+}
+
+function isValidBrWhatsapp(digits: string): boolean {
+  // Aceita 10 ou 11 dígitos (DDD + número). Também aceita com 55 na frente (12 ou 13).
+  let d = digits;
+  if ((d.length === 12 || d.length === 13) && d.startsWith("55")) d = d.slice(2);
+  if (d.length !== 10 && d.length !== 11) return false;
+  const ddd = Number(d.slice(0, 2));
+  if (!Number.isFinite(ddd) || ddd < 11 || ddd > 99) return false;
+  // Celular (11 dígitos) começa com 9
+  if (d.length === 11 && d[2] !== "9") return false;
+  return true;
+}
+
 const registerSimpleSchema = z.object({
-  fullName: z.string().trim().min(2).max(80),
-  email: z.string().trim().toLowerCase().email().max(160),
-  whatsapp: z
+  fullName: z
+    .string()
+    .transform(normalizeName)
+    .refine((v) => v.length >= 3 && v.length <= 80, { message: "Informe seu nome e sobrenome." })
+    .refine((v) => nameRegex.test(v), { message: "Informe seu nome e sobrenome." }),
+  email: z
     .string()
     .trim()
-    .min(8)
-    .max(24)
-    .transform((v) => v.replace(/\s+/g, " ")),
+    .toLowerCase()
+    .max(160, { message: "Digite um e-mail válido." })
+    .refine((v) => emailRegex.test(v), { message: "Digite um e-mail válido." }),
+  whatsapp: z
+    .string()
+    .transform(normalizeWhatsapp)
+    .refine(isValidBrWhatsapp, { message: "Digite um número de WhatsApp válido." }),
   acceptedTerms: z.literal(true),
 });
 
