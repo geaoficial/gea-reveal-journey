@@ -137,14 +137,30 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <main className="bg-gea-black text-gea-cream">
-      <SilentBoundary><Hero /></SilentBoundary>
-      <SilentBoundary><Manifesto /></SilentBoundary>
-      <SilentBoundary><Lifestyle /></SilentBoundary>
-      <SilentBoundary><InstagramSection /></SilentBoundary>
-      <SilentBoundary><HiddenChapter /></SilentBoundary>
-      <SilentBoundary><DirectorSeal /></SilentBoundary>
-      <SilentBoundary><CinematicFx /></SilentBoundary>
-      <SilentBoundary><ShareDock /></SilentBoundary>
+      <SilentBoundary>
+        <Hero />
+      </SilentBoundary>
+      <SilentBoundary>
+        <Manifesto />
+      </SilentBoundary>
+      <SilentBoundary>
+        <Lifestyle />
+      </SilentBoundary>
+      <SilentBoundary>
+        <InstagramSection />
+      </SilentBoundary>
+      <SilentBoundary>
+        <HiddenChapter />
+      </SilentBoundary>
+      <SilentBoundary>
+        <DirectorSeal />
+      </SilentBoundary>
+      <SilentBoundary>
+        <CinematicFx />
+      </SilentBoundary>
+      <SilentBoundary>
+        <ShareDock />
+      </SilentBoundary>
     </main>
   );
 }

@@ -300,8 +300,7 @@ export function Lifestyle() {
               opacity: 0,
               transform: "translate(-50%, -50%) scale(0.85)",
               border: "1px solid rgba(232,138,58,0.35)",
-              boxShadow:
-                "0 0 40px 4px rgba(232,138,58,0.15), inset 0 0 30px rgba(232,138,58,0.08)",
+              boxShadow: "0 0 40px 4px rgba(232,138,58,0.15), inset 0 0 30px rgba(232,138,58,0.08)",
               transition: "opacity 300ms ease",
             }}
           />

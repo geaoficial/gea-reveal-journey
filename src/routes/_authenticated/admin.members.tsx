@@ -2,11 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import {
-  listAdminMembers,
-  setMemberStatus,
-  exportMembersCsv,
-} from "@/lib/vip-admin.functions";
+import { listAdminMembers, setMemberStatus, exportMembersCsv } from "@/lib/vip-admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/members")({
   component: MembersPage,
@@ -25,8 +21,7 @@ function MembersPage() {
   });
 
   const mut = useMutation({
-    mutationFn: (v: { memberId: string; status: "active" | "blocked" }) =>
-      setStatus({ data: v }),
+    mutationFn: (v: { memberId: string; status: "active" | "blocked" }) => setStatus({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "members"] }),
   });
 
@@ -72,9 +67,7 @@ function MembersPage() {
           <tbody>
             {(query.data?.members ?? []).map((m) => (
               <tr key={m.id} className="border-t border-white/[0.06]">
-                <td className="px-3 py-2 font-mono">
-                  {String(m.member_number).padStart(4, "0")}
-                </td>
+                <td className="px-3 py-2 font-mono">{String(m.member_number).padStart(4, "0")}</td>
                 <td className="px-3 py-2">{m.full_name}</td>
                 <td className="px-3 py-2 text-white/70">@{m.instagram_handle}</td>
                 <td className="px-3 py-2 text-white/50">{m.city ?? "—"}</td>
@@ -82,11 +75,7 @@ function MembersPage() {
                   {new Date(m.unlocked_at).toLocaleDateString("pt-BR")}
                 </td>
                 <td className="px-3 py-2">
-                  <span
-                    className={
-                      m.status === "active" ? "text-emerald-400" : "text-red-400"
-                    }
-                  >
+                  <span className={m.status === "active" ? "text-emerald-400" : "text-red-400"}>
                     {m.status}
                   </span>
                 </td>

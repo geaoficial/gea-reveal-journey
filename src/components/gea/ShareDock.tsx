@@ -8,7 +8,11 @@ type Channel = "whatsapp" | "stories" | "native" | "copy";
 
 function track(channel: Channel) {
   if (typeof window === "undefined") return;
-  const p = (window as unknown as { plausible?: (event: string, opts?: { props?: Record<string, string> }) => void }).plausible;
+  const p = (
+    window as unknown as {
+      plausible?: (event: string, opts?: { props?: Record<string, string> }) => void;
+    }
+  ).plausible;
   p?.("Share Click", { props: { channel } });
 }
 
@@ -100,7 +104,11 @@ export function ShareDock() {
                 <ShareButton onClick={shareStories} label="Instagram Stories" />
                 <ShareButton
                   onClick={shareNative}
-                  label={typeof navigator !== "undefined" && "share" in navigator ? "Enviar…" : "Compartilhar"}
+                  label={
+                    typeof navigator !== "undefined" && "share" in navigator
+                      ? "Enviar…"
+                      : "Compartilhar"
+                  }
                 />
                 <ShareButton onClick={copyLink} label={copied ? "Link copiado" : "Copiar link"} />
               </motion.div>

@@ -77,9 +77,7 @@ export const listAdminMembers = createServerFn({ method: "POST" })
 
     if (data.q && data.q.length > 0) {
       const like = `%${data.q.replace(/[%_]/g, "\\$&")}%`;
-      query = query.or(
-        `full_name.ilike.${like},instagram_handle.ilike.${like},city.ilike.${like}`,
-      );
+      query = query.or(`full_name.ilike.${like},instagram_handle.ilike.${like},city.ilike.${like}`);
     }
     const { data: rows } = await query;
     return { members: rows ?? [] };
@@ -119,7 +117,11 @@ export const exportMembersCsv = createServerFn({ method: "GET" })
 
     const header = "member_number;full_name;instagram_handle;city;status;unlocked_at";
     const escape = (v: unknown) =>
-      v == null ? "" : String(v).replace(/[\r\n;]/g, " ").trim();
+      v == null
+        ? ""
+        : String(v)
+            .replace(/[\r\n;]/g, " ")
+            .trim();
     const body = (rows ?? [])
       .map((r) =>
         [
@@ -285,7 +287,14 @@ export const getInviteShareStats = createServerFn({ method: "POST" })
     // Agrupa por membro
     const byMember = new Map<
       string,
-      { total: number; whatsapp: number; copy_link: number; qr_generate: number; qr_download: number; last: string }
+      {
+        total: number;
+        whatsapp: number;
+        copy_link: number;
+        qr_generate: number;
+        qr_download: number;
+        last: string;
+      }
     >();
 
     for (const e of events) {
@@ -313,7 +322,10 @@ export const getInviteShareStats = createServerFn({ method: "POST" })
 
     // Hidrata nomes dos membros
     const memberIds = [...byMember.keys()];
-    let membersMap = new Map<string, { member_number: number; full_name: string; instagram_handle: string | null }>();
+    let membersMap = new Map<
+      string,
+      { member_number: number; full_name: string; instagram_handle: string | null }
+    >();
     if (memberIds.length > 0) {
       const { data: members } = await supabaseAdmin
         .from("vip_members")

@@ -57,14 +57,10 @@ export function BenefitCards() {
             <span className="mt-8 block text-sm uppercase tracking-[0.24em] text-gea-cream">
               {b.title}
             </span>
-            <span className="mt-3 block text-xs leading-relaxed text-gea-cream/55">
-              {b.short}
-            </span>
+            <span className="mt-3 block text-xs leading-relaxed text-gea-cream/55">{b.short}</span>
             <span className="mt-6 flex items-center gap-2 text-[0.6rem] uppercase tracking-[0.4em] text-gea-cream/40 transition-colors duration-500 group-hover:text-gea-sunset">
               Ler mais
-              <span className="transition-transform duration-500 group-hover:translate-x-1">
-                →
-              </span>
+              <span className="transition-transform duration-500 group-hover:translate-x-1">→</span>
             </span>
           </button>
         ))}
@@ -102,9 +98,7 @@ export function BenefitCards() {
               <h3 className="mt-5 font-display text-3xl italic leading-tight text-gea-cream">
                 {open.title}
               </h3>
-              <p className="mt-6 text-sm leading-relaxed text-gea-cream/70">
-                {open.detail}
-              </p>
+              <p className="mt-6 text-sm leading-relaxed text-gea-cream/70">{open.detail}</p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <a
                   href="https://instagram.com/geastoree"

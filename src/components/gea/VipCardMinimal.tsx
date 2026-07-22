@@ -9,8 +9,7 @@ type Props = {
 };
 
 const silverText: React.CSSProperties = {
-  background:
-    "linear-gradient(180deg, #f4f4f4 0%, #d4d4d4 40%, #8a8a8a 70%, #cfcfcf 100%)",
+  background: "linear-gradient(180deg, #f4f4f4 0%, #d4d4d4 40%, #8a8a8a 70%, #cfcfcf 100%)",
   WebkitBackgroundClip: "text",
   backgroundClip: "text",
   color: "transparent",
@@ -21,11 +20,7 @@ const silverText: React.CSSProperties = {
  * Cartão VIP GEA — versão minimalista para o novo fluxo simplificado.
  * Preto absoluto, detalhes em prata, apenas um brilho especular discreto.
  */
-export const VipCardMinimal = memo(function VipCardMinimal({
-  name,
-  memberId,
-  unlockedAt,
-}: Props) {
+export const VipCardMinimal = memo(function VipCardMinimal({ name, memberId, unlockedAt }: Props) {
   const prefersReduced = useReducedMotion();
   const trimmed = (name || "").trim();
   const displayName = (trimmed || "MEMBRO GEA").toUpperCase();
@@ -42,8 +37,7 @@ export const VipCardMinimal = memo(function VipCardMinimal({
         style={{
           background:
             "radial-gradient(120% 100% at 30% 20%, #141414 0%, #0a0a0a 55%, #050505 100%)",
-          boxShadow:
-            "0 40px 100px -40px rgba(0,0,0,0.95), 0 0 0 1px rgba(200,200,200,0.08)",
+          boxShadow: "0 40px 100px -40px rgba(0,0,0,0.95), 0 0 0 1px rgba(200,200,200,0.08)",
         }}
       >
         {/* Textura fosca */}
@@ -62,8 +56,7 @@ export const VipCardMinimal = memo(function VipCardMinimal({
           aria-hidden
           className="absolute inset-0"
           style={{
-            background:
-              "linear-gradient(160deg, rgba(255,255,255,0.05) 0%, transparent 45%)",
+            background: "linear-gradient(160deg, rgba(255,255,255,0.05) 0%, transparent 45%)",
           }}
         />
         {/* Brilho especular discreto — única animação */}
@@ -109,8 +102,7 @@ export const VipCardMinimal = memo(function VipCardMinimal({
             aria-hidden
             className="h-px w-full"
             style={{
-              background:
-                "linear-gradient(90deg, rgba(210,210,210,0.35), transparent)",
+              background: "linear-gradient(90deg, rgba(210,210,210,0.35), transparent)",
             }}
           />
 

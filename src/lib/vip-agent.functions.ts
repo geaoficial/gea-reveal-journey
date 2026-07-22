@@ -149,7 +149,11 @@ export const registerVipMember = createServerFn({ method: "POST" })
       .single();
 
     if (error || !inserted) {
-      return { ok: false as const, reason: "server_error" as const, message: "Falha ao cadastrar. Tente novamente." };
+      return {
+        ok: false as const,
+        reason: "server_error" as const,
+        message: "Falha ao cadastrar. Tente novamente.",
+      };
     }
 
     // Evento signup
@@ -228,7 +232,11 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
         ok: false as const,
         reason: "validation" as const,
         fieldErrors: data.fieldErrors,
-        message: data.fieldErrors.fullName || data.fieldErrors.email || data.fieldErrors.whatsapp || "Verifique os dados informados.",
+        message:
+          data.fieldErrors.fullName ||
+          data.fieldErrors.email ||
+          data.fieldErrors.whatsapp ||
+          "Verifique os dados informados.",
       };
     }
     const input = data.data;
@@ -279,7 +287,6 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
         };
       }
 
-
       const accessCode = generateAccessCode();
 
       const { data: inserted, error } = await supabaseAdmin
@@ -303,7 +310,11 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
             .ilike("email", input.email)
             .maybeSingle();
           if (raced && raced.status === "active") {
-            try { issueSessionCookie(raced.id); } catch (e) { console.error("[vip] issueSessionCookie (race) failed", e); }
+            try {
+              issueSessionCookie(raced.id);
+            } catch (e) {
+              console.error("[vip] issueSessionCookie (race) failed", e);
+            }
             return {
               ok: true as const,
               alreadyMember: true as const,
@@ -326,7 +337,6 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
         };
       }
 
-
       // Sessão emitida antes de eventos: se a persistência de evento falhar,
       // o cadastro segue válido e o usuário entra na área VIP normalmente.
       try {
@@ -347,7 +357,6 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
 
       // Integração com n8n temporariamente desativada para o lançamento.
       // O cadastro é gravado exclusivamente no Supabase.
-
 
       return {
         ok: true as const,
@@ -370,7 +379,6 @@ export const registerVipMemberSimple = createServerFn({ method: "POST" })
       };
     }
   });
-
 
 // ------------------------------------------------------------------
 // loginVipMemberSimple — por e-mail + código
@@ -422,34 +430,35 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
 
   if (!member || member.status !== "active") return { ok: false as const };
 
-  const [{ data: invites }, { data: benefits }, { data: followEvent }, { data: shareEvent }] = await Promise.all([
-    supabaseAdmin
-      .from("vip_invites")
-      .select("id, status, created_at, confirmed_at")
-      .eq("sponsor_id", memberId)
-      .order("created_at", { ascending: false }),
-    supabaseAdmin
-      .from("vip_benefits")
-      .select("id, title, description, type, code, min_invites, ends_at")
-      .eq("active", true)
-      .order("created_at", { ascending: false }),
-    supabaseAdmin
-      .from("vip_events")
-      .select("created_at")
-      .eq("member_id", memberId)
-      .eq("type", "instagram_follow")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabaseAdmin
-      .from("vip_events")
-      .select("created_at")
-      .eq("member_id", memberId)
-      .eq("type", "invite_share")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-  ]);
+  const [{ data: invites }, { data: benefits }, { data: followEvent }, { data: shareEvent }] =
+    await Promise.all([
+      supabaseAdmin
+        .from("vip_invites")
+        .select("id, status, created_at, confirmed_at")
+        .eq("sponsor_id", memberId)
+        .order("created_at", { ascending: false }),
+      supabaseAdmin
+        .from("vip_benefits")
+        .select("id, title, description, type, code, min_invites, ends_at")
+        .eq("active", true)
+        .order("created_at", { ascending: false }),
+      supabaseAdmin
+        .from("vip_events")
+        .select("created_at")
+        .eq("member_id", memberId)
+        .eq("type", "instagram_follow")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("vip_events")
+        .select("created_at")
+        .eq("member_id", memberId)
+        .eq("type", "invite_share")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
   const confirmed = (invites ?? []).filter((i) => i.status === "confirmed").length;
   const pending = (invites ?? []).filter((i) => i.status === "pending").length;
@@ -478,14 +487,15 @@ export const getMyVipMember = createServerFn({ method: "GET" }).handler(async ()
   const eligibleBenefits = allBenefits.filter((b) => b.unlocked);
 
   const memberIdPad = String(member.member_number).padStart(4, "0");
-  const firstNameSlug = (member.full_name || "MEMBRO")
-    .trim()
-    .split(/\s+/)[0]
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z]/g, "")
-    .toUpperCase()
-    .slice(0, 12) || "MEMBRO";
+  const firstNameSlug =
+    (member.full_name || "MEMBRO")
+      .trim()
+      .split(/\s+/)[0]
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z]/g, "")
+      .toUpperCase()
+      .slice(0, 12) || "MEMBRO";
   const couponCode = `GEA-${firstNameSlug}-${memberIdPad}`;
   const referralCode = `GEA${memberIdPad}`;
 
@@ -544,7 +554,11 @@ export const confirmInstagramFollow = createServerFn({ method: "POST" }).handler
     .select("created_at")
     .single();
 
-  return { ok: true as const, confirmedAt: inserted?.created_at ?? new Date().toISOString(), already: false };
+  return {
+    ok: true as const,
+    confirmedAt: inserted?.created_at ?? new Date().toISOString(),
+    already: false,
+  };
 });
 
 // ------------------------------------------------------------------

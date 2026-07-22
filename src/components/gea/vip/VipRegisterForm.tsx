@@ -69,14 +69,20 @@ export function VipRegisterForm() {
   );
 
   const mutation = useMutation({
-    mutationFn: (data: { fullName: string; email: string; whatsapp: string; acceptedTerms: true }) =>
-      register({ data }),
+    mutationFn: (data: {
+      fullName: string;
+      email: string;
+      whatsapp: string;
+      acceptedTerms: true;
+    }) => register({ data }),
     onSuccess: (res) => {
       if (res.ok) {
         setSuccess(true);
         try {
           (window as unknown as { plausible?: (n: string) => void }).plausible?.("VIP Signup");
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
         // Pequena pausa para exibir a animação de sucesso antes de trocar a tela.
         setTimeout(() => {
           qc.invalidateQueries({ queryKey: ["vip", "me"] });
@@ -100,7 +106,6 @@ export function VipRegisterForm() {
           : "Erro ao conectar com o servidor. Tente novamente em instantes.",
       });
     },
-
   });
 
   const showErr = (field: "fullName" | "email" | "whatsapp") =>
@@ -130,12 +135,20 @@ export function VipRegisterForm() {
         className="animate-in fade-in flex flex-col items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-8 text-center duration-500"
       >
         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20">
-          <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-6 w-6 text-white"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
             <path d="M5 12.5l4.5 4.5L19 7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
         <p className="text-sm text-white/80">Cadastro realizado com sucesso.</p>
-        <p className="text-[10px] uppercase tracking-[0.35em] text-white/45">Bem-vindo à GEA VIP.</p>
+        <p className="text-[10px] uppercase tracking-[0.35em] text-white/45">
+          Bem-vindo à GEA VIP.
+        </p>
       </div>
     );
   }
@@ -194,7 +207,10 @@ export function VipRegisterForm() {
         className="mt-2 flex min-h-11 w-full items-center justify-center gap-2 rounded bg-white py-3 text-xs uppercase tracking-[0.35em] text-black transition disabled:cursor-not-allowed disabled:opacity-40"
       >
         {mutation.isPending && (
-          <span className="inline-block h-3 w-3 animate-spin rounded-full border border-black/30 border-t-black" aria-hidden />
+          <span
+            className="inline-block h-3 w-3 animate-spin rounded-full border border-black/30 border-t-black"
+            aria-hidden
+          />
         )}
         {mutation.isPending ? "Enviando…" : "Entrar para GEA VIP"}
       </button>

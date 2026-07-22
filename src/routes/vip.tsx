@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 // Links oficiais — edite aqui se mudarem.
 const INSTAGRAM_URL = "https://instagram.com/geastoree";
@@ -25,8 +26,7 @@ export const Route = createFileRoute("/vip")({
       { property: "og:title", content: "GEA VIP" },
       {
         property: "og:description",
-        content:
-          "Faça parte da comunidade que acredita em evolução, propósito e exclusividade.",
+        content: "Faça parte da comunidade que acredita em evolução, propósito e exclusividade.",
       },
     ],
   }),
@@ -41,7 +41,6 @@ function VipPage() {
   const [progress, setProgress] = useState<Progress>(EMPTY);
   const [refId, setRefId] = useState<string>("");
   const [friends, setFriends] = useState<number>(0);
-  const [toast, setToast] = useState<string | null>(null);
   const [copied, setCopied] = useState<null | "main" | "extra">(null);
   const [celebrate, setCelebrate] = useState(false);
 
@@ -76,41 +75,76 @@ function VipPage() {
         url.searchParams.delete("confirm");
         window.history.replaceState({}, "", url.pathname + url.search);
       }
-    } catch {}
+    } catch {
+      // noop: localStorage pode estar indisponível no modo privado.
+    }
   }, []);
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-    } catch {}
+    } catch {
+      // noop: localStorage pode estar indisponível no modo privado.
+    }
   }, [progress]);
 
-  const mark = (key: keyof Progress) =>
-    setProgress((p) => (p[key] ? p : { ...p, [key]: true }));
+  const mark = (key: keyof Progress) => setProgress((p) => (p[key] ? p : { ...p, [key]: true }));
 
   const count = Number(progress.instagram) + Number(progress.share);
   const done = count === 2;
   const pct = (count / 2) * 100;
 
-  const inviteLink = useMemo(
-    () => (refId ? `${BASE_URL}/vip?ref=${refId}` : BASE_URL),
-    [refId],
-  );
+  const inviteLink = useMemo(() => (refId ? `${BASE_URL}/vip?ref=${refId}` : BASE_URL), [refId]);
 
   function handleInstagram() {
     window.open(INSTAGRAM_URL, "_blank", "noopener,noreferrer");
     mark("instagram");
   }
 
-  async function handleCopyInvite() {
-    try {
-      await navigator.clipboard.writeText(inviteLink);
-      setToast("Link de convite copiado.");
-    } catch {
-      setToast("Não foi possível copiar automaticamente. Selecione e copie o link abaixo.");
+  async function handleShareInvite() {
+    const sharedTitle = "GEA — Comunidade exclusiva";
+    const sharedText =
+      "Entre para a comunidade GEA. Experiência, estilo e benefícios exclusivos te esperam.";
+
+    let shared = false;
+
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      try {
+        await navigator.share({
+          title: sharedTitle,
+          text: sharedText,
+          url: inviteLink,
+        });
+        shared = true;
+        toast.success("Convite compartilhado com sucesso.", {
+          description: "Obrigado por levar a GEA adiante.",
+        });
+      } catch (err) {
+        // O usuário pode ter cancelado o compartilhamento nativo;
+        // não tratamos como erro, tentamos copiar em seguida.
+        if (err instanceof Error && err.name === "AbortError") {
+          toast("Compartilhamento cancelado.", {
+            description: "Você pode tentar novamente quando quiser.",
+          });
+          return;
+        }
+      }
     }
+
+    if (!shared) {
+      try {
+        await navigator.clipboard.writeText(inviteLink);
+        toast.success("Link de convite copiado.", {
+          description: "Agora é só enviar para quem você quiser.",
+        });
+      } catch {
+        toast.error("Não foi possível copiar automaticamente.", {
+          description: "Selecione e copie o link manualmente.",
+        });
+      }
+    }
+
     mark("share");
-    setTimeout(() => setToast(null), 2800);
   }
 
   async function copyCoupon(code: string, which: "main" | "extra") {
@@ -118,15 +152,22 @@ function VipPage() {
       await navigator.clipboard.writeText(code);
       setCopied(which);
       setTimeout(() => setCopied(null), 2000);
-    } catch {}
+    } catch {
+      // noop: clipboard pode ser negado pelo navegador.
+    }
   }
 
   async function copyInvite() {
     try {
       await navigator.clipboard.writeText(inviteLink);
-      setToast("Link copiado.");
-      setTimeout(() => setToast(null), 2800);
-    } catch {}
+      toast.success("Link de convite copiado.", {
+        description: "Agora é só enviar para quem você quiser.",
+      });
+    } catch {
+      toast.error("Não foi possível copiar automaticamente.", {
+        description: "Selecione e copie o link manualmente.",
+      });
+    }
   }
 
   const friendsPct = Math.min(100, friends * 100);
@@ -138,17 +179,13 @@ function VipPage() {
         <Link to="/" className="text-xs uppercase tracking-[0.5em]">
           GEA
         </Link>
-        <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-          VIP
-        </span>
+        <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">VIP</span>
         <span className="w-8" />
       </header>
 
       <main className="mx-auto max-w-lg px-6 pb-24 pt-16 sm:pt-24">
         <div className="animate-fade-in">
-          <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">
-            Bem-vindo
-          </p>
+          <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Bem-vindo</p>
           <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
             Bem-vindo à GEA.
           </h1>
@@ -169,14 +206,8 @@ function VipPage() {
               />
             </div>
             <ul className="mt-5 space-y-2 text-xs text-white/60">
-              <ProgressItem
-                done={progress.instagram}
-                label="Seguir a GEA no Instagram"
-              />
-              <ProgressItem
-                done={progress.share}
-                label="Copiar meu link de convite"
-              />
+              <ProgressItem done={progress.instagram} label="Seguir a GEA no Instagram" />
+              <ProgressItem done={progress.share} label="Compartilhar meu convite GEA" />
             </ul>
           </div>
 
@@ -190,17 +221,11 @@ function VipPage() {
             />
             <ActionButton
               done={progress.share}
-              onClick={handleCopyInvite}
-              label="Copiar meu link de convite"
-              doneLabel="Link de convite copiado"
+              onClick={handleShareInvite}
+              label="Compartilhar meu convite GEA"
+              doneLabel="Convite compartilhado"
             />
           </div>
-
-          {toast && (
-            <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-white/60 animate-fade-in">
-              {toast}
-            </p>
-          )}
         </div>
 
         {/* Cupom desbloqueado */}
@@ -218,9 +243,7 @@ function VipPage() {
 
             <div className="mt-6 border border-white/20 bg-white/[0.03] p-6">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-                  Código
-                </span>
+                <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">Código</span>
                 <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">
                   10% OFF
                 </span>
@@ -249,20 +272,18 @@ function VipPage() {
               Convide um amigo.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-white/60">
-              Convide um amigo para conhecer a GEA. Quando ele acessar através
-              do seu link e concluir as mesmas etapas, você desbloqueará
-              benefícios exclusivos.
+              Convide um amigo para conhecer a GEA. Quando ele acessar através do seu link e
+              concluir as mesmas etapas, você desbloqueará benefícios exclusivos.
             </p>
 
             <ul className="mt-6 space-y-2 text-xs text-white/70">
               <li className="flex items-start gap-3">
                 <span className="mt-1 h-1 w-1 rounded-full bg-white/60" />
-                Cupom especial <span className="text-white">GEA26</span> para a
-                primeira compra.
+                Cupom especial <span className="text-white">GEA26</span> para a primeira compra.
               </li>
               <li className="flex items-start gap-3">
-                <span className="mt-1 h-1 w-1 rounded-full bg-white/60" />1
-                participação no sorteio de um brinde misterioso da GEA.
+                <span className="mt-1 h-1 w-1 rounded-full bg-white/60" />1 participação no sorteio
+                de um brinde misterioso da GEA.
               </li>
             </ul>
 
@@ -279,9 +300,7 @@ function VipPage() {
                 />
               </div>
               <p className="mt-3 text-[11px] text-white/50">
-                {extraUnlocked
-                  ? "1 amigo confirmado."
-                  : "0 de 1 amigo confirmado."}
+                {extraUnlocked ? "1 amigo confirmado." : "0 de 1 amigo confirmado."}
               </p>
             </div>
 
@@ -306,14 +325,11 @@ function VipPage() {
                   celebrate ? "animate-scale-in" : ""
                 }`}
               >
-                <p className="text-[10px] uppercase tracking-[0.5em] text-white/50">
-                  Parabéns
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.5em] text-white/50">Parabéns</p>
                 <p className="mt-4 text-sm leading-relaxed text-white/80">
                   Seu amigo concluiu todas as etapas. Você desbloqueou o cupom{" "}
-                  <span className="text-white">GEA26</span> e garantiu sua
-                  participação no sorteio do{" "}
-                  <span className="text-white">Brinde Misterioso GEA</span>.
+                  <span className="text-white">GEA26</span> e garantiu sua participação no sorteio
+                  do <span className="text-white">Brinde Misterioso GEA</span>.
                 </p>
                 <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-6">
                   <span className="text-2xl font-light tracking-[0.35em] sm:text-3xl">

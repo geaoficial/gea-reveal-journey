@@ -27,12 +27,16 @@ function InvitesPage() {
       </p>
       <div className="mt-6 space-y-2">
         {(q.data?.invites ?? []).map((i) => {
-          const sponsor = i.sponsor as
-            | { member_number: number; full_name: string; instagram_handle: string }
-            | null;
-          const invitee = i.invitee as
-            | { member_number: number; full_name: string; instagram_handle: string }
-            | null;
+          const sponsor = i.sponsor as {
+            member_number: number;
+            full_name: string;
+            instagram_handle: string;
+          } | null;
+          const invitee = i.invitee as {
+            member_number: number;
+            full_name: string;
+            instagram_handle: string;
+          } | null;
           return (
             <div
               key={i.id}

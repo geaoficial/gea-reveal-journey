@@ -1,10 +1,6 @@
 import { motion } from "motion/react";
 
-const lines = [
-  "Estilo não se compra.",
-  "Se constrói.",
-  "Cada detalhe revela quem você é.",
-];
+const lines = ["Estilo não se compra.", "Se constrói.", "Cada detalhe revela quem você é."];
 
 const closing = "Bem-vindo ao início da história.";
 

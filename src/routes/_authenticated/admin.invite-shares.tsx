@@ -48,9 +48,7 @@ function InviteSharesPage() {
               key={p.days}
               onClick={() => setDays(p.days)}
               className={`px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] rounded transition ${
-                days === p.days
-                  ? "bg-white text-black"
-                  : "text-white/50 hover:text-white"
+                days === p.days ? "bg-white text-black" : "text-white/50 hover:text-white"
               }`}
             >
               {p.label}
@@ -75,10 +73,7 @@ function InviteSharesPage() {
                 const count = found?.count ?? 0;
                 const pct = data.total > 0 ? Math.round((count / data.total) * 100) : 0;
                 return (
-                  <div
-                    key={ch}
-                    className="rounded border border-white/10 bg-white/[0.02] p-4"
-                  >
+                  <div key={ch} className="rounded border border-white/10 bg-white/[0.02] p-4">
                     <div className="text-[9px] uppercase tracking-[0.4em] text-white/40">
                       {CHANNEL_LABEL[ch]}
                     </div>
@@ -120,9 +115,7 @@ function InviteSharesPage() {
                     data.members.map((m) => (
                       <tr key={m.memberId} className="border-t border-white/[0.06]">
                         <td className="px-4 py-2 text-white/50">
-                          {m.member_number != null
-                            ? String(m.member_number).padStart(4, "0")
-                            : "—"}
+                          {m.member_number != null ? String(m.member_number).padStart(4, "0") : "—"}
                         </td>
                         <td className="px-4 py-2">{m.full_name}</td>
                         <td className="px-4 py-2 text-white/50">
@@ -132,9 +125,7 @@ function InviteSharesPage() {
                         <td className="px-4 py-2 text-right tabular-nums">{m.copy_link}</td>
                         <td className="px-4 py-2 text-right tabular-nums">{m.qr_generate}</td>
                         <td className="px-4 py-2 text-right tabular-nums">{m.qr_download}</td>
-                        <td className="px-4 py-2 text-right tabular-nums font-medium">
-                          {m.total}
-                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums font-medium">{m.total}</td>
                         <td className="px-4 py-2 text-white/40 text-xs">
                           {new Date(m.last).toLocaleString("pt-BR")}
                         </td>

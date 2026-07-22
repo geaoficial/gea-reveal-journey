@@ -38,7 +38,6 @@ export function DirectorSeal() {
         </button>
       </footer>
 
-
       <AnimatePresence>
         {open && (
           <motion.div
@@ -66,8 +65,7 @@ export function DirectorSeal() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="relative w-full max-w-lg overflow-hidden rounded-[3px] border border-[#c9c9c9]/20 p-10 text-center shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)]"
               style={{
-                backgroundImage:
-                  "linear-gradient(155deg, #0d0d0d 0%, #141414 45%, #080808 100%)",
+                backgroundImage: "linear-gradient(155deg, #0d0d0d 0%, #141414 45%, #080808 100%)",
               }}
             >
               <button
@@ -76,7 +74,14 @@ export function DirectorSeal() {
                 aria-label="Fechar"
                 className="absolute right-4 top-4 text-[#7a7a7a] transition-colors hover:text-[#e8e8e8]"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                >
                   <path d="M6 6l12 12M18 6l-12 12" />
                 </svg>
               </button>
@@ -105,8 +110,8 @@ export function DirectorSeal() {
               >
                 A GEA foi idealizada e dirigida por Breno Elias.
                 <br />
-                Cada detalhe desta experiência foi pensado para transmitir
-                presença, elegância e exclusividade.
+                Cada detalhe desta experiência foi pensado para transmitir presença, elegância e
+                exclusividade.
                 <br />
                 <span className="text-[#8a8a8a]">
                   Obrigado por fazer parte do início desta história.
@@ -161,19 +166,30 @@ export function DirectorSeal() {
 
 function LegalLinks() {
   const openPrefs = () => window.dispatchEvent(new CustomEvent("gea:open-consent"));
-  const linkClass =
-    "text-[#7a7a7a] transition-colors hover:text-[#e8e8e8]";
+  const linkClass = "text-[#7a7a7a] transition-colors hover:text-[#e8e8e8]";
   return (
     <nav
       className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[0.55rem] uppercase tracking-[0.36em]"
       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
     >
-      <Link to="/privacidade" className={linkClass}>Privacidade</Link>
-      <span aria-hidden className="text-[#3a3a3a]">·</span>
-      <Link to="/cookies" className={linkClass}>Cookies</Link>
-      <span aria-hidden className="text-[#3a3a3a]">·</span>
-      <Link to="/termos" className={linkClass}>Termos</Link>
-      <span aria-hidden className="text-[#3a3a3a]">·</span>
+      <Link to="/privacidade" className={linkClass}>
+        Privacidade
+      </Link>
+      <span aria-hidden className="text-[#3a3a3a]">
+        ·
+      </span>
+      <Link to="/cookies" className={linkClass}>
+        Cookies
+      </Link>
+      <span aria-hidden className="text-[#3a3a3a]">
+        ·
+      </span>
+      <Link to="/termos" className={linkClass}>
+        Termos
+      </Link>
+      <span aria-hidden className="text-[#3a3a3a]">
+        ·
+      </span>
       <button type="button" onClick={openPrefs} className={linkClass}>
         Preferências
       </button>

@@ -19,11 +19,7 @@ export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
     if (typeof window !== "undefined") setOrigin(window.location.origin);
   }, []);
 
-  const link = useMemo(
-    () => `${origin}/invite/${memberNumber}`,
-    [origin, memberNumber],
-  );
-
+  const link = useMemo(() => `${origin}/invite/${memberNumber}`, [origin, memberNumber]);
 
   const message = useMemo(
     () =>
@@ -34,7 +30,9 @@ export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
   const track = (name: string) => {
     try {
       (window as unknown as { plausible?: (n: string) => void }).plausible?.(name);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   };
 
   const copy = async (value: string, setter: (v: boolean) => void) => {
@@ -42,7 +40,9 @@ export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
       await navigator.clipboard.writeText(value);
       setter(true);
       setTimeout(() => setter(false), 2200);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   };
 
   const handleShare = async () => {
@@ -51,20 +51,21 @@ export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
       try {
         await navigator.share({ title: "GEA VIP", text: message, url: link });
         return;
-      } catch { /* fallthrough */ }
+      } catch {
+        /* fallthrough */
+      }
     }
     copy(link, setCopiedLink);
   };
 
   return (
     <section className="mt-14">
-      <h2 className="text-[10px] uppercase tracking-[0.4em] text-white/45">
-        Indique um amigo
-      </h2>
+      <h2 className="text-[10px] uppercase tracking-[0.4em] text-white/45">Indique um amigo</h2>
       <p className="mt-4 text-sm leading-relaxed text-white/70">
-        Convide um amigo para fazer parte da GEA VIP. Quando ele se cadastrar,
-        seguir a GEA no Instagram e concluir a primeira compra,
-        <span className="text-white"> vocês dois recebem 10% de desconto</span> em uma próxima compra.
+        Convide um amigo para fazer parte da GEA VIP. Quando ele se cadastrar, seguir a GEA no
+        Instagram e concluir a primeira compra,
+        <span className="text-white"> vocês dois recebem 10% de desconto</span> em uma próxima
+        compra.
       </p>
 
       <div className="mt-6 space-y-3">
@@ -72,7 +73,10 @@ export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
           <span className="min-w-0 flex-1 truncate text-[12px] text-white/70">{link}</span>
           <button
             type="button"
-            onClick={() => { track("VIP Invite Copy Link"); copy(link, setCopiedLink); }}
+            onClick={() => {
+              track("VIP Invite Copy Link");
+              copy(link, setCopiedLink);
+            }}
             className="shrink-0 rounded border border-white/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-white/70 transition hover:border-white/40 hover:text-white"
           >
             {copiedLink ? "Copiado" : "Copiar link"}
@@ -85,7 +89,10 @@ export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
           </span>
           <button
             type="button"
-            onClick={() => { track("VIP Invite Copy Code"); copy(referralCode, setCopiedCode); }}
+            onClick={() => {
+              track("VIP Invite Copy Code");
+              copy(referralCode, setCopiedCode);
+            }}
             className="shrink-0 rounded border border-white/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-white/70 transition hover:border-white/40 hover:text-white"
           >
             {copiedCode ? "Copiado" : "Copiar código"}
