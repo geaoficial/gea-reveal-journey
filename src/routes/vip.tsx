@@ -12,9 +12,40 @@ const INVITED_BY_KEY = "gea_vip_invited_by";
 const INVITE_NOTIFIED_KEY = "gea_vip_invite_notified";
 const COUPON_MAIN = "GEA10";
 const COUPON_EXTRA = "GEA26";
+const MEMBER_KEY = "gea_vip_member_v1";
 
 type Progress = { instagram: boolean; share: boolean };
 const EMPTY: Progress = { instagram: false, share: false };
+
+type Member = { name: string; whatsapp: string; registeredAt: string };
+
+// Aceita apenas letras (com acentos), espaços, hífen e apóstrofo.
+const NAME_RE = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/;
+
+function sanitizeName(v: string) {
+  return v.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ' -]/g, "").replace(/\s{2,}/g, " ").slice(0, 60);
+}
+
+/** Formata número brasileiro conforme digita: (11) 91234-5678 ou (11) 1234-5678. */
+function formatWhatsapp(v: string) {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length === 0) return "";
+  if (d.length <= 2) return `(${d}`;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+/** Valida DDD BR (11–99) e comprimento 10 (fixo) ou 11 (celular, começando por 9). */
+function isValidWhatsapp(v: string) {
+  const d = v.replace(/\D/g, "");
+  if (d.length !== 10 && d.length !== 11) return false;
+  const ddd = Number(d.slice(0, 2));
+  if (ddd < 11 || ddd > 99) return false;
+  if (d.length === 11 && d[2] !== "9") return false;
+  return true;
+}
+
 
 /**
  * Notifica que um convite foi concluído.
@@ -64,10 +95,21 @@ function VipPage() {
   const [copied, setCopied] = useState<null | "main" | "extra">(null);
   const [celebrate, setCelebrate] = useState(false);
   const [invitedBy, setInvitedBy] = useState<string>("");
+  const [member, setMember] = useState<Member | null>(null);
+  const [welcomeShown, setWelcomeShown] = useState(false);
 
   // Load persisted state.
   useEffect(() => {
     try {
+      const rawMember = localStorage.getItem(MEMBER_KEY);
+      if (rawMember) {
+        const m = JSON.parse(rawMember) as Member;
+        if (m?.name && m?.whatsapp) {
+          setMember(m);
+          setWelcomeShown(true);
+        }
+      }
+
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setProgress({ ...EMPTY, ...JSON.parse(raw) });
 
@@ -222,6 +264,21 @@ function VipPage() {
   const friendsPct = Math.min(100, friends * 100);
   const extraUnlocked = friends >= 1;
 
+  function handleRegister(m: Member) {
+    try {
+      localStorage.setItem(MEMBER_KEY, JSON.stringify(m));
+    } catch {
+      // noop
+    }
+    setMember(m);
+    setWelcomeShown(false);
+    toast.success("Bem-vindo à Comunidade GEA.", {
+      description: `${m.name.split(" ")[0]}, seu acesso está liberado.`,
+    });
+    // Pequena transição para a mensagem de boas-vindas.
+    setTimeout(() => setWelcomeShown(true), 900);
+  }
+
   return (
     <div className="min-h-screen bg-black text-white antialiased">
       <header className="flex items-center justify-between border-b border-white/[0.06] px-6 py-5">
@@ -241,7 +298,17 @@ function VipPage() {
             </p>
           </div>
         )}
+
+        {!member ? (
+          <RegisterForm onSubmit={handleRegister} />
+        ) : !welcomeShown ? (
+          <WelcomeSplash name={member.name} />
+        ) : (
+        <>
         <div className="animate-fade-in">
+          <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">
+            Olá, {member.name.split(" ")[0]}
+          </p>
           <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Bem-vindo</p>
           <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
             Bem-vindo à GEA.
@@ -416,6 +483,8 @@ function VipPage() {
             </a>
           </section>
         )}
+        </>
+        )}
       </main>
     </div>
   );
@@ -475,5 +544,124 @@ function ActionButton({
         {done ? "Concluído" : "Abrir"}
       </span>
     </button>
+  );
+}
+
+function RegisterForm({ onSubmit }: { onSubmit: (m: Member) => void }) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [nameErr, setNameErr] = useState<string | null>(null);
+  const [phoneErr, setPhoneErr] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  function validate() {
+    let ok = true;
+    const trimmed = name.trim();
+    if (!trimmed) {
+      setNameErr("Informe seu nome.");
+      ok = false;
+    } else if (trimmed.length < 2 || !NAME_RE.test(trimmed)) {
+      setNameErr("Use apenas letras.");
+      ok = false;
+    } else {
+      setNameErr(null);
+    }
+    if (!isValidWhatsapp(phone)) {
+      setPhoneErr("Informe um WhatsApp válido com DDD.");
+      ok = false;
+    } else {
+      setPhoneErr(null);
+    }
+    return ok;
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (submitting) return;
+    if (!validate()) return;
+    setSubmitting(true);
+    onSubmit({
+      name: name.trim().replace(/\s+/g, " "),
+      whatsapp: phone.replace(/\D/g, ""),
+      registeredAt: new Date().toISOString(),
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className="animate-fade-in">
+      <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Cadastro rápido</p>
+      <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
+        Entrar na GEA VIP.
+      </h1>
+      <p className="mt-4 text-sm leading-relaxed text-white/60">
+        Dois campos e você está dentro. Nada de login ou senha.
+      </p>
+
+      <div className="mt-10 space-y-6">
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">Nome</span>
+          <input
+            type="text"
+            inputMode="text"
+            autoComplete="name"
+            autoCapitalize="words"
+            spellCheck={false}
+            maxLength={60}
+            placeholder="Seu nome"
+            value={name}
+            onChange={(e) => {
+              setName(sanitizeName(e.target.value));
+              if (nameErr) setNameErr(null);
+            }}
+            className="mt-2 w-full border-b border-white/20 bg-transparent py-3 text-base text-white placeholder-white/25 outline-none transition focus:border-white"
+          />
+          {nameErr && <span className="mt-2 block text-[11px] text-red-300/90">{nameErr}</span>}
+        </label>
+
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-[0.4em] text-white/40">WhatsApp</span>
+          <input
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel-national"
+            maxLength={16}
+            placeholder="(11) 91234-5678"
+            value={phone}
+            onChange={(e) => {
+              setPhone(formatWhatsapp(e.target.value));
+              if (phoneErr) setPhoneErr(null);
+            }}
+            className="mt-2 w-full border-b border-white/20 bg-transparent py-3 text-base text-white placeholder-white/25 outline-none transition focus:border-white"
+          />
+          {phoneErr && <span className="mt-2 block text-[11px] text-red-300/90">{phoneErr}</span>}
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        disabled={submitting}
+        className="mt-10 w-full border border-white/25 py-4 text-[11px] uppercase tracking-[0.4em] text-white transition hover:bg-white hover:text-black disabled:opacity-60"
+      >
+        {submitting ? "Entrando…" : "Entrar na GEA VIP"}
+      </button>
+
+      <p className="mt-6 text-[11px] leading-relaxed text-white/40">
+        Ao entrar, você concorda em receber comunicações da GEA no WhatsApp.
+      </p>
+    </form>
+  );
+}
+
+function WelcomeSplash({ name }: { name: string }) {
+  const first = name.split(" ")[0];
+  return (
+    <div className="flex min-h-[50vh] flex-col items-center justify-center text-center animate-fade-in">
+      <p className="text-[10px] uppercase tracking-[0.5em] text-white/40">Comunidade GEA</p>
+      <h1 className="mt-6 text-3xl font-light leading-tight tracking-tight sm:text-4xl">
+        Bem-vindo à Comunidade GEA.
+      </h1>
+      <p className="mt-4 text-sm text-white/60">{first}, seu acesso está liberado.</p>
+      <span className="mt-10 h-[2px] w-16 animate-pulse bg-white/40" />
+    </div>
   );
 }
