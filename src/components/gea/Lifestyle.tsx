@@ -126,7 +126,7 @@ export function Lifestyle() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-10%" }}
         transition={{ duration: 1.4 }}
-        className="relative h-[90dvh] w-full overflow-hidden"
+        className="relative h-[90svh] w-full overflow-hidden"
       >
         <div className="relative h-full w-full">
           <BlurImage
@@ -167,7 +167,7 @@ export function Lifestyle() {
           ref={revealRef}
           onPointerMove={onPointerMove}
           onPointerDown={onPointerMove}
-          className="relative h-[100dvh] w-full overflow-hidden bg-black"
+          className="relative h-[100svh] w-full overflow-hidden bg-black"
           style={{ touchAction: "pan-y" }}
         >
           <div className="relative h-full w-full">
