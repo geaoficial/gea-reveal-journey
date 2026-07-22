@@ -204,7 +204,7 @@ function VipPage() {
               />
               <ProgressItem
                 done={progress.share}
-                label="Copiar meu link de convite"
+                label="Compartilhar meu convite GEA"
               />
             </ul>
           </div>
