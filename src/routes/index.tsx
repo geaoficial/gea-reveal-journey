@@ -7,8 +7,6 @@ import { HiddenChapter } from "@/components/gea/HiddenChapter";
 import { CinematicControls } from "@/components/gea/CinematicControls";
 import { CinematicTrailer } from "@/components/gea/CinematicTrailer";
 import { ShareDock } from "@/components/gea/ShareDock";
-import { VipUnlockOverlay } from "@/components/gea/VipUnlockOverlay";
-import { VipArea } from "@/components/gea/VipArea";
 import { SilentBoundary } from "@/components/gea/SilentBoundary";
 import { DirectorSeal } from "@/components/gea/DirectorSeal";
 import { useDeviceCapability } from "@/lib/device-capability";
