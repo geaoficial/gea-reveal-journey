@@ -17,9 +17,31 @@ import { getRequestOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const origin = await getRequestOrigin();
-    return { origin };
+    try {
+      const origin = await getRequestOrigin();
+      return { origin };
+    } catch {
+      return { origin: "" };
+    }
   },
+  errorComponent: ({ error, reset }) => {
+    console.error(error);
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black px-4 text-white">
+        <div className="max-w-md text-center">
+          <h1 className="text-lg tracking-[0.4em] uppercase">GEA</h1>
+          <p className="mt-4 text-sm text-white/60">Algo não carregou. Recarregue a página.</p>
+          <button
+            onClick={() => reset()}
+            className="mt-6 rounded border border-white/25 px-4 py-2 text-xs uppercase tracking-[0.3em] hover:border-white/60"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    );
+  },
+
   head: ({ loaderData }) => {
     // Fallback absoluto garante preview no WhatsApp/Instagram mesmo antes do SSR resolver o host.
     const PUBLISHED_ORIGIN = "https://gea-reveal-journey.lovable.app";
