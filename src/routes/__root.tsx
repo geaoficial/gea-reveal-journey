@@ -133,8 +133,30 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <VipMenuButton />
       <CookieConsent />
       <ConsentScripts />
     </QueryClientProvider>
   );
 }
+
+/**
+ * Botão permanente "GEA VIP" — visível em todas as páginas exceto na própria /vip.
+ * Fixo no canto superior direito, minimalista e discreto.
+ */
+function VipMenuButton() {
+  const router = useRouter();
+  const pathname = router.state.location.pathname;
+  if (pathname.startsWith("/vip") || pathname.startsWith("/_authenticated") || pathname.startsWith("/admin")) {
+    return null;
+  }
+  return (
+    <Link
+      to="/vip"
+      className="fixed right-4 top-4 z-[60] rounded-full border border-white/20 bg-black/50 px-4 py-2 text-[10px] uppercase tracking-[0.4em] text-white/85 backdrop-blur-md transition hover:border-white/60 hover:text-white sm:right-6 sm:top-6"
+    >
+      GEA VIP
+    </Link>
+  );
+}
+
