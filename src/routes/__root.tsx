@@ -147,7 +147,13 @@ function RootComponent() {
 function VipMenuButton() {
   const router = useRouter();
   const pathname = router.state.location.pathname;
-  if (pathname.startsWith("/vip") || pathname.startsWith("/_authenticated") || pathname.startsWith("/admin")) {
+  if (
+    pathname === "/vip" ||
+    pathname.startsWith("/vip/") ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/invite")
+  ) {
     return null;
   }
   return (
@@ -159,4 +165,5 @@ function VipMenuButton() {
     </Link>
   );
 }
+
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
   memberNumber: number;
@@ -13,11 +13,17 @@ type Props = {
 export function VipReferral({ memberNumber, firstName, referralCode }: Props) {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
+  const [origin, setOrigin] = useState("");
 
-  const link = useMemo(() => {
-    if (typeof window === "undefined") return `/invite/${memberNumber}`;
-    return `${window.location.origin}/invite/${memberNumber}`;
-  }, [memberNumber]);
+  useEffect(() => {
+    if (typeof window !== "undefined") setOrigin(window.location.origin);
+  }, []);
+
+  const link = useMemo(
+    () => `${origin}/invite/${memberNumber}`,
+    [origin, memberNumber],
+  );
+
 
   const message = useMemo(
     () =>
