@@ -9,40 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VipRouteImport } from './routes/vip'
-import { Route as TermosRouteImport } from './routes/termos'
-import { Route as PrivacidadeRouteImport } from './routes/privacidade'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as InviteMemberNumberRouteImport } from './routes/invite.$memberNumber'
-import { Route as InviteCodeRouteImport } from './routes/invite.$code'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as VipRouteImport } from './routes/vip'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as InviteCodeRouteImport } from './routes/invite.$code'
+import { Route as InviteMemberNumberRouteImport } from './routes/invite.$memberNumber'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin.members'
-import { Route as AuthenticatedAdminInvitesRouteImport } from './routes/_authenticated/admin.invites'
-import { Route as AuthenticatedAdminInviteSharesRouteImport } from './routes/_authenticated/admin.invite-shares'
 import { Route as AuthenticatedAdminBenefitsRouteImport } from './routes/_authenticated/admin.benefits'
+import { Route as AuthenticatedAdminInviteSharesRouteImport } from './routes/_authenticated/admin.invite-shares'
+import { Route as AuthenticatedAdminInvitesRouteImport } from './routes/_authenticated/admin.invites'
+import { Route as AuthenticatedAdminMembersRouteImport } from './routes/_authenticated/admin.members'
 
-const VipRoute = VipRouteImport.update({
-  id: '/vip',
-  path: '/vip',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermosRoute = TermosRouteImport.update({
-  id: '/termos',
-  path: '/termos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacidadeRoute = PrivacidadeRouteImport.update({
-  id: '/privacidade',
-  path: '/privacidade',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -50,23 +39,24 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InviteMemberNumberRoute = InviteMemberNumberRouteImport.update({
-  id: '/invite/$memberNumber',
-  path: '/invite/$memberNumber',
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InviteCodeRoute = InviteCodeRouteImport.update({
-  id: '/invite/$code',
-  path: '/invite/$code',
+const VipRoute = VipRouteImport.update({
+  id: '/vip',
+  path: '/vip',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -74,21 +64,25 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const InviteCodeRoute = InviteCodeRouteImport.update({
+  id: '/invite/$code',
+  path: '/invite/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteMemberNumberRoute = InviteMemberNumberRouteImport.update({
+  id: '/invite/$memberNumber',
+  path: '/invite/$memberNumber',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminMembersRoute =
-  AuthenticatedAdminMembersRouteImport.update({
-    id: '/members',
-    path: '/members',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminInvitesRoute =
-  AuthenticatedAdminInvitesRouteImport.update({
-    id: '/invites',
-    path: '/invites',
+const AuthenticatedAdminBenefitsRoute =
+  AuthenticatedAdminBenefitsRouteImport.update({
+    id: '/benefits',
+    path: '/benefits',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminInviteSharesRoute =
@@ -97,10 +91,16 @@ const AuthenticatedAdminInviteSharesRoute =
     path: '/invite-shares',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminBenefitsRoute =
-  AuthenticatedAdminBenefitsRouteImport.update({
-    id: '/benefits',
-    path: '/benefits',
+const AuthenticatedAdminInvitesRoute =
+  AuthenticatedAdminInvitesRouteImport.update({
+    id: '/invites',
+    path: '/invites',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMembersRoute =
+  AuthenticatedAdminMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
@@ -218,39 +218,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vip': {
-      id: '/vip'
-      path: '/vip'
-      fullPath: '/vip'
-      preLoaderRoute: typeof VipRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/termos': {
-      id: '/termos'
-      path: '/termos'
-      fullPath: '/termos'
-      preLoaderRoute: typeof TermosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidade': {
-      id: '/privacidade'
-      path: '/privacidade'
-      fullPath: '/privacidade'
-      preLoaderRoute: typeof PrivacidadeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -260,25 +232,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invite/$memberNumber': {
-      id: '/invite/$memberNumber'
-      path: '/invite/$memberNumber'
-      fullPath: '/invite/$memberNumber'
-      preLoaderRoute: typeof InviteMemberNumberRouteImport
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invite/$code': {
-      id: '/invite/$code'
-      path: '/invite/$code'
-      fullPath: '/invite/$code'
-      preLoaderRoute: typeof InviteCodeRouteImport
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vip': {
+      id: '/vip'
+      path: '/vip'
+      fullPath: '/vip'
+      preLoaderRoute: typeof VipRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -288,6 +274,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/invite/$code': {
+      id: '/invite/$code'
+      path: '/invite/$code'
+      fullPath: '/invite/$code'
+      preLoaderRoute: typeof InviteCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/$memberNumber': {
+      id: '/invite/$memberNumber'
+      path: '/invite/$memberNumber'
+      fullPath: '/invite/$memberNumber'
+      preLoaderRoute: typeof InviteMemberNumberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -295,18 +295,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/members': {
-      id: '/_authenticated/admin/members'
-      path: '/members'
-      fullPath: '/admin/members'
-      preLoaderRoute: typeof AuthenticatedAdminMembersRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/invites': {
-      id: '/_authenticated/admin/invites'
-      path: '/invites'
-      fullPath: '/admin/invites'
-      preLoaderRoute: typeof AuthenticatedAdminInvitesRouteImport
+    '/_authenticated/admin/benefits': {
+      id: '/_authenticated/admin/benefits'
+      path: '/benefits'
+      fullPath: '/admin/benefits'
+      preLoaderRoute: typeof AuthenticatedAdminBenefitsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/invite-shares': {
@@ -316,11 +309,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminInviteSharesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/benefits': {
-      id: '/_authenticated/admin/benefits'
-      path: '/benefits'
-      fullPath: '/admin/benefits'
-      preLoaderRoute: typeof AuthenticatedAdminBenefitsRouteImport
+    '/_authenticated/admin/invites': {
+      id: '/_authenticated/admin/invites'
+      path: '/invites'
+      fullPath: '/admin/invites'
+      preLoaderRoute: typeof AuthenticatedAdminInvitesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/members': {
+      id: '/_authenticated/admin/members'
+      path: '/members'
+      fullPath: '/admin/members'
+      preLoaderRoute: typeof AuthenticatedAdminMembersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
   }
